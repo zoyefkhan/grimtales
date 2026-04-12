@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 1: The Fall — The Obsidian Court — GrimTales</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/reader.css" />
+</head>
+<body class="page-reader">
+
+  <!-- Reading Progress Bar -->
+  <div class="reading-progress-bar" id="progressBar" style="width:0%"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo">
+        <div class="logo-icon"></div>
+        <span class="logo-text">Grim<span>Tales</span></span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="browse.html">Browse</a></li>
+        <li><a href="novel-detail.html">Novel</a></li>
+      </ul>
+      <div class="navbar-actions">
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+        <a href="login.html" class="btn btn-outline" style="font-size:0.75rem;padding:0.5em 1.2em;">Sign In</a>
+      </div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">🏠 Home</a>
+    <a href="novel-detail.html">📖 Novel Details</a>
+  </div>
+
+  <!-- READER HEADER -->
+  <div class="reader-header">
+    <div class="container reader-header-inner">
+      <div class="reader-nav-info">
+        <a href="novel-detail.html" class="reader-novel-link">← The Obsidian Court</a>
+        <div class="reader-chapter-title">Chapter 1: The Fall of House Morn</div>
+      </div>
+      <div class="reader-controls">
+        <button class="reader-ctrl-btn" id="settingsBtn" title="Reader settings">⚙</button>
+        <button class="reader-ctrl-btn" id="bookmarkBtn" title="Bookmark">🔖</button>
+        <button class="reader-ctrl-btn" id="prevChapter" title="Previous chapter">‹</button>
+        <button class="reader-ctrl-btn" id="nextChapter" title="Next chapter">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- READER SETTINGS PANEL -->
+  <div class="reader-settings-panel" id="settingsPanel">
+    <div class="settings-title">Reading Settings</div>
+
+    <div class="settings-group">
+      <span class="settings-label">Font Size</span>
+      <div class="font-size-control">
+        <button id="fontDecrease">−</button>
+        <span class="font-size-display" id="fontSizeDisplay">18px</span>
+        <button id="fontIncrease">+</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <span class="settings-label">Theme</span>
+      <div class="theme-swatches">
+        <div class="theme-swatch swatch-dark active" data-theme="dark" title="Dark"></div>
+        <div class="theme-swatch swatch-sepia" data-theme="sepia" title="Sepia"></div>
+        <div class="theme-swatch swatch-light" data-theme="light" title="Light"></div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <span class="settings-label">Font Family</span>
+      <div class="font-options">
+        <div class="font-option active" data-font="crimson" style="font-family:'Crimson Text',serif">Crimson</div>
+        <div class="font-option" data-font="garamond" style="font-family:'EB Garamond',serif">Garamond</div>
+        <div class="font-option" data-font="georgia" style="font-family:Georgia,serif">Georgia</div>
+        <div class="font-option" data-font="cinzel" style="font-family:'Cinzel',serif">Cinzel</div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <span class="settings-label">Line Height</span>
+      <div class="line-height-slider">
+        <input type="range" id="lineHeightSlider" min="1.4" max="2.4" step="0.1" value="1.95" />
+      </div>
+    </div>
+  </div>
+
+  <!-- READER LAYOUT -->
+  <div class="reader-main">
+    <!-- Left sidebar (sticky TOC) -->
+    <div class="reader-sidebar-left">
+      <div class="reader-toc">
+        <div class="toc-title">Table of Contents</div>
+        <ul class="toc-list" id="tocList">
+          <li><a href="#" class="active">Chapter 1: The Fall</a></li>
+          <li><a href="#">Chapter 2: The Exiled</a></li>
+          <li><a href="#">Chapter 3: The Court of Shadows</a></li>
+          <li><a href="#">Chapter 4: Blood Contracts</a></li>
+          <li><a href="#">Chapter 5: The First Lie</a></li>
+          <li><a href="#">Chapter 6: Sorceress</a></li>
+          <li><a href="#">Chapter 7: The Jester's Riddle</a></li>
+          <li><a href="#">Chapter 8: Queen's Gambit</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Main reading content -->
+    <div class="reader-content" id="readerContent">
+      <div class="chapter-heading">
+        <div class="chapter-number">Chapter I</div>
+        <h1 class="chapter-title-main">The Fall of House Morn</h1>
+        <div class="chapter-meta-row">
+          <span>Published March 14, 2023</span>
+          <span>·</span>
+          <span>4,200 words</span>
+          <span>·</span>
+          <span>~18 min read</span>
+        </div>
+      </div>
+
+      <div class="chapter-body" id="chapterBody">
+        <p>The execution order came on parchment stained with the King's seal — red wax pressed in the shape of a crown that looked, to Kael Morn's eyes, exactly like a wound.</p>
+
+        <p>He had carried out forty-seven such orders in his six years as the Crown's Blade. He had learned not to read the names before the deed was done, a mercy he granted to himself rather than to those who would die. Names made it complicated. Names made it human.</p>
+
+        <p>But this time, the name was Sera Aldwyn, and Sera Aldwyn was twelve years old.</p>
+
+        <div class="chapter-ornament">— ✦ —</div>
+
+        <p>The cell was small and damp and smelled of the river. The girl sat in the corner with her knees drawn to her chest, watching him with eyes that were too old for her face. Eyes that had already counted the odds and found them wanting.</p>
+
+        <p>"You're the King's Blade," she said. It wasn't a question.</p>
+
+        <p>"I am."</p>
+
+        <p>"My father said you were the most dangerous man in the kingdom." She paused. "He said you had no soul."</p>
+
+        <p>Kael looked at the order in his hand. At the seal. At the name written in the court scribe's careful, beautiful hand — the kind of hand that had never held a weapon, that had never felt what it was to end a life.</p>
+
+        <p><em>Sera Aldwyn. Twelve years. Daughter of the Traitor Edmund Aldwyn. To be executed for conspiracy against the Crown by order of His Most Gracious Majesty, King Calderon the Third.</em></p>
+
+        <p>"Your father was wrong," Kael said, and he folded the order in half, and then in half again, and placed it into the torch flame on the wall until there was nothing left of it but ash and the smell of burning wax.</p>
+
+        <div class="chapter-ornament">— ✦ —</div>
+
+        <p>He expected to die for it. In his experience, men who refused the King's commands did not live long enough to regret them.</p>
+
+        <p>Instead, they exiled him.</p>
+
+        <p>Perhaps Calderon feared the precedent. Perhaps some advisor whispered in his ear that executing your own Blade, a man who knew the location of every secret the Crown had buried in the past two decades, was an invitation to certain kinds of posthumous chaos. Perhaps the King simply could not bear the thought of a sword turning on its own master.</p>
+
+        <p>Whatever the reason, Kael Morn rode out of the capital on a grey morning with a horse, a sword, a purse of coin that felt like an insult, and a letter barring him from every major city in the kingdom.</p>
+
+        <blockquote>
+          "You have been found guilty of gross dereliction of duty and willful defiance of royal command. You are hereby stripped of all titles, ranks, and privileges afforded by service to the Crown. Should you return to the capital or approach within fifty leagues of any royal seat, your life is forfeit."
+        </blockquote>
+
+        <p>He read it three times. Then he used it to start a fire and made camp at the side of the road and slept better than he had in years.</p>
+
+        <div class="chapter-ornament">— ✦ —</div>
+
+        <p>He found out about the Obsidian Court the way most people did: by accident, while trying to stay alive.</p>
+
+        <p>It was six months after the exile, in a border town called Greyveil that smelled permanently of fish and forgotten ambitions. Kael had taken work as a guard for a merchant who asked no questions, which was the only kind of merchant he could work for now.</p>
+
+        <p>The merchant's name was Davan, and he was moving something he didn't want Kael to see. Kael noticed this the way he noticed everything — without seeming to notice at all, a skill he had spent years cultivating in royal corridors where the wrong expression at the wrong moment could cost you your head.</p>
+
+        <p>Whatever Davan carried arrived sealed in a black lacquered box with a lock shaped like a crescent moon. Three men came to collect it at midnight, dressed in plain wool that was expensive in the way only very rich people could make very plain things expensive. They spoke to Davan for seven minutes. One of them glanced at Kael in the doorway and then glanced away, the way you glanced away from things you were pretending not to see.</p>
+
+        <p>They paid Davan in obsidian coins.</p>
+
+        <p>Kael had never seen obsidian coins. In the kingdom, only two currencies circulated: royal gold, stamped with the King's profile, and silver commons used for everyday trade. Obsidian wasn't a currency. It wasn't even particularly valuable as a material — too brittle, too difficult to work.</p>
+
+        <p>Except, apparently, to someone.</p>
+
+        <p>He waited until Davan was asleep, then examined the coins. They were perfectly circular, perfectly smooth, and heavier than they should have been for their size. On one face: a gate with no keyhole. On the other: a phrase in old court script that Kael had learned as a child from the royal library's most restricted texts.</p>
+
+        <p><em>We hold what the light refuses to keep.</em></p>
+
+        <p>Kael sat with the coin for a long time in the dark.</p>
+
+        <p>Then he put it in his pocket, saddled his horse, and began riding toward the only person he could think of who might know what it meant: a woman named Vey, who had once been the most powerful sorceress at court, and who had been exiled six months before him for reasons that had never been explained to anyone's satisfaction.</p>
+
+        <p>He found her three weeks later in a tower at the edge of the Ashen Moors, precisely where rumor had placed her, surrounded by books that smelled of things that should not be and a cat that watched him with an unsettling degree of focus.</p>
+
+        <p>"Kael Morn," she said, without looking up from her work. "I wondered when one of you would find me."</p>
+
+        <p>"One of who?"</p>
+
+        <p>She looked up then. She had the same sharp face he remembered from court, the same silver-threaded dark hair, the same expression of faint impatience that suggested she was always three steps ahead of the current conversation. But her eyes were different. Older. Heavier with something he recognized because he had felt it himself in the months after exile.</p>
+
+        <p>She had seen something she couldn't unsee.</p>
+
+        <p>"Come inside," she said. "Close the door. The wards will need to be reset." She glanced at his pocket. "And take out the coin. It's been tracking you since Greyveil."</p>
+
+        <p>Kael took out the coin.</p>
+
+        <p>In the light of her lamp, it had begun to glow.</p>
+      </div>
+
+      <!-- Chapter Navigation -->
+      <div class="chapter-navigation">
+        <button class="chapter-nav-btn" id="prevChapterBottom" disabled>
+          <span>‹</span>
+          <div>
+            <span class="nav-label">Previous</span>
+            <span class="nav-chapter-name">—</span>
+          </div>
+        </button>
+
+        <div class="chapter-nav-center">
+          <div class="chapter-nav-progress">Chapter 1 of 284</div>
+        </div>
+
+        <button class="chapter-nav-btn next" id="nextChapterBottom">
+          <div>
+            <span class="nav-label">Next</span>
+            <span class="nav-chapter-name">The Exiled Road</span>
+          </div>
+          <span>›</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right sidebar -->
+    <div class="reader-sidebar-right">
+      <div style="position:sticky;top:140px;display:flex;flex-direction:column;gap:0.75rem">
+        <div style="text-align:center">
+          <div style="font-family:var(--font-heading);font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ash);margin-bottom:0.5rem">Progress</div>
+          <div style="font-family:var(--font-display);font-size:1.1rem;color:var(--crimson-glow)" id="readingPercent">0%</div>
+        </div>
+        <div style="width:3px;height:200px;background:var(--charcoal-mid);border-radius:2px;position:relative;margin:0 auto">
+          <div id="progressIndicator" style="position:absolute;top:0;left:0;right:0;background:var(--crimson);border-radius:2px;transition:height 0.1s ease;height:0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="comments-section container-sm" style="max-width:760px;margin:0 auto">
+    <div class="comments-header">
+      <h2 class="comments-title">Chapter Comments <span style="color:var(--ash);font-family:var(--font-body);font-size:0.9rem">(126)</span></h2>
+      <select style="width:auto;font-size:0.8rem;padding:0.35em 0.75em;border-radius:20px">
+        <option>Top Comments</option>
+        <option>Newest First</option>
+        <option>Oldest First</option>
+      </select>
+    </div>
+
+    <div class="comment-form">
+      <textarea placeholder="What did you think of this chapter?"></textarea>
+      <div class="comment-form-footer">
+        <div style="font-size:0.78rem;color:var(--ash)">Sign in to comment</div>
+        <a href="login.html" class="btn btn-crimson">Sign In</a>
+      </div>
+    </div>
+
+    <div class="comments-list" id="commentsSection">
+      <!-- Injected by JS -->
+    </div>
+
+    <div style="text-align:center;margin-top:1.5rem">
+      <button class="btn btn-outline" id="loadMoreComments">Load More Comments</button>
+    </div>
+  </div>
+
+  <div style="height:4rem"></div>
+
+  <script src="js/app.js"></script>
+  <script src="js/bookmarks.js"></script>
+  <script src="js/reader.js"></script>
+  <script src="js/comments.js"></script>
+</body>
+</html>

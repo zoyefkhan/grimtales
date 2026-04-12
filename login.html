@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — GrimTales</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+<div class="page-auth">
+
+  <!-- Visual Side -->
+  <div class="auth-visual">
+    <div class="auth-visual-bg"></div>
+    <div class="auth-visual-pattern"></div>
+    <div class="auth-visual-content">
+      <a href="index.html" class="auth-logo">
+        <div class="auth-logo-icon"></div>
+        <span class="auth-logo-text">Grim<span>Tales</span></span>
+      </a>
+      <h2 class="auth-visual-title">Return to the <span>Darkness</span></h2>
+      <p class="auth-visual-desc">Welcome back. Your bookmarks, reading progress, and favourite stories await in the shadows.</p>
+
+      <div class="auth-features">
+        <div class="auth-feature">
+          <span class="auth-feature-icon">📖</span>
+          <div class="auth-feature-text">
+            <strong>Continue Reading</strong>
+            Pick up exactly where you left off, across any device.
+          </div>
+        </div>
+        <div class="auth-feature">
+          <span class="auth-feature-icon">🔔</span>
+          <div class="auth-feature-text">
+            <strong>Chapter Alerts</strong>
+            Get notified the moment your favourite authors update.
+          </div>
+        </div>
+        <div class="auth-feature">
+          <span class="auth-feature-icon">💬</span>
+          <div class="auth-feature-text">
+            <strong>Join Discussions</strong>
+            Share theories, reactions, and connect with fellow readers.
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-visual-quote">
+        <p>"The best dark fantasy I've read in years. The Obsidian Court had me up until 3AM three nights in a row."</p>
+        <cite>— @shadowreader, GrimTales community</cite>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Side -->
+  <div class="auth-form-side">
+    <div class="auth-form-container">
+      <div class="auth-form-header">
+        <h1 class="auth-form-title">Welcome Back</h1>
+        <p class="auth-form-subtitle">Don't have an account? <a href="register.html">Create one free →</a></p>
+      </div>
+
+      <div class="auth-form" id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Email or Username</label>
+          <div class="form-input-wrap">
+            <input type="text" id="loginIdentifier" placeholder="you@example.com" autocomplete="username" />
+            <span class="form-input-icon">👤</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="form-input-wrap">
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+            <span class="form-input-icon">🔒</span>
+            <button class="password-toggle" id="togglePassword" type="button">👁</button>
+          </div>
+          <div class="form-forgot"><a href="#">Forgot password?</a></div>
+        </div>
+
+        <label class="form-remember">
+          <input type="checkbox" id="rememberMe" /> Remember me for 30 days
+        </label>
+
+        <button class="auth-submit" id="loginBtn">Sign In to GrimTales</button>
+
+        <div class="auth-divider">or continue with</div>
+
+        <div class="social-auth">
+          <button class="social-auth-btn">
+            <span>G</span> Google
+          </button>
+          <button class="social-auth-btn">
+            <span>D</span> Discord
+          </button>
+        </div>
+
+        <p class="auth-terms">
+          By signing in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

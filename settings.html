@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings — GrimTales</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <style>
+    .page-settings { padding-top: 70px; min-height: 100vh; }
+    .settings-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 2.5rem;
+      padding: 3rem 0;
+      align-items: start;
+    }
+    .settings-sidebar {
+      position: sticky;
+      top: 90px;
+      background: var(--charcoal);
+      border: var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .settings-sidebar-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: var(--border-subtle);
+      font-family: var(--font-heading);
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ash);
+    }
+    .settings-nav { padding: 0.5rem 0; }
+    .settings-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      font-family: var(--font-heading);
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      color: var(--ash-light);
+      cursor: pointer;
+      transition: var(--transition);
+      border-left: 2px solid transparent;
+    }
+    .settings-nav-link:hover { color: var(--white); background: rgba(139,26,26,0.06); }
+    .settings-nav-link.active { color: var(--crimson-glow); background: rgba(139,26,26,0.1); border-left-color: var(--crimson); }
+    .settings-nav-link .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    /* Settings Panel */
+    .settings-panel { display: none; }
+    .settings-panel.active { display: block; }
+    .settings-card {
+      background: var(--charcoal);
+      border: var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    .settings-card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .settings-card-title { font-family: var(--font-heading); font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ash-light); }
+    .settings-card-body { padding: 1.5rem; }
+    .settings-form { display: flex; flex-direction: column; gap: 1.25rem; }
+    .settings-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-label { font-family: var(--font-heading); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ash); }
+    .form-hint { font-size: 0.75rem; color: var(--ash); }
+    /* Avatar Upload */
+    .avatar-upload-area {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .current-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--crimson);
+      background: linear-gradient(135deg, #1a0808, #2d1010);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 1.8rem; color: var(--crimson-glow);
+      flex-shrink: 0;
+    }
+    .avatar-upload-btns { display: flex; flex-direction: column; gap: 0.5rem; }
+    /* Toggle Switch */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 0;
+      border-bottom: var(--border-subtle);
+    }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-label { font-size: 0.88rem; color: var(--ash-light); }
+    .toggle-desc { font-size: 0.75rem; color: var(--ash); margin-top: 0.15rem; }
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: var(--charcoal-light);
+      border-radius: 24px;
+      transition: var(--transition);
+      border: var(--border-subtle);
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      height: 16px; width: 16px;
+      left: 3px; bottom: 3px;
+      background: var(--ash);
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+    .toggle-switch input:checked + .toggle-slider { background: var(--crimson); border-color: var(--crimson); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); background: white; }
+    /* Danger Zone */
+    .danger-zone { border-color: rgba(139,26,26,0.4); }
+    .danger-zone .settings-card-header { border-bottom-color: rgba(139,26,26,0.2); }
+    .danger-zone .settings-card-title { color: var(--crimson-glow); }
+    .danger-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+      border-bottom: var(--border-subtle);
+    }
+    .danger-action:last-child { border-bottom: none; padding-bottom: 0; }
+    .danger-action-desc { font-size: 0.85rem; color: var(--ash-light); }
+    .danger-action-desc strong { color: var(--white); display: block; margin-bottom: 0.15rem; font-family: var(--font-heading); font-size: 0.82rem; }
+    .save-bar {
+      position: sticky;
+      bottom: 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      background: var(--charcoal);
+      border: var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-deep);
+      margin-top: 1rem;
+    }
+    @media(max-width:1024px) { .settings-layout { grid-template-columns: 1fr; } .settings-sidebar { position: static; } .settings-nav { display: flex; overflow-x: auto; } .settings-nav-link { white-space: nowrap; border-left: none; border-bottom: 2px solid transparent; } .settings-nav-link.active { border-left: none; border-bottom-color: var(--crimson); } }
+    @media(max-width:768px) { .settings-row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body class="page-settings">
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo">
+        <div class="logo-icon"></div>
+        <span class="logo-text">Grim<span>Tales</span></span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="browse.html">Browse</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+      </ul>
+      <div class="navbar-actions">
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+        <div class="user-avatar" onclick="window.location='user-profile.html'">
+          <div style="width:100%;height:100%;background:linear-gradient(135deg,#2d0f0f,#1a0808);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:0.8rem;color:var(--crimson-glow)">SR</div>
+        </div>
+      </div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">🏠 Home</a>
+    <a href="user-profile.html">👤 Profile</a>
+  </div>
+
+  <div class="container">
+    <div style="padding:2rem 0 1rem">
+      <h1 style="font-family:var(--font-display);font-size:1.6rem;color:var(--white);margin-bottom:0.25rem">Account Settings</h1>
+      <p style="color:var(--ash);font-size:0.9rem">Manage your profile, notifications, and preferences</p>
+    </div>
+
+    <div class="settings-layout">
+      <!-- Sidebar -->
+      <div class="settings-sidebar">
+        <div class="settings-sidebar-header">Settings</div>
+        <nav class="settings-nav">
+          <div class="settings-nav-link active" data-panel="profile"><span class="nav-icon">👤</span> Profile</div>
+          <div class="settings-nav-link" data-panel="account"><span class="nav-icon">🔐</span> Account & Security</div>
+          <div class="settings-nav-link" data-panel="notifications"><span class="nav-icon">🔔</span> Notifications</div>
+          <div class="settings-nav-link" data-panel="reading"><span class="nav-icon">📖</span> Reading Preferences</div>
+          <div class="settings-nav-link" data-panel="privacy"><span class="nav-icon">👁️</span> Privacy</div>
+          <div class="settings-nav-link" data-panel="danger"><span class="nav-icon">⚠️</span> Danger Zone</div>
+        </nav>
+      </div>
+
+      <!-- Main -->
+      <div>
+
+        <!-- PROFILE PANEL -->
+        <div class="settings-panel active" id="profilePanel">
+          <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-card-title">Profile Picture</span></div>
+            <div class="settings-card-body">
+              <div class="avatar-upload-area">
+                <div class="current-avatar">SR</div>
+                <div class="avatar-upload-btns">
+                  <button class="btn btn-outline" onclick="window.showToast('Image upload connects to Cloudinary in production.')">Upload Photo</button>
+                  <button class="btn btn-outline" style="color:var(--crimson-glow);border-color:rgba(139,26,26,0.3)" onclick="window.showToast('Avatar removed.')">Remove</button>
+                </div>
+                <div style="font-size:0.75rem;color:var(--ash)">JPG, PNG or WEBP · Max 2MB · Recommended: 400×400px</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-card-title">Public Profile</span></div>
+            <div class="settings-card-body">
+              <div class="settings-form">
+                <div class="settings-row">
+                  <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" value="ShadowReader92" />
+                    <div class="form-hint">Letters, numbers, underscores only. 3–30 chars.</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Display Name</label>
+                    <input type="text" value="Shadow Reader" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Bio</label>
+                  <textarea style="min-height:90px;resize:vertical" placeholder="Tell the community a bit about yourself...">Dark fantasy reader since forever. Favourite tropes: anti-heroes, magic systems, and morally grey courts.</textarea>
+                  <div class="form-hint">Max 500 characters</div>
+                </div>
+                <div class="settings-row">
+                  <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" placeholder="City, Country" value="London, UK" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Website</label>
+                    <input type="url" placeholder="https://yoursite.com" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Favourite Genres</label>
+                  <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.25rem" id="genreToggles">
+                    <button class="filter-chip active" style="border-radius:3px">Dark Fantasy</button>
+                    <button class="filter-chip active" style="border-radius:3px">Gothic Horror</button>
+                    <button class="filter-chip" style="border-radius:3px">Vampire</button>
+                    <button class="filter-chip active" style="border-radius:3px">Supernatural</button>
+                    <button class="filter-chip" style="border-radius:3px">Mystery</button>
+                    <button class="filter-chip" style="border-radius:3px">Psychological</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn btn-outline">Cancel</button>
+            <button class="btn btn-crimson" id="saveProfile">Save Profile</button>
+          </div>
+        </div>
+
+        <!-- ACCOUNT PANEL -->
+        <div class="settings-panel" id="accountPanel">
+          <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-card-title">Email Address</span></div>
+            <div class="settings-card-body">
+              <div class="settings-form">
+                <div class="form-group">
+                  <label class="form-label">Current Email</label>
+                  <input type="email" value="shadow@example.com" />
+                </div>
+                <button class="btn btn-outline" style="align-self:flex-start" onclick="window.showToast('Verification email sent!')">Update Email</button>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-card-title">Change Password</span></div>
+            <div class="settings-card-body">
+              <div class="settings-form">
+                <div class="form-group">
+                  <label class="form-label">Current Password</label>
+                  <input type="password" placeholder="••••••••" />
+                </div>
+                <div class="settings-row">
+                  <div class="form-group">
+                    <label class="form-label">New Password</label>
+                    <input type="password" placeholder="••••••••" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Confirm New</label>
+                    <input type="password" placeholder="••••••••" />
+                  </div>
+                </div>
+                <button class="btn btn-crimson" style="align-self:flex-start" onclick="window.showToast('Password updated successfully!')">Update Password</button>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-card-title">Connected Accounts</span></div>
+            <div class="settings-card-body">
+              <div class="toggle-row">
+                <div><div class="toggle-label">Google</div><div class="toggle-desc">Not connected</div></div>
+                <button class="btn btn-outline" style="font-size:0.75rem" onclick="window.showToast('Google OAuth coming soon.')">Connect</button>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Discord</div><div class="toggle-desc">Not connected</div></div>
+                <button class="btn btn-outline" style="font-size:0.75rem" onclick="window.showToast('Discord OAuth coming soon.')">Connect</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS PANEL -->
+        <div class="settings-panel" id="notificationsPanel">
+          <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-card-title">Email Notifications</span></div>
+            <div class="settings-card-body">
+              <div class="toggle-row"><div><div class="toggle-label">New Chapter Alerts</div><div class="toggle-desc">When authors you follow post a new chapter</div></div><label class="toggle-switch"><input type="checkbox" checked /><div class="toggle-slider"></div></label></div>
+              <div class="toggle-row"><div><div class="toggle-label">Comment Replies</div><div class="toggle-desc">When someone replies to your comment</div></div><label class="toggle-switch"><input type="checkbox" checked /><div class="toggle-slider"></div></label></div>
+              <div class="toggle-row"><div><div class="toggle-label">New Followers</div><div class="toggle-desc">When someone follows you</div></div><label class="toggle-switch"><input type="checkbox" /><div class="toggle-slider"></div></label></div>
+              <div class="toggle-row"><div><div class="toggle-label">Weekly Newsletter</div><div class="toggle-desc">Top novels and community highlights every Friday</div></div><label class="toggle-switch"><input type="checkbox" checked /><div class="toggle-slider"></div></label></div>
+              <div class="toggle-row"><div><div class="toggle-label">Featured Highlights</div><div class="toggle-desc">Editor's picks and curated recommendations</div></div><label class="toggle-switch"><input type="checkbox" checked /><div class="toggle-slider"></div></label></div>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-card-title">Site Notifications</span></div>
+            <div class="settings-card-body">
+              <div class="toggle-row"><div><div class="toggle-label">Push Notifications</div><div class="toggle-desc">In-browser alerts for important updates</div></div><label class="toggle-switch"><input type="checkbox" checked /><div class="toggle-slider"></div></label></div>
+              <div class="toggle-row"><div><div class="toggle-label">Reading Reminders</div><div class="toggle-desc">Remind me to continue novels I've started</div></div><label class="toggle-switch"><input type="checkbox" /><div class="toggle-slider"></div></label></div>
+            </div>
+          </div>
+          <div class="save-bar"><button class="btn btn-crimson" onclick="window.showToast('Notification preferences saved!')">Save Preferences</button></div>
+        </div>
+
+        <!-- READING PREFERENCES PANEL -->
+        <div class="settings-panel" id="readingPanel">
+          <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-card-title">Default Reader Settings</span></div>
+            <div class="settings-card-body">
+              <div class="settings-form">
+                <div class="settings-row">
+                  <div class="form-group">
+                    <label class="form-label">Default Font</label>
+                    <select><option>Crimson Text</option><option>EB Garamond</option><option>Georgia</option><option>Cinzel</option></select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Default Font Size</label>
+                    <select><option>16px</option><option selected>18px</option><option>20px</option><option>22px</option><option>24px</option></select>
+                  </div>
+                </div>
+                <div class="settings-row">
+                  <div class="form-group">
+                    <label class="form-label">Default Theme</label>
+                    <select><option selected>Dark</option><option>Sepia</option><option>Light</option></select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Line Spacing</label>
+                    <select><option>Compact (1.6)</option><option selected>Normal (1.95)</option><option>Relaxed (2.2)</option></select>
+                  </div>
+                </div>
+                <div class="toggle-row"><div><div class="toggle-label">Auto-save Progress</div><div class="toggle-desc">Remember exactly where you left off in each chapter</div></div><label class="toggle-switch"><input type="checkbox" checked /><div class="toggle-slider"></div></label></div>
+                <div class="toggle-row"><div><div class="toggle-label">Show Reading Progress Bar</div><div class="toggle-desc">Display scroll progress at the top of the reader</div></div><label class="toggle-switch"><input type="checkbox" checked /><div class="toggle-slider"></div></label></div>
+                <div class="toggle-row"><div><div class="toggle-label">Mature Content</div><div class="toggle-desc">Show novels marked as Adult (18+) in results</div></div><label class="toggle-switch"><input type="checkbox" /><div class="toggle-slider"></div></label></div>
+              </div>
+            </div>
+          </div>
+          <div class="save-bar"><button class="btn btn-crimson" onclick="window.showToast('Reading preferences saved!')">Save Preferences</button></div>
+        </div>
+
+        <!-- PRIVACY PANEL -->
+        <div class="settings-panel" id="privacyPanel">
+          <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-card-title">Profile Visibility</span></div>
+            <div class="settings-card-body">
+              <div class="toggle-row"><div><div class="toggle-label">Public Profile</div><div class="toggle-desc">Allow others to view your profile page</div></div><label class="toggle-switch"><input type="checkbox" checked /><div class="toggle-slider"></div></label></div>
+              <div class="toggle-row"><div><div class="toggle-label">Show Reading History</div><div class="toggle-desc">Let others see what you've been reading</div></div><label class="toggle-switch"><input type="checkbox" /><div class="toggle-slider"></div></label></div>
+              <div class="toggle-row"><div><div class="toggle-label">Show Library</div><div class="toggle-desc">Display your saved novels publicly</div></div><label class="toggle-switch"><input type="checkbox" checked /><div class="toggle-slider"></div></label></div>
+              <div class="toggle-row"><div><div class="toggle-label">Show Following List</div><div class="toggle-desc">Let others see which authors you follow</div></div><label class="toggle-switch"><input type="checkbox" checked /><div class="toggle-slider"></div></label></div>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-card-header"><span class="settings-card-title">Messaging</span></div>
+            <div class="settings-card-body">
+              <div class="toggle-row"><div><div class="toggle-label">Allow Messages</div><div class="toggle-desc">Let other users send you direct messages</div></div><label class="toggle-switch"><input type="checkbox" checked /><div class="toggle-slider"></div></label></div>
+              <div class="toggle-row"><div><div class="toggle-label">Messages from Authors Only</div><div class="toggle-desc">Only verified authors can message you</div></div><label class="toggle-switch"><input type="checkbox" /><div class="toggle-slider"></div></label></div>
+            </div>
+          </div>
+          <div class="save-bar"><button class="btn btn-crimson" onclick="window.showToast('Privacy settings saved!')">Save Settings</button></div>
+        </div>
+
+        <!-- DANGER ZONE PANEL -->
+        <div class="settings-panel" id="dangerPanel">
+          <div class="settings-card danger-zone">
+            <div class="settings-card-header"><span class="settings-card-title">⚠ Danger Zone</span></div>
+            <div class="settings-card-body">
+              <div class="danger-action">
+                <div class="danger-action-desc"><strong>Export My Data</strong>Download all your data including reading history, comments, and bookmarks.</div>
+                <button class="btn btn-outline" onclick="window.showToast('Data export request submitted. Check your email.')">Export Data</button>
+              </div>
+              <div class="danger-action">
+                <div class="danger-action-desc"><strong>Deactivate Account</strong>Temporarily hide your profile. You can reactivate by signing back in.</div>
+                <button class="btn btn-outline" style="border-color:rgba(201,168,76,0.4);color:var(--gold)" onclick="window.showToast('Account deactivated. Sign in to reactivate.', 'error')">Deactivate</button>
+              </div>
+              <div class="danger-action">
+                <div class="danger-action-desc"><strong>Delete Account</strong>Permanently delete your account and all associated data. This cannot be undone.</div>
+                <button class="btn btn-outline" style="border-color:rgba(139,26,26,0.6);color:var(--crimson-glow)" onclick="if(confirm('Are you absolutely sure? This cannot be undone.')) window.showToast('Account deletion request submitted.', 'error')">Delete Account</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>

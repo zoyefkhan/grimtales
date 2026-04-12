@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Obsidian Court — GrimTales</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/novel-detail.css" />
+</head>
+<body class="page-novel">
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo">
+        <div class="logo-icon"></div>
+        <span class="logo-text">Grim<span>Tales</span></span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="browse.html">Browse</a></li>
+        <li><a href="index.html#genres">Genres</a></li>
+        <li><a href="dashboard.html">Write</a></li>
+      </ul>
+      <div class="navbar-actions">
+        <div class="navbar-search">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search novels..." />
+        </div>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+        <a href="login.html" class="btn btn-outline" style="font-size:0.75rem;padding:0.5em 1.2em;">Sign In</a>
+      </div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">🏠 Home</a>
+    <a href="browse.html">📚 Browse</a>
+    <a href="login.html">👤 Sign In</a>
+  </div>
+
+  <!-- NOVEL HERO -->
+  <section class="novel-hero">
+    <div class="novel-hero-bg"></div>
+    <div class="novel-hero-blur" style="background-image:url('assets/covers/obsidian-court.jpg')"></div>
+
+    <div class="novel-hero-inner container">
+      <div class="novel-hero-cover">
+        <div style="width:220px;height:320px;background:linear-gradient(135deg,#1a0808,#2d1010,#1a0808);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;text-align:center">
+          <div style="font-family:var(--font-heading);font-size:0.6rem;letter-spacing:0.2em;color:var(--crimson-glow);border:1px solid rgba(192,57,43,0.3);padding:0.2em 0.6em;margin-bottom:1.5rem;text-transform:uppercase">Dark Fantasy</div>
+          <div style="font-family:var(--font-display);font-size:1.15rem;color:var(--white);line-height:1.3;margin-bottom:2rem">The Obsidian<br/>Court</div>
+          <div style="width:40px;height:1px;background:var(--crimson);margin-bottom:1.5rem"></div>
+          <div style="font-family:var(--font-heading);font-size:0.6rem;letter-spacing:0.2em;color:var(--ash);text-transform:uppercase">Marcus Vale</div>
+        </div>
+        <div class="novel-hero-cover-overlay"></div>
+      </div>
+
+      <div class="novel-hero-content">
+        <div class="novel-status-row">
+          <span class="tag">Dark Fantasy</span>
+          <span class="tag">Political Intrigue</span>
+          <span class="novel-status status-ongoing">Ongoing</span>
+        </div>
+        <h1 class="novel-hero-title">The Obsidian Court</h1>
+        <div class="novel-hero-author">
+          by <a href="author-profile.html">Marcus Vale</a> &nbsp;·&nbsp; Updated 2 days ago
+        </div>
+        <div class="novel-hero-rating">
+          <span class="rating-stars">★★★★★</span>
+          <span class="rating-score">4.8</span>
+          <span class="rating-count">(3,240 ratings)</span>
+        </div>
+        <div class="novel-hero-tags">
+          <span class="tag">Magic System</span>
+          <span class="tag">Anti-Hero</span>
+          <span class="tag">Court Intrigue</span>
+          <span class="tag">Dark MC</span>
+          <span class="tag">Slow Burn</span>
+        </div>
+        <div class="novel-hero-stats">
+          <div class="hero-stat-item">
+            <span class="hero-stat-val">284</span>
+            <span class="hero-stat-key">Chapters</span>
+          </div>
+          <div class="hero-stat-item">
+            <span class="hero-stat-val">1.2M</span>
+            <span class="hero-stat-key">Views</span>
+          </div>
+          <div class="hero-stat-item">
+            <span class="hero-stat-val">48K</span>
+            <span class="hero-stat-key">Followers</span>
+          </div>
+          <div class="hero-stat-item">
+            <span class="hero-stat-val">12K</span>
+            <span class="hero-stat-key">Favorites</span>
+          </div>
+        </div>
+        <div class="novel-hero-actions">
+          <a href="chapter-read.html" class="btn btn-crimson">▶ Read Now</a>
+          <button class="btn btn-outline" id="followBtn">♡ Follow</button>
+          <button class="btn btn-outline" id="bookmarkBtn">🔖 Bookmark</button>
+          <button class="btn btn-outline" id="rateBtn">★ Rate</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NOVEL BODY -->
+  <div class="container">
+    <div class="novel-body">
+      <!-- Main Content -->
+      <div>
+        <!-- Synopsis -->
+        <div class="synopsis-section">
+          <h3 style="font-family:var(--font-heading);font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--crimson-glow);margin-bottom:1rem">Synopsis</h3>
+          <div class="synopsis-text collapsed" id="synopsisText">
+            <p>In a kingdom where shadows hold more power than swords, Kael Morn — once the crown's most trusted enforcer — finds himself stripped of rank, title, and purpose after refusing one unjust execution too many.</p>
+            <p>Exiled to the outer courts, he discovers that the Obsidian Court, the kingdom's most secretive political body, operates not through law but through ancient blood contracts, forbidden magic, and alliances with entities that should not exist.</p>
+            <p>To survive, Kael must master the very arts he despised: manipulation, deception, and the careful application of darkness. His only allies are a disgraced sorceress with a secret that could shatter the court, a court jester who knows every secret but speaks only in riddles, and a queen who is either his salvation or his ruin.</p>
+            <p>In the Obsidian Court, loyalty is a weapon, truth is currency, and the wrong word in the wrong ear means death before morning. And somewhere in its shadowed halls, a conspiracy reaches back five centuries — one that Kael is only beginning to unravel.</p>
+          </div>
+          <button class="synopsis-toggle" id="synopsisToggle">▾ Read More</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Chapters List -->
+        <div class="chapters-panel">
+          <div class="chapters-header">
+            <span class="chapters-title">284 Chapters</span>
+            <div class="chapters-sort">
+              <button class="sort-btn active">Oldest</button>
+              <button class="sort-btn">Newest</button>
+            </div>
+          </div>
+          <div class="chapters-list" id="chaptersList">
+            <!-- Injected by JS -->
+          </div>
+          <div class="chapters-load-more">
+            <button class="btn btn-outline" id="loadMoreChapters">Load More Chapters</button>
+          </div>
+        </div>
+
+        <!-- Comments -->
+        <div style="margin-top:2.5rem">
+          <h3 style="font-family:var(--font-display);font-size:1.1rem;color:var(--white);margin-bottom:1.5rem">Comments <span style="color:var(--ash);font-size:0.85rem;font-family:var(--font-body)">(842)</span></h3>
+
+          <div class="comment-form">
+            <textarea placeholder="Share your thoughts on this novel..."></textarea>
+            <div class="comment-form-footer">
+              <button class="btn btn-crimson">Post Comment</button>
+            </div>
+          </div>
+
+          <div class="comments-list" id="commentsList">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="novel-sidebar">
+        <!-- Author Card -->
+        <div class="sidebar-panel">
+          <div class="sidebar-panel-header">
+            <span class="sidebar-panel-title">About the Author</span>
+          </div>
+          <div class="sidebar-panel-body">
+            <div class="author-card">
+              <div class="author-card-avatar">
+                <div style="width:100%;height:100%;background:linear-gradient(135deg,#2d0f0f,#1a0808);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.2rem;color:var(--crimson-glow)">MV</div>
+              </div>
+              <div>
+                <div class="author-card-name">Marcus Vale</div>
+                <div class="author-card-novels">8 novels · 124K followers</div>
+              </div>
+            </div>
+            <p class="author-card-bio">Weaving darkness into prose since 2018. Specializes in political intrigue, morally grey characters, and worlds where magic comes at a terrible cost.</p>
+            <a href="author-profile.html" class="btn btn-outline" style="width:100%;justify-content:center">View Profile</a>
+          </div>
+        </div>
+
+        <!-- Novel Info -->
+        <div class="sidebar-panel">
+          <div class="sidebar-panel-header">
+            <span class="sidebar-panel-title">Novel Info</span>
+          </div>
+          <div class="sidebar-panel-body">
+            <div class="info-list">
+              <div class="info-row">
+                <span class="info-key">Status</span>
+                <span class="novel-status status-ongoing">Ongoing</span>
+              </div>
+              <div class="info-row">
+                <span class="info-key">Updated</span>
+                <span class="info-val">2 days ago</span>
+              </div>
+              <div class="info-row">
+                <span class="info-key">Words</span>
+                <span class="info-val">842,000</span>
+              </div>
+              <div class="info-row">
+                <span class="info-key">Language</span>
+                <span class="info-val">English</span>
+              </div>
+              <div class="info-row">
+                <span class="info-key">Started</span>
+                <span class="info-val">March 2023</span>
+              </div>
+              <div class="info-row">
+                <span class="info-key">Rating</span>
+                <span class="info-val" style="color:var(--gold)">★ 4.8 / 5.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Similar Novels -->
+        <div class="sidebar-panel">
+          <div class="sidebar-panel-header">
+            <span class="sidebar-panel-title">You May Also Like</span>
+          </div>
+          <div class="sidebar-panel-body">
+            <div class="similar-list" id="similarList">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/novel.js"></script>
+</body>
+</html>
