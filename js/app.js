@@ -324,3 +324,61 @@ window.renderNovelListItem = renderNovelListItem;
     }
   } catch { /* silent */ }
 })();
+
+// ─── Role-based UI adjustments ───────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const user     = window.GT_User || null;
+  const role     = window.GT_Role || (user?.role) || 'reader';
+  const loggedIn = window.GT_isLoggedIn || false;
+
+  if (!loggedIn) return;
+
+  // Show "Write" nav link only for authors
+  document.querySelectorAll('a[href="dashboard.html"]').forEach(link => {
+    if (role !== 'author' && role !== 'admin') {
+      // Replace with "Become Author" for readers
+      link.textContent = '✍ Write';
+      link.href = 'register.html';
+      link.title = 'Create an Author account to start writing';
+      link.style.color = 'var(--gold)';
+    }
+  });
+
+  // Show upgrade banner for readers on certain pages
+  const page = window.location.pathname.split('/').pop();
+  if (page === 'index.html' || page === '' || page === '/') {
+    if (role === 'reader') {
+      const banner = document.createElement('div');
+      banner.style.cssText = `
+        position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);
+        background:linear-gradient(135deg,#1a0808,#2d1010);
+        border:1px solid rgba(139,26,26,0.5);
+        border-radius:8px;padding:0.85rem 1.5rem;
+        display:flex;align-items:center;gap:1rem;
+        box-shadow:0 4px 24px rgba(0,0,0,0.6),0 0 20px rgba(139,26,26,0.2);
+        z-index:500;font-family:Georgia,serif;
+        animation:fadeInUp 0.5s ease both;
+        max-width:90vw;
+      `;
+      banner.innerHTML = `
+        <span style="font-size:1.2rem">✍️</span>
+        <span style="font-size:0.82rem;color:#c4c4d4">
+          Want to publish your own stories?
+        </span>
+        <a href="register.html" style="
+          background:linear-gradient(180deg,#3a0000,#8b1a1a,#c0392b,#8b1a1a,#3a0000);
+          color:white;padding:0.4em 1em;border-radius:4px;
+          font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;
+          font-family:Georgia,serif;text-decoration:none;white-space:nowrap;
+          box-shadow:0 0 12px rgba(139,26,26,0.4);
+        ">Become an Author</a>
+        <button onclick="this.parentElement.remove()" style="
+          background:none;border:none;color:#6a6a7a;
+          font-size:1.1rem;cursor:pointer;padding:0 0.25rem;
+        ">×</button>
+      `;
+      setTimeout(() => document.body.appendChild(banner), 2000);
+      setTimeout(() => banner?.remove(), 10000);
+    }
+  }
+});
