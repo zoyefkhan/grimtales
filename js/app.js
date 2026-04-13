@@ -228,3 +228,99 @@ window.showToast = showToast;
 window.MOCK_NOVELS = MOCK_NOVELS;
 window.renderNovelCard = renderNovelCard;
 window.renderNovelListItem = renderNovelListItem;
+
+// ─── Session: Update Navbar for Logged-In User ─
+(function updateNavbarForSession() {
+  try {
+    const user = JSON.parse(localStorage.getItem('gt-user') || 'null');
+    if (!user) return;
+
+    // Replace Sign In / Join buttons with user avatar + name
+    const actions = document.querySelector('.navbar-actions');
+    if (!actions) return;
+
+    // Remove auth buttons
+    actions.querySelectorAll('a[href="login.html"], a[href="register.html"]').forEach(el => el.remove());
+
+    // Build initials for avatar
+    const initials = user.username ? user.username.slice(0, 2).toUpperCase() : 'GT';
+
+    // Notification dot
+    const notifBadge = `<span style="
+      position:absolute;top:-3px;right:-3px;
+      width:9px;height:9px;border-radius:50%;
+      background:var(--crimson);border:2px solid var(--black);
+    "></span>`;
+
+    // Insert avatar if not already there
+    if (!document.getElementById('navUserAvatar')) {
+      const avatarWrap = document.createElement('div');
+      avatarWrap.style.cssText = 'display:flex;align-items:center;gap:0.6rem';
+      avatarWrap.innerHTML = `
+        <a href="notifications.html" style="position:relative;width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:var(--ash);font-size:1.1rem;transition:color 0.2s" title="Notifications">
+          🔔${notifBadge}
+        </a>
+        <div id="navUserAvatar" style="
+          width:36px;height:36px;border-radius:50%;
+          border:2px solid var(--crimson);
+          background:linear-gradient(135deg,#2d0f0f,#1a0808);
+          display:flex;align-items:center;justify-content:center;
+          font-family:var(--font-heading);font-size:0.75rem;
+          color:var(--crimson-glow);cursor:pointer;
+          transition:all 0.2s;flex-shrink:0;
+          box-shadow:0 0 10px rgba(139,26,26,0.3);
+        " title="${user.username}">${user.avatar ? `<img src="${user.avatar}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">` : initials}</div>
+      `;
+      actions.appendChild(avatarWrap);
+
+      // Dropdown on click
+      document.getElementById('navUserAvatar').addEventListener('click', (e) => {
+        e.stopPropagation();
+        let menu = document.getElementById('userDropdown');
+        if (menu) { menu.remove(); return; }
+
+        menu = document.createElement('div');
+        menu.id = 'userDropdown';
+        menu.style.cssText = `
+          position:fixed;top:68px;right:1.5rem;
+          background:var(--charcoal);border:var(--border-subtle);
+          border-radius:var(--radius-lg);padding:0.5rem 0;
+          box-shadow:0 8px 32px rgba(0,0,0,0.6),0 0 0 1px rgba(139,26,26,0.2);
+          z-index:9998;min-width:210px;
+          animation:fadeInUp 0.18s ease;
+        `;
+        menu.innerHTML = `
+          <div style="padding:0.85rem 1.25rem;border-bottom:var(--border-subtle)">
+            <div style="font-family:var(--font-heading);font-size:0.85rem;color:var(--white);margin-bottom:0.1rem">${user.username}</div>
+            <div style="font-size:0.72rem;color:var(--ash)">${user.email || ''}</div>
+            <div style="font-size:0.65rem;color:var(--crimson-glow);font-family:var(--font-heading);letter-spacing:0.1em;text-transform:uppercase;margin-top:0.25rem">✦ ${user.role || 'Reader'}</div>
+          </div>
+          ${[
+            ['user-profile.html','👤','My Profile'],
+            ['dashboard.html','✍️','Dashboard'],
+            ['notifications.html','🔔','Notifications'],
+            ['settings.html','⚙️','Settings'],
+          ].map(([href,icon,label]) => `
+            <a href="${href}" style="display:flex;align-items:center;gap:0.7rem;padding:0.65rem 1.25rem;color:var(--ash-light);font-family:var(--font-heading);font-size:0.78rem;text-decoration:none;transition:all 0.2s" onmouseenter="this.style.background='rgba(139,26,26,0.1)';this.style.color='var(--white)'" onmouseleave="this.style.background='';this.style.color=''">${icon} ${label}</a>
+          `).join('')}
+          <div style="border-top:var(--border-subtle);margin-top:0.25rem">
+            <a href="#" id="signOutBtn" style="display:flex;align-items:center;gap:0.7rem;padding:0.65rem 1.25rem;color:var(--crimson-glow);font-family:var(--font-heading);font-size:0.78rem;text-decoration:none;transition:all 0.2s" onmouseenter="this.style.background='rgba(139,26,26,0.08)'" onmouseleave="this.style.background=''">🚪 Sign Out</a>
+          </div>
+        `;
+        document.body.appendChild(menu);
+
+        document.getElementById('signOutBtn').addEventListener('click', (ev) => {
+          ev.preventDefault();
+          localStorage.removeItem('gt-user');
+          localStorage.removeItem('gt-logged-in');
+          window.showToast('Signed out. See you in the dark. 🌑');
+          setTimeout(() => window.location.href = 'index.html', 700);
+        });
+
+        setTimeout(() => {
+          document.addEventListener('click', () => menu?.remove(), { once: true });
+        }, 10);
+      });
+    }
+  } catch { /* silent */ }
+})();
