@@ -1,4 +1,14 @@
-
+{
+  "version": 2,
+  "name": "grimtales",
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
     { "src": "/browse", "dest": "/browse.html" },
     { "src": "/search", "dest": "/search.html" },
     { "src": "/login", "dest": "/login.html" },
