@@ -2,78 +2,59 @@
   "version": 2,
   "name": "grimtales",
   "routes": [
-    { "src": "/", "dest": "/index.html" },
-    { "src": "/index\\.html", "dest": "/index.html" },
-    
-    {/* Auth pages */}
-    { "src": "/login", "dest": "/login.html" },
-    { "src": "/login\\.html", "dest": "/login.html" },
-    { "src": "/register", "dest": "/register.html" },
-    { "src": "/register\\.html", "dest": "/register.html" },
-    
-    {/* Main pages */}
-    { "src": "/browse", "dest": "/browse.html" },
-    { "src": "/browse\\.html", "dest": "/browse.html" },
-    { "src": "/search", "dest": "/search.html" },
-    { "src": "/search\\.html", "dest": "/search.html" },
-    
-    {/* Novel pages */}
-    { "src": "/novel", "dest": "/novel-detail.html" },
-    { "src": "/novel-detail\\.html", "dest": "/novel-detail.html" },
-    { "src": "/read", "dest": "/chapter-read.html" },
-    { "src": "/chapter-read\\.html", "dest": "/chapter-read.html" },
-    
-    {/* User pages */}
-    { "src": "/author", "dest": "/author-profile.html" },
-    { "src": "/author-profile\\.html", "dest": "/author-profile.html" },
-    { "src": "/dashboard", "dest": "/dashboard.html" },
-    { "src": "/dashboard\\.html", "dest": "/dashboard.html" },
-    { "src": "/profile", "dest": "/user-profile.html" },
-    { "src": "/user-profile\\.html", "dest": "/user-profile.html" },
-    { "src": "/settings", "dest": "/settings.html" },
-    { "src": "/settings\\.html", "dest": "/settings.html" },
-    { "src": "/notifications", "dest": "/notifications.html" },
-    { "src": "/notifications\\.html", "dest": "/notifications.html" },
-    
-    {/* Verify pages */}
-    { "src": "/verify-email", "dest": "/verify-email.html" },
-    { "src": "/verify-email\\.html", "dest": "/verify-email.html" },
-    { "src": "/reset-password", "dest": "/reset-password.html" },
-    { "src": "/reset-password\\.html", "dest": "/reset-password.html" },
-    
-    {/* Static assets */}
-    { "src": "/css/(.*)", "dest": "/css/$1" },
-    { "src": "/js/(.*)", "dest": "/js/$1" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    
-    {/* Root files */}
-    { "src": "/manifest.json", "dest": "/manifest.json" },
-    { "src": "/robots.txt", "dest": "/robots.txt" },
-    { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
-    
-    {/* 404 catch-all - MUST be last */}
-    { "src": "/(.*)", "dest": "/404.html", "status": 404 }
+    { "handle": "filesystem" },
+
+    { "src": "/",                   "dest": "/index.html" },
+    { "src": "/index\\.html",       "dest": "/index.html" },
+    { "src": "/login\\.html",       "dest": "/login.html" },
+    { "src": "/login",              "dest": "/login.html" },
+    { "src": "/register\\.html",    "dest": "/register.html" },
+    { "src": "/register",           "dest": "/register.html" },
+    { "src": "/browse\\.html",      "dest": "/browse.html" },
+    { "src": "/browse",             "dest": "/browse.html" },
+    { "src": "/search\\.html",      "dest": "/search.html" },
+    { "src": "/search",             "dest": "/search.html" },
+    { "src": "/novel-detail\\.html","dest": "/novel-detail.html" },
+    { "src": "/novel-detail",       "dest": "/novel-detail.html" },
+    { "src": "/chapter-read\\.html","dest": "/chapter-read.html" },
+    { "src": "/chapter-read",       "dest": "/chapter-read.html" },
+    { "src": "/author-profile\\.html","dest": "/author-profile.html" },
+    { "src": "/author-profile",     "dest": "/author-profile.html" },
+    { "src": "/user-profile\\.html","dest": "/user-profile.html" },
+    { "src": "/user-profile",       "dest": "/user-profile.html" },
+    { "src": "/dashboard\\.html",   "dest": "/dashboard.html" },
+    { "src": "/dashboard",          "dest": "/dashboard.html" },
+    { "src": "/settings\\.html",    "dest": "/settings.html" },
+    { "src": "/settings",           "dest": "/settings.html" },
+    { "src": "/notifications\\.html","dest": "/notifications.html" },
+    { "src": "/notifications",      "dest": "/notifications.html" },
+    { "src": "/reset-password\\.html","dest": "/reset-password.html" },
+    { "src": "/reset-password",     "dest": "/reset-password.html" },
+    { "src": "/verify-email\\.html","dest": "/verify-email.html" },
+    { "src": "/verify-email",       "dest": "/verify-email.html" },
+    { "src": "/404\\.html",         "dest": "/404.html" },
+
+    { "src": "/(.*)",               "dest": "/404.html", "status": 404 }
   ],
   "headers": [
-    {
-      "source": "/css/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
-    },
-    {
-      "source": "/js/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
-    },
-    {
-      "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
-    },
     {
       "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-XSS-Protection", "value": "1; mode=block" }
       ]
+    },
+    {
+      "source": "/css/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
+    },
+    {
+      "source": "/js/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
     }
   ]
 }

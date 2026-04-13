@@ -1,13 +1,13 @@
 /* ============================================
    loading.js — Metallic Page Loader
-   Auto-injects on every page that includes it
 ============================================ */
 
 (function () {
-  // ─── Inject CSS ────────────────────────────
+  // ─── Inject CSS using absolute path ────────
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'css/loading.css';
+  // Use absolute path so it works on all pages at any depth
+  link.href = '/css/loading.css';
   document.head.appendChild(link);
 
   // ─── Build loader HTML ─────────────────────
@@ -20,7 +20,6 @@
       </div>
       <div class="loader-title">Grim<span>Tales</span></div>
     </div>
-
     <div class="loader-bars">
       <div class="loader-bar"></div>
       <div class="loader-bar"></div>
@@ -28,13 +27,11 @@
       <div class="loader-bar"></div>
       <div class="loader-bar"></div>
     </div>
-
     <div class="loader-text">
       Entering the darkness<span class="loader-dots"></span>
     </div>
   `;
 
-  // Inject at top of body before content renders
   document.documentElement.style.overflow = 'hidden';
   if (document.body) {
     document.body.prepend(loader);
@@ -42,7 +39,7 @@
     document.addEventListener('DOMContentLoaded', () => document.body.prepend(loader));
   }
 
-  // ─── Hide loader when page is ready ────────
+  // ─── Hide loader when page ready ───────────
   function hideLoader() {
     document.documentElement.style.overflow = '';
     loader.classList.add('hidden');
@@ -55,21 +52,33 @@
     window.addEventListener('load', () => setTimeout(hideLoader, 600));
   }
 
-  // ─── Page transition on link clicks ────────
-  const transition = document.createElement('div');
-  transition.className = 'gt-page-transition';
-  document.body?.appendChild(transition) || document.addEventListener('DOMContentLoaded', () => document.body.appendChild(transition));
+  // ─── Page transition ────────────────────────
+  function setupTransition() {
+    const transition = document.createElement('div');
+    transition.className = 'gt-page-transition';
+    document.body.appendChild(transition);
 
-  document.addEventListener('click', (e) => {
-    const link = e.target.closest('a[href]');
-    if (!link) return;
-    const href = link.getAttribute('href');
-    // Only internal page links
-    if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || href.startsWith('javascript')) return;
-    if (link.target === '_blank') return;
+    document.addEventListener('click', (e) => {
+      const anchor = e.target.closest('a[href]');
+      if (!anchor) return;
+      const href = anchor.getAttribute('href');
 
-    e.preventDefault();
-    transition.classList.add('active');
-    setTimeout(() => { window.location.href = href; }, 250);
-  });
+      // Skip: external, hash, mailto, javascript, blank target
+      if (!href) return;
+      if (href.startsWith('http') || href.startsWith('//')) return;
+      if (href.startsWith('#')) return;
+      if (href.startsWith('mailto') || href.startsWith('tel')) return;
+      if (anchor.target === '_blank') return;
+
+      e.preventDefault();
+      transition.classList.add('active');
+      setTimeout(() => { window.location.href = href; }, 220);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupTransition);
+  } else {
+    setupTransition();
+  }
 })();
