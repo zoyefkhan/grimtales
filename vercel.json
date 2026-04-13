@@ -3,7 +3,7 @@
   "name": "grimtales",
   "builds": [
     {
-      "src": "**/*.html",
+      "src": "**/*",
       "use": "@vercel/static"
     }
   ],
