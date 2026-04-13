@@ -16,12 +16,11 @@ const connectDB = async () => {
   }
 
   if (uri.includes('<password>')) {
-    throw new Error(
-      '❌ You forgot to replace <password> in your MONGODB_URI.\n' +
-      '   Open your .env file and replace <password> with your actual MongoDB password.\n' +
-      '   Example: mongodb+srv://<username>:<password>@cluster.mongodb.net/dbname
-    );
-  }
+  throw new Error(
+  '❌ You forgot to replace <password> in your MONGODB_URI.\n' +
+  '   Open your .env file and replace <password> with your actual MongoDB password.\n' +
+  '   Example: mongodb+srv://<username>:<password>@cluster.mongodb.net/dbname'
+);
 
   try {
     const conn = await mongoose.connect(uri, {
