@@ -19,7 +19,7 @@ const connectDB = async () => {
     throw new Error(
       '❌ You forgot to replace <password> in your MONGODB_URI.\n' +
       '   Open your .env file and replace <password> with your actual MongoDB password.\n' +
-      '   Example: mongodb+srv://admin:MyActualPassword123@cluster0.xxxxx.mongodb.net/grimtales'
+      '   Example: mongodb+srv://<username>:<password>@cluster.mongodb.net/dbname
     );
   }
 
