@@ -106,9 +106,17 @@
 
 </div>
 
-<script src="js/auth-guard.js"></script>
-  <script src="js/loading.js"></script>
-  <script src="js/app.js"></script>
+<!-- Supabase CDN first -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<!-- auth.js creates supabase -->
 <script src="js/auth.js"></script>
+
+<!-- app.js uses supabase -->
+<script src="js/app.js"></script>
+
+<!-- Helpers -->
+<script src="js/auth-guard.js"></script>
+<script src="js/loading.js"></script>
 </body>
 </html>
