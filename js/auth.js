@@ -21,7 +21,8 @@ async function loadSupabase() {
     s.onload = () => {
       if (SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-resolve(supabaseClient);
+      }
+      resolve(supabaseClient);
     };
     s.onerror = () => resolve(null);
     document.head.appendChild(s);
