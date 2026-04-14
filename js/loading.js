@@ -100,15 +100,15 @@
     setTimeout(() => loader?.remove(), 500);
   }
 
-  const maxWait = setTimeout(hideLoader, 800);
+  const maxWait = setTimeout(hideLoader, 1500);
 
   if (document.readyState === 'complete') {
     clearTimeout(maxWait);
-    setTimeout(hideLoader, 300);
+    setTimeout(hideLoader, 1200);
   } else {
     window.addEventListener('load', () => {
       clearTimeout(maxWait);
-      setTimeout(hideLoader, 300);
+      setTimeout(hideLoader, 1200);
     }, { once: true });
   }
 
