@@ -1,6 +1,6 @@
 /* ============================================
-   loading.css — Metallic Crimson Loading Screen
-   Matches the metallic red/black button style
+   loading.css — GrimTales Gothic Loader v2
+   Dark sigil + blood drip + rune style
 ============================================ */
 
 /* ─── Full Page Loader ─────────────────────── */
@@ -12,7 +12,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #0a0a0b;
+  gap: 1.8rem;
+  background: #0a0008;
   transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
@@ -22,129 +23,136 @@
   pointer-events: none;
 }
 
-/* ─── Metallic Logo Block ──────────────────── */
-.loader-logo {
+/* ─── Sigil / Emblem ───────────────────────── */
+.loader-sigil {
   position: relative;
-  margin-bottom: 2.5rem;
-  animation: loaderPulse 2s ease-in-out infinite;
+  width: 110px;
+  height: 110px;
+  animation: sigilFloat 3s ease-in-out infinite;
 }
 
-.loader-hex {
-  width: 72px;
-  height: 72px;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  background: linear-gradient(
-    160deg,
-    #3a0000 0%,
-    #8b1a1a 20%,
-    #c0392b 40%,
-    #e74c3c 50%,
-    #c0392b 60%,
-    #8b1a1a 80%,
-    #3a0000 100%
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow:
-    0 0 30px rgba(139,26,26,0.6),
-    0 0 60px rgba(139,26,26,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.15);
-  animation: hexShimmer 2.5s linear infinite;
+.loader-sigil svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-.loader-hex-inner {
-  font-size: 1.8rem;
-  color: #fff;
-  text-shadow: 0 0 12px rgba(255,255,255,0.6);
-  animation: starSpin 4s linear infinite;
+.sigil-outer-ring {
+  animation: sigilPulse 2.5s ease-in-out infinite;
 }
 
-.loader-title {
-  font-family: 'Cinzel Decorative', 'Georgia', serif;
-  font-size: 1.2rem;
-  color: #f0eee8;
-  letter-spacing: 0.12em;
-  margin-top: 1rem;
+.sigil-rune-ring {
+  transform-origin: 50px 50px;
+  animation: sigilRotate 14s linear infinite;
+}
+
+.sigil-inner-star {
+  transform-origin: 50px 50px;
+  animation: innerSpin 9s linear infinite;
+}
+
+.sigil-core-text {
+  animation: corePulse 2s ease-in-out infinite;
+}
+
+/* ─── Brand ────────────────────────────────── */
+.loader-brand {
   text-align: center;
 }
 
-.loader-title span { color: #e74c3c; }
+.loader-title {
+  font-family: 'Cinzel Decorative', 'Cinzel', 'Georgia', serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #f0ece4;
+  text-transform: uppercase;
+  text-shadow: 0 0 30px rgba(192,57,43,0.4);
+}
 
-/* ─── Metallic Progress Bars ───────────────── */
-/* Matches the red metallic bars in the screenshot */
-.loader-bars {
+.loader-title span {
+  color: #c0392b;
+}
+
+.loader-subtitle {
+  font-family: 'Cinzel', 'Georgia', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: #5a3a3a;
+  margin-top: 0.35rem;
+}
+
+/* ─── Rune Row ─────────────────────────────── */
+.loader-runes {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 200px;
-  margin-bottom: 1.5rem;
+  gap: 1.1rem;
+  align-items: center;
 }
 
-.loader-bar {
-  height: 36px;
-  border-radius: 6px;
+.loader-rune {
+  font-size: 0.9rem;
+  color: #4a1a1a;
+  animation: runeFade 3.2s ease-in-out infinite;
+}
+
+.loader-rune:nth-child(1) { animation-delay: 0s; }
+.loader-rune:nth-child(2) { animation-delay: 0.45s; }
+.loader-rune:nth-child(3) { animation-delay: 0.9s; }
+.loader-rune:nth-child(4) { animation-delay: 1.35s; }
+.loader-rune:nth-child(5) { animation-delay: 1.8s; }
+.loader-rune:nth-child(6) { animation-delay: 2.25s; }
+.loader-rune:nth-child(7) { animation-delay: 2.7s; }
+
+/* ─── Blood Drip Progress Bar ──────────────── */
+.loader-drip-track {
   position: relative;
-  overflow: hidden;
-  background: linear-gradient(
-    180deg,
-    #1a0000 0%,
-    #3d0000 15%,
-    #8b1a1a 40%,
-    #c0392b 50%,
-    #8b1a1a 60%,
-    #3d0000 85%,
-    #1a0000 100%
-  );
-  box-shadow:
-    0 2px 8px rgba(0,0,0,0.8),
-    inset 0 1px 0 rgba(255,80,80,0.2),
-    inset 0 -1px 0 rgba(0,0,0,0.4);
-  border: 1px solid rgba(139,26,26,0.4);
-  animation: barLoad 1.8s ease-in-out infinite;
+  width: 220px;
+  height: 3px;
+  background: #1a0505;
+  border-radius: 2px;
 }
 
-/* Metallic sheen sweep */
-.loader-bar::before {
-  content: '';
+.loader-drip-fill {
+  position: relative;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #3d0000, #c0392b, #e74c3c);
+  border-radius: 2px;
+  animation: fillBar 2.4s ease-in-out infinite;
+}
+
+.loader-drip-glow {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 30%,
-    rgba(255,255,255,0.12) 50%,
-    transparent 70%
-  );
-  animation: sheenSweep 1.8s ease-in-out infinite;
-  background-size: 200% 100%;
+  right: -1px;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e74c3c;
+  box-shadow: 0 0 10px #e74c3c, 0 0 22px rgba(192,57,43,0.7);
 }
 
-/* Top highlight line */
-.loader-bar::after {
-  content: '';
+.loader-drip-drop {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,120,120,0.4), transparent);
+  right: -3px;
+  top: 5px;
+  width: 5px;
+  height: 9px;
+  background: #c0392b;
+  border-radius: 0 0 4px 4px;
+  animation: dripDrop 2.4s ease-in-out infinite;
+  opacity: 0;
 }
-
-/* Stagger each bar */
-.loader-bar:nth-child(1) { animation-delay: 0s; width: 100%; }
-.loader-bar:nth-child(2) { animation-delay: 0.15s; width: 100%; }
-.loader-bar:nth-child(3) { animation-delay: 0.3s; width: 100%; }
-.loader-bar:nth-child(4) { animation-delay: 0.45s; width: 100%; }
-.loader-bar:nth-child(5) { animation-delay: 0.6s; width: 100%; }
 
 /* ─── Loading Text ──────────────────────────── */
 .loader-text {
   font-family: 'Cinzel', 'Georgia', serif;
-  font-size: 0.68rem;
-  letter-spacing: 0.3em;
+  font-size: 0.6rem;
+  letter-spacing: 0.38em;
   text-transform: uppercase;
-  color: #9a9aaa;
-  animation: textFade 1.5s ease-in-out infinite;
+  color: #5a3535;
+  animation: textFade 1.8s ease-in-out infinite;
 }
 
 .loader-dots::after {
@@ -157,10 +165,10 @@
   position: fixed;
   inset: 0;
   z-index: 9998;
-  background: #0a0a0b;
+  background: #0a0008;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.22s ease;
 }
 
 .gt-page-transition.active {
@@ -227,7 +235,6 @@
 }
 
 .auth-submit:hover::before { left: 100%; }
-
 .auth-submit:hover {
   transform: translateY(-1px) !important;
   box-shadow:
@@ -235,12 +242,9 @@
     0 0 30px rgba(192,57,43,0.5),
     inset 0 1px 0 rgba(255,100,100,0.25) !important;
 }
-
 .auth-submit:active {
   transform: translateY(0) !important;
-  box-shadow:
-    0 2px 8px rgba(0,0,0,0.4),
-    inset 0 2px 4px rgba(0,0,0,0.3) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4), inset 0 2px 4px rgba(0,0,0,0.3) !important;
 }
 
 /* ─── Metallic Primary Button ───────────────── */
@@ -281,36 +285,56 @@
 }
 
 /* ─── Keyframes ─────────────────────────────── */
-@keyframes loaderPulse {
-  0%, 100% { transform: scale(1); }
-  50%       { transform: scale(1.04); }
+@keyframes sigilFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
 }
 
-@keyframes hexShimmer {
-  0%   { box-shadow: 0 0 20px rgba(139,26,26,0.5), 0 0 40px rgba(139,26,26,0.2); }
-  50%  { box-shadow: 0 0 35px rgba(192,57,43,0.7), 0 0 70px rgba(139,26,26,0.4); }
-  100% { box-shadow: 0 0 20px rgba(139,26,26,0.5), 0 0 40px rgba(139,26,26,0.2); }
-}
-
-@keyframes starSpin {
+@keyframes sigilRotate {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
 
-@keyframes barLoad {
-  0%   { opacity: 0.6; }
-  50%  { opacity: 1; }
-  100% { opacity: 0.6; }
+@keyframes innerSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+@keyframes sigilPulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+
+@keyframes corePulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes runeFade {
+  0%, 100% { opacity: 0.15; transform: scale(1); color: #4a1a1a; }
+  50%       { opacity: 1; transform: scale(1.35); color: #c0392b; }
+}
+
+@keyframes fillBar {
+  0%   { width: 0%; }
+  75%  { width: 100%; }
+  100% { width: 100%; }
+}
+
+@keyframes dripDrop {
+  0%, 65%  { opacity: 0; transform: scaleY(0); }
+  78%      { opacity: 1; transform: scaleY(1); }
+  100%     { opacity: 0; transform: translateY(10px) scaleY(1.6); }
+}
+
+@keyframes textFade {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 1; }
 }
 
 @keyframes sheenSweep {
   0%   { background-position: -200% 0; }
   100% { background-position: 200% 0; }
-}
-
-@keyframes textFade {
-  0%, 100% { opacity: 0.5; }
-  50%       { opacity: 1; }
 }
 
 @keyframes dots {
