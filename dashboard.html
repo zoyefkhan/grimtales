@@ -57,27 +57,27 @@
           <a href="dashboard.html" class="dash-nav-link active">
             <span class="nav-icon">📊</span> Dashboard
           </a>
-          <a href="#" class="dash-nav-link">
+          <a href="#" class="dash-nav-link" data-panel="notifications" id="notificationsLink">
             <span class="nav-icon">🔔</span> Notifications
             <span class="dash-nav-badge">12</span>
           </a>
-          <a href="author-profile.html" class="dash-nav-link">
+          <a href="user-profile.html" class="dash-nav-link" data-panel="profile" id="profileLink">
             <span class="nav-icon">👤</span> My Profile
           </a>
         </div>
 
         <div class="dash-nav-section">
           <div class="dash-nav-section-title">Writing</div>
-          <a href="#" class="dash-nav-link" id="myNovelsLink">
+          <a href="#" class="dash-nav-link" id="myNovelsLink" data-panel="overviewPanel">
             <span class="nav-icon">📚</span> My Novels
           </a>
-          <a href="#" class="dash-nav-link" id="newNovelLink">
+          <a href="#" class="dash-nav-link" id="newNovelLink" data-panel="newNovelPanel">
             <span class="nav-icon">➕</span> New Novel
           </a>
-          <a href="#" class="dash-nav-link" id="writeChapterLink">
+          <a href="#" class="dash-nav-link" id="writeChapterLink" data-panel="editorPanel">
             <span class="nav-icon">✍️</span> Write Chapter
           </a>
-          <a href="#" class="dash-nav-link">
+          <a href="#" class="dash-nav-link" data-panel="draftsPanel" id="draftsLink">
             <span class="nav-icon">📝</span> Drafts
             <span class="dash-nav-badge">3</span>
           </a>
@@ -85,21 +85,21 @@
 
         <div class="dash-nav-section">
           <div class="dash-nav-section-title">Analytics</div>
-          <a href="#" class="dash-nav-link">
+          <a href="#" class="dash-nav-link" data-panel="statsPanel" id="statsLink">
             <span class="nav-icon">📈</span> Stats & Views
           </a>
-          <a href="#" class="dash-nav-link">
+          <a href="#" class="dash-nav-link" data-panel="commentsPanel" id="commentsLink">
             <span class="nav-icon">💬</span> Comments
             <span class="dash-nav-badge">28</span>
           </a>
-          <a href="#" class="dash-nav-link">
+          <a href="#" class="dash-nav-link" data-panel="reviewsPanel" id="reviewsLink">
             <span class="nav-icon">⭐</span> Reviews
           </a>
         </div>
 
         <div class="dash-nav-section">
           <div class="dash-nav-section-title">Account</div>
-          <a href="#" class="dash-nav-link">
+          <a href="settings.html" class="dash-nav-link" data-panel="settings" id="settingsLink">
             <span class="nav-icon">⚙️</span> Settings
           </a>
           <a href="index.html" class="dash-nav-link">
@@ -336,7 +336,17 @@ The story continues in the darkness, where every word carries weight and every s
         </div>
       </div>
 
-    </main>
+  
+      <!-- Stats Panel -->
+      <div id="statsPanel" style="display:none"></div>
+      <!-- Comments Panel -->
+      <div id="commentsPanel" style="display:none"></div>
+      <!-- Reviews Panel -->
+      <div id="reviewsPanel" style="display:none"></div>
+      <!-- Drafts Panel -->
+      <div id="draftsPanel" style="display:none"></div>
+
+  </main>
   </div>
 
   <script src="js/auth-guard.js"></script>

@@ -49,6 +49,7 @@
         <button class="reader-ctrl-btn" id="bookmarkBtn" title="Bookmark">🔖</button>
         <button class="reader-ctrl-btn" id="prevChapter" title="Previous chapter">‹</button>
         <button class="reader-ctrl-btn" id="nextChapter" title="Next chapter">›</button>
+        <button class="reader-ctrl-btn" id="reportChapterBtn" title="Report this chapter" style="color:var(--crimson-glow)">⚑</button>
       </div>
     </div>
   </div>
@@ -274,9 +275,65 @@
 
   <div style="height:4rem"></div>
 
+  <script src="js/auth-callback.js"></script>
+  <script src="js/loading.js"></script>
   <script src="js/app.js"></script>
   <script src="js/bookmarks.js"></script>
   <script src="js/reader.js"></script>
   <script src="js/comments.js"></script>
+
+  <!-- Report Modal -->
+  <div id="reportModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(6,6,8,0.95);display:none;align-items:center;justify-content:center;padding:1.5rem">
+    <div style="background:linear-gradient(170deg,#110000,#220505,#110000);border:1px solid rgba(139,26,26,0.5);border-radius:12px;padding:2rem;max-width:440px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.8);font-family:Georgia,serif">
+      <h2 style="font-family:Georgia,serif;color:#f0eee8;font-size:1rem;margin-bottom:0.5rem">⚑ Report This Chapter</h2>
+      <p style="color:#9a9aaa;font-size:0.8rem;margin-bottom:1.25rem">Select a reason:</p>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1.25rem" id="reportReasons">
+        <button class="report-reason-btn" data-r="Hate speech or discrimination">⚠️ Hate speech</button>
+        <button class="report-reason-btn" data-r="Sexually explicit content">🔞 Explicit content</button>
+        <button class="report-reason-btn" data-r="Graphic violence">🔴 Graphic violence</button>
+        <button class="report-reason-btn" data-r="Harassment or bullying">😡 Harassment</button>
+        <button class="report-reason-btn" data-r="Copyright infringement">©️ Copyright violation</button>
+        <button class="report-reason-btn" data-r="Spam or misleading">📢 Spam</button>
+        <button class="report-reason-btn" data-r="Other">📝 Other</button>
+      </div>
+      <textarea id="reportDetails" placeholder="Additional details (optional)..." style="min-height:70px;resize:vertical;width:100%;background:linear-gradient(180deg,#0d0000,#1a0505);border:1px solid rgba(139,26,26,0.3);color:#d4d0c8;border-radius:4px;padding:0.6em 1em;font-family:Georgia,serif;font-size:0.85rem;margin-bottom:1rem;box-sizing:border-box"></textarea>
+      <div style="display:flex;gap:0.75rem;justify-content:flex-end">
+        <button id="cancelReport" style="background:linear-gradient(180deg,#0d0000,#1a0505);color:#9a9aaa;padding:0.6em 1.2em;border-radius:4px;font-size:0.78rem;border:1px solid rgba(139,26,26,0.3);cursor:pointer;font-family:Georgia,serif">Cancel</button>
+        <button id="submitReport" style="background:linear-gradient(180deg,#3a0000,#8b1a1a,#c0392b,#8b1a1a,#3a0000);color:white;padding:0.6em 1.4em;border-radius:4px;font-size:0.78rem;border:none;cursor:pointer;font-family:Georgia,serif">Submit Report</button>
+      </div>
+    </div>
+  </div>
+  <style>
+    .report-reason-btn { padding:0.6em 1em;background:linear-gradient(180deg,#110000,#1a0505);border:1px solid rgba(139,26,26,0.25);border-radius:4px;color:#c4c4d4;font-family:Georgia,serif;font-size:0.8rem;cursor:pointer;text-align:left;transition:all 0.2s; }
+    .report-reason-btn:hover,.report-reason-btn.active { border-color:var(--crimson);color:var(--crimson-glow);background:rgba(139,26,26,0.1); }
+  </style>
+  <script>
+    let selectedReason = '';
+    document.getElementById('reportChapterBtn')?.addEventListener('click', () => {
+      document.getElementById('reportModal').style.display = 'flex';
+    });
+    document.getElementById('cancelReport')?.addEventListener('click', () => {
+      document.getElementById('reportModal').style.display = 'none';
+    });
+    document.querySelectorAll('.report-reason-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.report-reason-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedReason = btn.dataset.r;
+      });
+    });
+    document.getElementById('submitReport')?.addEventListener('click', () => {
+      if (!selectedReason) { window.showToast('Please select a reason.', 'error'); return; }
+      window.showToast('Report submitted. Our team will review it within 4 hours. ✦');
+      document.getElementById('reportModal').style.display = 'none';
+      selectedReason = '';
+      document.querySelectorAll('.report-reason-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('reportDetails').value = '';
+    });
+    document.getElementById('reportModal')?.addEventListener('click', e => {
+      if (e.target === document.getElementById('reportModal')) document.getElementById('reportModal').style.display = 'none';
+    });
+  </script>
+
 </body>
 </html>

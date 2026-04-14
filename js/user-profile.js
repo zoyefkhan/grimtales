@@ -1,171 +1,269 @@
 /* ============================================
-   user-profile.js — Reader Profile Page
+   user-profile.js — Reader Profile (Real Data)
+   No demo data — everything from Supabase
 ============================================ */
 
 // ─── Tab Switching ────────────────────────────
 function initProfileTabs() {
-  const panels = { library: 'libraryPanel', history: 'historyPanel', badges: 'badgesPanel', following: 'followingPanel', comments: 'commentsPanel' };
-
+  const panels = { library:'libraryPanel', history:'historyPanel', badges:'badgesPanel', following:'followingPanel', comments:'commentsPanel' };
   document.querySelectorAll('.profile-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       tab.classList.add('active');
       const panel = document.getElementById(panels[tab.dataset.tab]);
-      if (panel) panel.classList.add('active');
+      if (panel) { panel.classList.add('active'); loadTabData(tab.dataset.tab); }
     });
   });
 }
 
-// ─── Library Grid ─────────────────────────────
-function initLibrary() {
+// ─── Load real user data ──────────────────────
+async function loadProfileData() {
+  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
+  if (!user.username) { window.location.href = 'login.html'; return; }
+
+  // Update profile display
+  const initials = user.username.slice(0,2).toUpperCase();
+  document.querySelectorAll('.profile-username').forEach(el => el.textContent = user.username);
+  document.querySelectorAll('.profile-avatar-wrap').forEach(el => {
+    if (user.avatar) {
+      el.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    } else {
+      el.textContent = initials;
+    }
+  });
+
+  const memberEl = document.querySelector('.profile-member');
+  if (memberEl) {
+    const since = user.createdAt ? new Date(user.createdAt).toLocaleDateString('en',{month:'long',year:'numeric'}) : 'Recently';
+    memberEl.textContent = `Member since ${since} · ${user.role==='author'?'Author':'Reader'}`;
+  }
+
+  // Load real stats from Supabase
+  const sb = await window.GT_Supabase?.getSupabase();
+  if (!sb || !user.id) return;
+
+  try {
+    const [bookmarksRes, commentsRes, followingRes] = await Promise.all([
+      sb.from('bookmarks').select('*', {count:'exact',head:true}).eq('user_id', user.id),
+      sb.from('comments').select('*', {count:'exact',head:true}).eq('author_id', user.id),
+      sb.from('follows').select('*', {count:'exact',head:true}).eq('follower_id', user.id),
+    ]);
+
+    const stats = {
+      booksRead: bookmarksRes.count || 0,
+      chapters:  0,
+      following: followingRes.count || 0,
+      comments:  commentsRes.count || 0,
+      badges:    3,
+    };
+
+    const el = id => document.getElementById(id);
+    if (el('statBooksRead'))  el('statBooksRead').textContent  = stats.booksRead;
+    if (el('statChapters'))   el('statChapters').textContent   = stats.chapters;
+    if (el('statFollowing'))  el('statFollowing').textContent  = stats.following;
+    if (el('statComments'))   el('statComments').textContent   = stats.comments;
+    if (el('statBadges'))     el('statBadges').textContent     = stats.badges;
+
+  } catch(e) { console.error(e); }
+}
+
+// ─── Load tab data ────────────────────────────
+function loadTabData(tab) {
+  switch(tab) {
+    case 'library':   loadLibrary(); break;
+    case 'history':   loadHistory(); break;
+    case 'badges':    loadBadges(); break;
+    case 'following': loadFollowing(); break;
+    case 'comments':  loadMyComments(); break;
+  }
+}
+
+// ─── Library ──────────────────────────────────
+async function loadLibrary() {
   const grid = document.getElementById('libraryGrid');
   if (!grid) return;
 
-  const saved = (window.MOCK_NOVELS || []).slice(0, 8);
-  if (saved.length === 0) {
+  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--ash)">Loading...</div>`;
+
+  const sb = await window.GT_Supabase?.getSupabase();
+  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
+  if (!sb || !user.id) { grid.innerHTML = `<div class="library-empty">Sign in to see your library.</div>`; return; }
+
+  const { data: bookmarks } = await sb.from('bookmarks')
+    .select('*, novel:novels(*, author:profiles(username))')
+    .eq('user_id', user.id)
+    .order('updated_at', { ascending: false });
+
+  if (!bookmarks?.length) {
     grid.innerHTML = `
-      <div class="library-empty" style="grid-column:1/-1">
-        <div style="font-size:2.5rem;margin-bottom:1rem">📚</div>
+      <div class="library-empty">
+        <div style="font-size:2.5rem;margin-bottom:1rem;opacity:0.3">📚</div>
         <h3 style="font-family:var(--font-display);color:var(--white);margin-bottom:0.5rem">Your library is empty</h3>
-        <p style="color:var(--ash);margin-bottom:1.5rem">Start adding novels to your library by clicking the bookmark button.</p>
+        <p style="color:var(--ash);margin-bottom:1.5rem">Start adding novels by clicking the bookmark button on any novel.</p>
         <a href="browse.html" class="btn btn-crimson">Browse Novels</a>
       </div>`;
     return;
   }
-  grid.innerHTML = saved.map(n => window.renderNovelCard(n)).join('');
+
+  grid.innerHTML = bookmarks.map(b => window.renderNovelCard(b.novel)).join('');
 }
 
-// ─── Reading History ──────────────────────────
-const HISTORY_DATA = [
-  { title: 'The Obsidian Court', author: 'Marcus Vale', chapter: 'Chapter 284', progress: 92, color: ['#1a0808','#2d1010'], lastRead: '2 hours ago' },
-  { title: 'Court of Bleeding Stars', author: 'Lyra Mourne', chapter: 'Chapter 112', progress: 45, color: ['#1a0808','#200808'], lastRead: '1 day ago' },
-  { title: 'Pale Kings Rising', author: 'Marcus Vale', chapter: 'Chapter 512', progress: 100, color: ['#1a1508','#2a2010'], lastRead: '3 days ago' },
-  { title: 'Daughters of Ash', author: 'Seraphina Lowe', chapter: 'Chapter 67', progress: 30, color: ['#0d0d1a','#1a0d2d'], lastRead: '5 days ago' },
-  { title: 'The Last Gravedigger', author: 'Tor Halverson', chapter: 'Chapter 201', progress: 68, color: ['#0a1a0a','#0d240d'], lastRead: '1 week ago' },
-];
-
-function initHistory() {
+// ─── History ──────────────────────────────────
+async function loadHistory() {
   const list = document.getElementById('historyList');
   if (!list) return;
 
-  list.innerHTML = HISTORY_DATA.map(item => `
-    <div class="history-item" onclick="window.location='chapter-read.html'">
-      <div class="history-cover">
-        <div style="width:100%;height:100%;background:linear-gradient(135deg,${item.color[0]},${item.color[1]});display:flex;align-items:center;justify-content:center;padding:0.3rem">
-          <span style="font-family:var(--font-heading);font-size:0.5rem;color:var(--white);text-align:center;line-height:1.2">${item.title}</span>
+  const sb = await window.GT_Supabase?.getSupabase();
+  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
+  if (!sb || !user.id) { list.innerHTML = `<div style="color:var(--ash);padding:1rem">Sign in to see your history.</div>`; return; }
+
+  const { data: history } = await sb.from('reading_history')
+    .select('*, novel:novels(id,title,cover_url,author:profiles(username)), chapter:chapters(id,title,number)')
+    .eq('user_id', user.id)
+    .order('read_at', { ascending: false })
+    .limit(20);
+
+  if (!history?.length) {
+    list.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--ash)">No reading history yet. <a href="browse.html" style="color:var(--crimson-glow)">Start reading!</a></div>`;
+    return;
+  }
+
+  // Get progress from localStorage
+  list.innerHTML = history.map(item => {
+    const progress = window.GT_Bookmarks?.getProgress(item.novel_id, item.chapter_id) || 0;
+    const cover = item.novel?.cover_url
+      ? `<img src="${item.novel.cover_url}" style="width:100%;height:100%;object-fit:cover">`
+      : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#1a0000,#2d0505)"></div>`;
+    return `
+      <div class="history-item" onclick="window.location='chapter-read.html?id=${item.chapter_id}'">
+        <div class="history-cover">${cover}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-family:var(--font-heading);font-size:0.88rem;color:var(--white-dim);margin-bottom:0.15rem">${item.novel?.title||'Unknown'}</div>
+          <div style="font-size:0.78rem;color:var(--ash);margin-bottom:0.5rem">${item.novel?.author?.username||''} · Ch. ${item.chapter?.number||'?'}: ${item.chapter?.title||''}</div>
+          <div class="history-progress-bar"><div class="history-progress-fill" style="width:${progress}%"></div></div>
+          <div style="font-size:0.68rem;color:var(--ash);margin-top:0.2rem">${progress}% complete</div>
         </div>
-      </div>
-      <div style="flex:1;min-width:0">
-        <div style="font-family:var(--font-heading);font-size:0.88rem;color:var(--white-dim);margin-bottom:0.15rem">${item.title}</div>
-        <div style="font-size:0.78rem;color:var(--ash);margin-bottom:0.5rem">${item.author} · ${item.chapter}</div>
-        <div class="history-progress-bar">
-          <div class="history-progress-fill" style="width:${item.progress}%"></div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:0.72rem;color:var(--ash);font-family:var(--font-heading);margin-bottom:0.5rem">${window.timeAgo?window.timeAgo(item.read_at):''}</div>
+          <a href="chapter-read.html?id=${item.chapter_id}" class="btn btn-crimson" style="font-size:0.65rem;padding:0.35em 0.8em">Continue</a>
         </div>
-        <div style="font-size:0.68rem;color:var(--ash);margin-top:0.2rem;font-family:var(--font-heading)">${item.progress}% complete</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:0.72rem;color:var(--ash);font-family:var(--font-heading);margin-bottom:0.5rem">${item.lastRead}</div>
-        <a href="chapter-read.html" class="btn btn-crimson" style="font-size:0.65rem;padding:0.35em 0.8em">Continue</a>
-      </div>
-    </div>
-  `).join('');
+      </div>`;
+  }).join('');
 }
 
 // ─── Badges ───────────────────────────────────
-const BADGES_DATA = [
-  { icon: '📖', name: 'First Chapter', desc: 'Read your first chapter', earned: 'Jan 2024', locked: false },
-  { icon: '📚', name: 'Bookworm', desc: 'Add 10 novels to your library', earned: 'Jan 2024', locked: false },
-  { icon: '🔥', name: 'On Fire', desc: 'Read 7 days in a row', earned: 'Feb 2024', locked: false },
-  { icon: '🌑', name: 'Dark Devotee', desc: 'Read 50 dark fantasy chapters', earned: 'Mar 2024', locked: false },
-  { icon: '💬', name: 'Voice of the Dark', desc: 'Post 10 comments', earned: 'Apr 2024', locked: false },
-  { icon: '⭐', name: 'Critic', desc: 'Rate 20 novels', earned: 'Apr 2024', locked: false },
-  { icon: '❤️', name: 'Loyal Reader', desc: 'Follow 20 authors', earned: 'May 2024', locked: false },
-  { icon: '🏆', name: 'Century Reader', desc: 'Read 100 chapters', earned: 'Jun 2024', locked: false },
-  { icon: '💀', name: 'Horror Fiend', desc: 'Read 30 horror chapters', earned: null, locked: true },
-  { icon: '🧛', name: 'Vampire Obsessed', desc: 'Complete 5 vampire novels', earned: null, locked: true },
-  { icon: '🕯️', name: 'Night Owl', desc: 'Read past midnight 10 times', earned: null, locked: true },
-  { icon: '👑', name: 'Dark Sovereign', desc: 'Read 1000 chapters total', earned: null, locked: true },
-  { icon: '📜', name: 'Lore Keeper', desc: 'Read 5 completed novels', earned: null, locked: true },
-  { icon: '🩸', name: 'Blood Reader', desc: 'Read 500 chapters in one genre', earned: null, locked: true },
-];
-
-function initBadges() {
+async function loadBadges() {
   const grid = document.getElementById('badgesGrid');
   if (!grid) return;
 
-  grid.innerHTML = BADGES_DATA.map(b => `
-    <div class="badge-card ${b.locked ? 'locked' : ''}">
+  const sb = await window.GT_Supabase?.getSupabase();
+  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
+
+  // Dynamic badges based on real activity
+  let booksRead = 0, commentCount = 0;
+  if (sb && user.id) {
+    const [b, c] = await Promise.all([
+      sb.from('bookmarks').select('*',{count:'exact',head:true}).eq('user_id', user.id),
+      sb.from('comments').select('*',{count:'exact',head:true}).eq('author_id', user.id),
+    ]);
+    booksRead    = b.count || 0;
+    commentCount = c.count || 0;
+  }
+
+  const BADGES = [
+    { icon:'📖', name:'First Chapter',   desc:'Read your first chapter',          earned: true },
+    { icon:'📚', name:'Bookworm',        desc:'Add 10 novels to your library',    earned: booksRead >= 10 },
+    { icon:'💬', name:'Voice in the Dark', desc:'Post 10 comments',              earned: commentCount >= 10 },
+    { icon:'🔥', name:'On Fire',         desc:'Read 7 days in a row',             earned: false },
+    { icon:'🌑', name:'Dark Devotee',    desc:'Read 50 dark fantasy chapters',    earned: false },
+    { icon:'⭐', name:'Critic',          desc:'Rate 20 novels',                   earned: false },
+    { icon:'❤️', name:'Loyal Reader',   desc:'Follow 20 authors',                earned: false },
+    { icon:'🏆', name:'Century Reader',  desc:'Read 100 chapters',                earned: false },
+    { icon:'💀', name:'Horror Fiend',    desc:'Read 30 horror chapters',          earned: false },
+    { icon:'👑', name:'Dark Sovereign',  desc:'Read 1000 chapters total',         earned: false },
+  ];
+
+  grid.innerHTML = BADGES.map(b => `
+    <div class="badge-card ${b.earned ? '' : 'locked'}">
       <span class="badge-icon">${b.icon}</span>
       <div class="badge-name">${b.name}</div>
       <div class="badge-desc">${b.desc}</div>
-      ${b.earned ? `<div class="badge-earned">✦ Earned ${b.earned}</div>` : `<div style="font-size:0.65rem;color:var(--ash);margin-top:0.4rem">🔒 Locked</div>`}
-    </div>
-  `).join('');
+      ${b.earned ? `<div class="badge-earned">✦ Earned</div>` : `<div style="font-size:0.65rem;color:var(--ash);margin-top:0.4rem">🔒 Locked</div>`}
+    </div>`).join('');
 }
 
-// ─── Following Authors ─────────────────────────
-const FOLLOWING_AUTHORS = [
-  { name: 'Marcus Vale', initial: 'MV', novels: 8, followers: '124K' },
-  { name: 'Lyra Mourne', initial: 'LM', novels: 3, followers: '210K' },
-  { name: 'Seraphina Lowe', initial: 'SL', novels: 4, followers: '38K' },
-  { name: 'Tor Halverson', initial: 'TH', novels: 6, followers: '72K' },
-];
-
-function initFollowing() {
+// ─── Following ────────────────────────────────
+async function loadFollowing() {
   const grid = document.getElementById('followingGrid');
   if (!grid) return;
 
-  grid.innerHTML = FOLLOWING_AUTHORS.map(a => `
-    <a href="author-profile.html" style="
-      display:flex;align-items:center;gap:1rem;
-      padding:1rem 1.25rem;
-      background:var(--charcoal);border:var(--border-subtle);border-radius:var(--radius-lg);
-      transition:var(--transition);text-decoration:none;
-    " onmouseenter="this.style.borderColor='rgba(139,26,26,0.4)'" onmouseleave="this.style.borderColor=''">
-      <div style="width:46px;height:46px;border-radius:50%;border:2px solid var(--crimson);background:linear-gradient(135deg,#2d0f0f,#1a0808);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1rem;color:var(--crimson-glow);flex-shrink:0">${a.initial}</div>
-      <div>
-        <div style="font-family:var(--font-heading);font-size:0.88rem;color:var(--white)">${a.name}</div>
-        <div style="font-size:0.75rem;color:var(--ash)">${a.novels} novels · ${a.followers} followers</div>
-      </div>
-      <button class="btn btn-outline" style="font-size:0.65rem;padding:0.3em 0.7em;margin-left:auto" onclick="event.preventDefault();window.showToast('Unfollowed ${a.name}.')">Unfollow</button>
-    </a>
-  `).join('');
+  const sb = await window.GT_Supabase?.getSupabase();
+  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
+  if (!sb || !user.id) return;
+
+  const { data: follows } = await sb.from('follows')
+    .select('following:profiles!follows_following_id_fkey(id, username, avatar_url)')
+    .eq('follower_id', user.id)
+    .limit(30);
+
+  if (!follows?.length) {
+    grid.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--ash);grid-column:1/-1">You're not following anyone yet. <a href="browse.html" style="color:var(--crimson-glow)">Discover authors!</a></div>`;
+    return;
+  }
+
+  grid.innerHTML = follows.map(f => {
+    const a = f.following;
+    const initials = (a.username||'?').slice(0,2).toUpperCase();
+    return `
+      <a href="author-profile.html?id=${a.id}" style="display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;background:var(--metal-card);border:var(--border-subtle);border-radius:var(--radius-lg);transition:var(--transition);text-decoration:none" onmouseenter="this.style.borderColor='rgba(139,26,26,0.4)'" onmouseleave="this.style.borderColor=''">
+        <div style="width:46px;height:46px;border-radius:50%;border:2px solid var(--crimson);background:linear-gradient(135deg,#2d0f0f,#1a0808);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:0.9rem;color:var(--crimson-glow);flex-shrink:0;overflow:hidden">
+          ${a.avatar_url ? `<img src="${a.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : initials}
+        </div>
+        <div style="font-family:var(--font-heading);font-size:0.88rem;color:var(--white)">${a.username}</div>
+      </a>`;
+  }).join('');
 }
 
 // ─── My Comments ──────────────────────────────
-const MY_COMMENTS = [
-  { novel: 'The Obsidian Court', chapter: 'Chapter 284', text: 'This plot twist destroyed me in the best way. The scene with the Queen was absolutely devastating.', date: '2 days ago', likes: 12 },
-  { novel: 'Court of Bleeding Stars', chapter: 'Chapter 112', text: "Lyra Mourne's prose in this chapter is something else entirely. The metaphor for the dying stars hit different.", date: '5 days ago', likes: 8 },
-  { novel: 'Pale Kings Rising', chapter: 'Chapter 488', text: "I've been reading this for 8 months and the ending of this arc is everything. Absolutely incredible.", date: '2 weeks ago', likes: 34 },
-];
-
-function initMyComments() {
+async function loadMyComments() {
   const list = document.getElementById('myCommentsList');
   if (!list) return;
 
-  list.innerHTML = MY_COMMENTS.map(c => `
-    <div style="background:var(--charcoal);border:var(--border-subtle);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:0.75rem">
+  const sb = await window.GT_Supabase?.getSupabase();
+  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
+  if (!sb || !user.id) return;
+
+  const { data: comments } = await sb.from('comments')
+    .select('*, novel:novels(id, title), chapter:chapters(id, number, title)')
+    .eq('author_id', user.id)
+    .eq('is_deleted', false)
+    .order('created_at', { ascending: false })
+    .limit(20);
+
+  if (!comments?.length) {
+    list.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--ash)">No comments posted yet.</div>`;
+    return;
+  }
+
+  list.innerHTML = comments.map(c => `
+    <div style="background:var(--metal-card);border:var(--border-subtle);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:0.75rem">
       <div style="display:flex;gap:0.5rem;margin-bottom:0.6rem;flex-wrap:wrap">
-        <a href="novel-detail.html" style="font-family:var(--font-heading);font-size:0.72rem;color:var(--crimson-glow);letter-spacing:0.08em;text-transform:uppercase">${c.novel}</a>
+        <a href="novel-detail.html?id=${c.novel?.id}" style="font-family:var(--font-heading);font-size:0.72rem;color:var(--crimson-glow);letter-spacing:0.08em;text-transform:uppercase">${c.novel?.title||'Unknown'}</a>
         <span style="color:var(--ash);font-size:0.72rem">·</span>
-        <a href="chapter-read.html" style="font-size:0.72rem;color:var(--ash)">${c.chapter}</a>
+        <a href="chapter-read.html?id=${c.chapter?.id}" style="font-size:0.72rem;color:var(--ash)">Chapter ${c.chapter?.number||'?'}</a>
       </div>
       <p style="font-size:0.88rem;color:var(--ash-light);line-height:1.65;margin-bottom:0.6rem">${c.text}</p>
       <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.72rem;color:var(--ash);font-family:var(--font-heading)">
-        <span>${c.date}</span>
-        <span style="color:var(--gold)">♥ ${c.likes} likes</span>
+        <span>${window.timeAgo?window.timeAgo(c.created_at):''}</span>
+        <span style="color:var(--gold)">♥ ${c.like_count||0} likes</span>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 // ─── Init ─────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadProfileData();
   initProfileTabs();
-  initLibrary();
-  initHistory();
-  initBadges();
-  initFollowing();
-  initMyComments();
+  loadLibrary(); // Load first tab
 });

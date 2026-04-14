@@ -1,84 +1,74 @@
 /* ============================================
-   loading.js — Metallic Page Loader
+   loading.js — Fast Page Loader
+   Optimized: shorter delay, no back-button block
 ============================================ */
-
 (function () {
-  // ─── Inject CSS using absolute path ────────
+  // ─── Skip loader on back/forward navigation ─
+  if (performance.getEntriesByType('navigation')[0]?.type === 'back_forward') return;
+
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  // Use absolute path so it works on all pages at any depth
   link.href = '/css/loading.css';
   document.head.appendChild(link);
 
-  // ─── Build loader HTML ─────────────────────
   const loader = document.createElement('div');
   loader.id = 'gt-loader';
   loader.innerHTML = `
     <div class="loader-logo">
-      <div class="loader-hex">
-        <span class="loader-hex-inner">✦</span>
-      </div>
+      <div class="loader-hex"><span class="loader-hex-inner">✦</span></div>
       <div class="loader-title">Grim<span>Tales</span></div>
     </div>
     <div class="loader-bars">
-      <div class="loader-bar"></div>
-      <div class="loader-bar"></div>
-      <div class="loader-bar"></div>
-      <div class="loader-bar"></div>
+      <div class="loader-bar"></div><div class="loader-bar"></div>
+      <div class="loader-bar"></div><div class="loader-bar"></div>
       <div class="loader-bar"></div>
     </div>
-    <div class="loader-text">
-      Entering the darkness<span class="loader-dots"></span>
-    </div>
-  `;
+    <div class="loader-text">Entering the darkness<span class="loader-dots"></span></div>`;
 
   document.documentElement.style.overflow = 'hidden';
-  if (document.body) {
-    document.body.prepend(loader);
-  } else {
-    document.addEventListener('DOMContentLoaded', () => document.body.prepend(loader));
-  }
+  if (document.body) document.body.prepend(loader);
+  else document.addEventListener('DOMContentLoaded', () => document.body.prepend(loader));
 
-  // ─── Hide loader when page ready ───────────
   function hideLoader() {
     document.documentElement.style.overflow = '';
     loader.classList.add('hidden');
-    setTimeout(() => loader.remove(), 550);
+    setTimeout(() => loader?.remove(), 500);
   }
+
+  // Hide quickly — max 800ms wait
+  const maxWait = setTimeout(hideLoader, 800);
 
   if (document.readyState === 'complete') {
-    setTimeout(hideLoader, 600);
+    clearTimeout(maxWait);
+    setTimeout(hideLoader, 300);
   } else {
-    window.addEventListener('load', () => setTimeout(hideLoader, 600));
+    window.addEventListener('load', () => {
+      clearTimeout(maxWait);
+      setTimeout(hideLoader, 300);
+    }, { once: true });
   }
 
-  // ─── Page transition ────────────────────────
+  // ─── Page transition (skip same-page anchors) ─
   function setupTransition() {
-    const transition = document.createElement('div');
-    transition.className = 'gt-page-transition';
-    document.body.appendChild(transition);
+    const overlay = document.createElement('div');
+    overlay.className = 'gt-page-transition';
+    document.body.appendChild(overlay);
 
-    document.addEventListener('click', (e) => {
-      const anchor = e.target.closest('a[href]');
-      if (!anchor) return;
-      const href = anchor.getAttribute('href');
-
-      // Skip: external, hash, mailto, javascript, blank target
-      if (!href) return;
-      if (href.startsWith('http') || href.startsWith('//')) return;
-      if (href.startsWith('#')) return;
-      if (href.startsWith('mailto') || href.startsWith('tel')) return;
-      if (anchor.target === '_blank') return;
+    document.addEventListener('click', e => {
+      const a = e.target.closest('a[href]');
+      if (!a) return;
+      const href = a.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('http') ||
+          href.startsWith('mailto') || href.startsWith('tel') ||
+          href.startsWith('javascript') || a.target === '_blank') return;
 
       e.preventDefault();
-      transition.classList.add('active');
-      setTimeout(() => { window.location.href = href; }, 220);
+      overlay.classList.add('active');
+      // Navigate after very short delay
+      setTimeout(() => { window.location.href = href; }, 180);
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupTransition);
-  } else {
-    setupTransition();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setupTransition);
+  else setupTransition();
 })();
