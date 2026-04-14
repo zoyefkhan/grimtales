@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — GrimTales</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <style>
+    .page-contact { padding-top:70px; min-height:100vh; }
+    .contact-layout { display:grid; grid-template-columns:1fr 1fr; gap:3rem; padding:4rem 0; align-items:start; }
+    .contact-card { background:var(--metal-card); border:var(--border-subtle); border-radius:var(--radius-lg); padding:1.5rem; display:flex; gap:1rem; margin-bottom:1rem; transition:var(--transition); }
+    .contact-card:hover { border-color:rgba(139,26,26,0.4); }
+    .contact-icon { font-size:1.8rem; flex-shrink:0; }
+    .contact-label { font-family:var(--font-heading); font-size:0.78rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--crimson-glow); margin-bottom:0.25rem; }
+    .contact-value { font-size:0.88rem; color:var(--ash-light); }
+    .form-group { display:flex; flex-direction:column; gap:0.4rem; margin-bottom:1.25rem; }
+    .form-label { font-family:var(--font-heading); font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ash); }
+    .contact-form { background:var(--metal-card); border:var(--border-subtle); border-radius:var(--radius-lg); padding:2rem; }
+    @media(max-width:768px) { .contact-layout { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body class="page-contact">
+  <script src="js/loading.js"></script>
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo"><div class="logo-icon"></div><span class="logo-text">Grim<span>Tales</span></span></a>
+      <ul class="navbar-nav"><li><a href="index.html">Home</a></li><li><a href="help.html">Help</a></li></ul>
+      <div class="navbar-actions"><button class="theme-toggle" id="themeToggle">🌙</button></div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobileNav"><a href="index.html">🏠 Home</a></div>
+
+  <div class="container">
+    <div style="padding:3rem 0 1rem;text-align:center">
+      <div style="font-family:var(--font-heading);font-size:0.72rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--crimson-glow);margin-bottom:0.75rem">Get in Touch</div>
+      <h1 style="font-family:var(--font-display);font-size:2rem;color:var(--white);margin-bottom:0.5rem">Contact Us</h1>
+      <p style="color:var(--ash)">We respond to all messages within 24 hours</p>
+    </div>
+
+    <div class="contact-layout">
+      <div>
+        <h2 style="font-family:var(--font-heading);font-size:0.8rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ash);margin-bottom:1.25rem">Ways to Reach Us</h2>
+        <div class="contact-card"><div class="contact-icon">📧</div><div><div class="contact-label">General Support</div><div class="contact-value">support@grimtales.com</div><div style="font-size:0.75rem;color:var(--ash);margin-top:0.25rem">For account issues, reading problems, general questions</div></div></div>
+        <div class="contact-card"><div class="contact-icon">⚠️</div><div><div class="contact-label">Report Content</div><div class="contact-value">report@grimtales.com</div><div style="font-size:0.75rem;color:var(--ash);margin-top:0.25rem">For harmful, offensive or copyright-infringing content</div></div></div>
+        <div class="contact-card"><div class="contact-icon">✍️</div><div><div class="contact-label">Author Enquiries</div><div class="contact-value">authors@grimtales.com</div><div style="font-size:0.75rem;color:var(--ash);margin-top:0.25rem">For publishing questions, featured author programme</div></div></div>
+        <div class="contact-card"><div class="contact-icon">💼</div><div><div class="contact-label">Business & Press</div><div class="contact-value">hello@grimtales.com</div><div style="font-size:0.75rem;color:var(--ash);margin-top:0.25rem">Partnerships, press enquiries, advertising</div></div></div>
+        <div style="background:var(--metal-card);border:var(--border-subtle);border-radius:var(--radius-lg);padding:1.5rem;margin-top:1rem">
+          <div style="font-family:var(--font-heading);font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--crimson-glow);margin-bottom:0.75rem">Response Times</div>
+          <div style="font-size:0.82rem;color:var(--ash-light);line-height:2">
+            🟢 General support — within 24 hours<br>
+            🟡 Content reports — within 4 hours<br>
+            🔴 Urgent safety issues — within 1 hour
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form">
+        <h2 style="font-family:var(--font-display);font-size:1.1rem;color:var(--white);margin-bottom:1.5rem">Send a Message</h2>
+        <div class="form-group"><label class="form-label">Your Name</label><input type="text" id="contactName" placeholder="Your name" /></div>
+        <div class="form-group"><label class="form-label">Email Address</label><input type="email" id="contactEmail" placeholder="you@example.com" /></div>
+        <div class="form-group">
+          <label class="form-label">Topic</label>
+          <select id="contactTopic">
+            <option value="">Select a topic...</option>
+            <option>Account / Login issue</option>
+            <option>Report content</option>
+            <option>Reading problem</option>
+            <option>Author / Publishing</option>
+            <option>Technical issue</option>
+            <option>Business enquiry</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Message</label><textarea id="contactMessage" style="min-height:140px;resize:vertical" placeholder="Describe your issue or question in detail..."></textarea></div>
+        <button class="btn btn-crimson" id="sendMessageBtn" style="width:100%;justify-content:center">Send Message →</button>
+        <p style="font-size:0.75rem;color:var(--ash);margin-top:1rem;text-align:center">We'll reply to the email address you provide above.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById('sendMessageBtn').addEventListener('click', () => {
+      const name  = document.getElementById('contactName').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const msg   = document.getElementById('contactMessage').value.trim();
+      if (!name)  { window.showToast('Please enter your name.', 'error'); return; }
+      if (!email || !email.includes('@')) { window.showToast('Please enter a valid email.', 'error'); return; }
+      if (!msg)   { window.showToast('Please write a message.', 'error'); return; }
+      window.showToast('Message sent! We\'ll reply within 24 hours. ✦');
+      document.getElementById('contactName').value = '';
+      document.getElementById('contactEmail').value = '';
+      document.getElementById('contactMessage').value = '';
+    });
+  </script>
+</body>
+</html>
