@@ -135,7 +135,7 @@ async function fetchNovels({ sort = 'total_views', genre, limit = 20, page = 1 }
 
   const offset = (page - 1) * limit;
   let query = sb.from('novels')
-    .select('*, author:profiles(username, avatar_url)')
+    .select('*, author:profiles!author_id(username, avatar_url)')
     .eq('is_visible', true)
     .eq('is_published', true)
     .range(offset, offset + limit - 1);
@@ -160,7 +160,7 @@ async function fetchNovel(id) {
   const sb = await window.GT_Supabase?.getSupabase();
   if (!sb) return null;
   const { data, error } = await sb.from('novels')
-    .select('*, author:profiles(id, username, avatar_url, bio, is_verified)')
+    .select('*, author:profiles!author_id(id, username, avatar_url, bio, is_verified)')
     .eq('id', id)
     .single();
   if (error) { console.error('fetchNovel:', error); return null; }
