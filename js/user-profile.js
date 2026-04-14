@@ -1,6 +1,9 @@
 /* ============================================
    user-profile.js — Reader Profile (Real Data)
    No demo data — everything from Supabase
+   
+   FIX: Wait for Supabase session on mobile before
+   falling back to localStorage check
 ============================================ */
 
 // ─── Tab Switching ────────────────────────────
@@ -17,10 +20,58 @@ function initProfileTabs() {
   });
 }
 
+// FIX: Get user from Supabase session first, then fall back to localStorage.
+// On mobile, the session may not have been written to localStorage yet.
+async function getActiveUser() {
+  // First try Supabase session (most reliable, works on mobile)
+  try {
+    const sb = await window.GT_Supabase?.getSupabase();
+    if (sb) {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session?.user) {
+        // Sync to localStorage so other parts of the app can use it
+        const sbUser = session.user;
+        const user = {
+          id:        sbUser.id,
+          username:  sbUser.user_metadata?.username
+                     || sbUser.user_metadata?.full_name
+                     || sbUser.user_metadata?.name
+                     || sbUser.email?.split('@')[0]
+                     || 'User',
+          email:     sbUser.email,
+          role:      sbUser.user_metadata?.role || 'reader',
+          avatar:    sbUser.user_metadata?.avatar_url
+                     || sbUser.user_metadata?.picture
+                     || '',
+          createdAt: sbUser.created_at,
+        };
+        localStorage.setItem('gt-user', JSON.stringify(user));
+        localStorage.setItem('gt-logged-in', 'true');
+        return user;
+      }
+    }
+  } catch(e) {
+    console.warn('Supabase session check failed, falling back to localStorage:', e);
+  }
+
+  // Fall back to localStorage (desktop / already-synced sessions)
+  const stored = localStorage.getItem('gt-user');
+  if (stored) {
+    try { return JSON.parse(stored); } catch(e) {}
+  }
+
+  return null;
+}
+
 // ─── Load real user data ──────────────────────
 async function loadProfileData() {
-  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
-  if (!user.username) { window.location.href = 'login.html'; return; }
+  // FIX: Use getActiveUser() instead of directly reading localStorage
+  const user = await getActiveUser();
+
+  if (!user || !user.username) {
+    window.location.href = 'login.html';
+    return;
+  }
 
   // Update profile display
   const initials = user.username.slice(0,2).toUpperCase();
@@ -87,8 +138,8 @@ async function loadLibrary() {
   grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--ash)">Loading...</div>`;
 
   const sb = await window.GT_Supabase?.getSupabase();
-  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
-  if (!sb || !user.id) { grid.innerHTML = `<div class="library-empty">Sign in to see your library.</div>`; return; }
+  const user = await getActiveUser();
+  if (!sb || !user?.id) { grid.innerHTML = `<div class="library-empty">Sign in to see your library.</div>`; return; }
 
   const { data: bookmarks } = await sb.from('bookmarks')
     .select('*, novel:novels(*, author:profiles(username))')
@@ -115,8 +166,8 @@ async function loadHistory() {
   if (!list) return;
 
   const sb = await window.GT_Supabase?.getSupabase();
-  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
-  if (!sb || !user.id) { list.innerHTML = `<div style="color:var(--ash);padding:1rem">Sign in to see your history.</div>`; return; }
+  const user = await getActiveUser();
+  if (!sb || !user?.id) { list.innerHTML = `<div style="color:var(--ash);padding:1rem">Sign in to see your history.</div>`; return; }
 
   const { data: history } = await sb.from('reading_history')
     .select('*, novel:novels(id,title,cover_url,author:profiles(username)), chapter:chapters(id,title,number)')
@@ -129,7 +180,6 @@ async function loadHistory() {
     return;
   }
 
-  // Get progress from localStorage
   list.innerHTML = history.map(item => {
     const progress = window.GT_Bookmarks?.getProgress(item.novel_id, item.chapter_id) || 0;
     const cover = item.novel?.cover_url
@@ -158,11 +208,10 @@ async function loadBadges() {
   if (!grid) return;
 
   const sb = await window.GT_Supabase?.getSupabase();
-  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
+  const user = await getActiveUser();
 
-  // Dynamic badges based on real activity
   let booksRead = 0, commentCount = 0;
-  if (sb && user.id) {
+  if (sb && user?.id) {
     const [b, c] = await Promise.all([
       sb.from('bookmarks').select('*',{count:'exact',head:true}).eq('user_id', user.id),
       sb.from('comments').select('*',{count:'exact',head:true}).eq('author_id', user.id),
@@ -199,8 +248,8 @@ async function loadFollowing() {
   if (!grid) return;
 
   const sb = await window.GT_Supabase?.getSupabase();
-  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
-  if (!sb || !user.id) return;
+  const user = await getActiveUser();
+  if (!sb || !user?.id) return;
 
   const { data: follows } = await sb.from('follows')
     .select('following:profiles!follows_following_id_fkey(id, username, avatar_url)')
@@ -217,7 +266,7 @@ async function loadFollowing() {
     const initials = (a.username||'?').slice(0,2).toUpperCase();
     return `
       <a href="author-profile.html?id=${a.id}" style="display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;background:var(--metal-card);border:var(--border-subtle);border-radius:var(--radius-lg);transition:var(--transition);text-decoration:none" onmouseenter="this.style.borderColor='rgba(139,26,26,0.4)'" onmouseleave="this.style.borderColor=''">
-        <div style="width:46px;height:46px;border-radius:50%;border:2px solid var(--crimson);background:linear-gradient(135deg,#2d0f0f,#1a0808);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:0.9rem;color:var(--crimson-glow);flex-shrink:0;overflow:hidden">
+        <div style="width:46px;height:46px;border-radius:50%;border:2px solid var(--crimson);background:linear-gradient(135deg,#2d0f0f,#1a0808);display:flex;align-items:center;justify-content:font-family:var(--font-heading);font-size:0.9rem;color:var(--crimson-glow);flex-shrink:0;overflow:hidden">
           ${a.avatar_url ? `<img src="${a.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : initials}
         </div>
         <div style="font-family:var(--font-heading);font-size:0.88rem;color:var(--white)">${a.username}</div>
@@ -231,8 +280,8 @@ async function loadMyComments() {
   if (!list) return;
 
   const sb = await window.GT_Supabase?.getSupabase();
-  const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
-  if (!sb || !user.id) return;
+  const user = await getActiveUser();
+  if (!sb || !user?.id) return;
 
   const { data: comments } = await sb.from('comments')
     .select('*, novel:novels(id, title), chapter:chapters(id, number, title)')
@@ -265,5 +314,5 @@ async function loadMyComments() {
 document.addEventListener('DOMContentLoaded', async () => {
   await loadProfileData();
   initProfileTabs();
-  loadLibrary(); // Load first tab
+  loadLibrary();
 });

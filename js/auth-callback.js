@@ -3,6 +3,10 @@
    Handles Supabase OAuth redirect on EVERY page
    Must be loaded on index.html and all pages
    so session is captured after Google/Discord
+   
+   FIX: Supports both hash-based (implicit) AND
+   query-string-based (PKCE) OAuth flows,
+   which is required for mobile browsers (Safari/iOS)
 ============================================ */
 
 (function () {
@@ -17,14 +21,26 @@
     return new Promise((resolve) => {
       if (window._sbClient) { resolve(window._sbClient); return; }
       if (window.supabase) {
-        window._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        window._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+          auth: {
+            // FIX: detectSessionInUrl must be true so PKCE code in query string is handled
+            detectSessionInUrl: true,
+            // FIX: Use pkce flow as it is more reliable on mobile browsers
+            flowType: 'pkce',
+          }
+        });
         resolve(window._sbClient);
         return;
       }
       const s = document.createElement('script');
       s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
       s.onload = () => {
-        window._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        window._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+          auth: {
+            detectSessionInUrl: true,
+            flowType: 'pkce',
+          }
+        });
         resolve(window._sbClient);
       };
       s.onerror = () => resolve(null);
@@ -52,31 +68,47 @@
     return user;
   }
 
-  // Run immediately when page loads
   async function handleCallback() {
     const sb = await loadSDK();
     if (!sb) return;
 
-    // Check URL hash for OAuth tokens (Supabase puts them here)
-    const hash = window.location.hash;
-    const hasToken = hash.includes('access_token') || hash.includes('error');
+    const hash   = window.location.hash;
+    const search = window.location.search;
+
+    // FIX: Check BOTH hash (implicit flow, desktop) AND query string (PKCE flow, mobile)
+    const hasHashToken  = hash.includes('access_token') || hash.includes('error');
+    const hasPKCECode   = search.includes('code=');
+    const hasToken      = hasHashToken || hasPKCECode;
 
     if (hasToken) {
-      // Supabase reads the hash automatically
-      const { data: { session }, error } = await sb.auth.getSession();
+      // FIX: exchangeCodeForSession handles PKCE; getSession handles implicit
+      // Supabase JS v2 does both automatically when detectSessionInUrl is true
+      // We just need to wait for the session to be ready
+      let session = null;
+      let error   = null;
+
+      if (hasPKCECode) {
+        // PKCE: exchange code for session explicitly for mobile
+        const result = await sb.auth.exchangeCodeForSession(window.location.href);
+        session = result.data?.session;
+        error   = result.error;
+      } else {
+        // Implicit (hash): getSession reads the hash automatically
+        const result = await sb.auth.getSession();
+        session = result.data?.session;
+        error   = result.error;
+      }
 
       if (session?.user) {
         const user = saveUser(session.user);
 
-        // Clean the URL hash
-        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        // Clean the URL (remove hash and/or query string OAuth params)
+        window.history.replaceState(null, '', window.location.pathname);
 
-        // Show welcome message
         setTimeout(() => {
           if (window.showToast) {
             window.showToast(`Welcome, ${user.username}! ✦`);
           }
-          // Reload navbar to show user avatar
           setTimeout(() => window.location.reload(), 800);
         }, 300);
 
@@ -89,7 +121,7 @@
       return;
     }
 
-    // No hash — just check if already have a session
+    // No token in URL — check existing session
     const { data: { session } } = await sb.auth.getSession();
     if (session?.user) {
       saveUser(session.user);
@@ -107,7 +139,6 @@
     });
   }
 
-  // Run as soon as possible
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', handleCallback);
   } else {
