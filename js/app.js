@@ -133,12 +133,12 @@ async function fetchNovels({ sort = 'total_views', genre, limit = 20, page = 1 }
   const sb = await window.GT_Supabase?.getSupabase();
   if (!sb) return [];
 
-  const offset = (page - 1) * limit;
-  let query = sb.from('novels')
-    .select('*, author:profiles!author_id(username, avatar_url)')
-    .eq('is_visible', true)
-    .eq('is_published', true)
-    .range(offset, offset + limit - 1);
+const offset = (page - 1) * limit;
+let query = sb.from('novels')
+  .select('*, author:profiles!author_id(username, avatar_url)')
+  .eq('is_visible', true)
+  .eq('status', 'published')
+  .range(offset, offset + limit - 1);
 
   if (genre) query = query.contains('genres', [genre]);
 
