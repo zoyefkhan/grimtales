@@ -1,66 +1,62 @@
 /* ============================================
    auth-callback.js
-   Handles Supabase OAuth redirect on EVERY page.
-
-   FIX: Static HTML sites must use implicit flow,
-   NOT pkce. PKCE requires a server to persist the
-   code verifier across the OAuth redirect. On mobile
-   the redirect opens a new context wiping localStorage.
+   Catches OAuth session on every page
+   Ensures profile exists (Android fix)
 ============================================ */
-
 (function () {
-
-  const SUPABASE_URL  = 'https://ukgqdgjtbvyybgvpmkcv.supabase.co';
-  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZ3FkZ2p0YnZ5eWJndnBta2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwOTI2OTEsImV4cCI6MjA5MTY2ODY5MX0.9t4p1Lcvu_j8hg0hWz3imLMb4NDBItPdyCogcTwiIAI';
+  const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
 
   if (SUPABASE_URL === 'YOUR_SUPABASE_URL') return;
 
-  function loadSDK() {
-    return new Promise((resolve) => {
-      if (window._sbClient) { resolve(window._sbClient); return; }
-      if (window.supabase) {
-        window._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
-          auth: {
-            flowType: 'implicit',        // ✅ correct for static HTML sites
-            detectSessionInUrl: true,    // reads #access_token from hash automatically
-            persistSession: true,
-            storage: window.localStorage,
-          }
-        });
-        resolve(window._sbClient);
-        return;
-      }
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-      s.onload = () => {
-        window._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
-          auth: {
-            flowType: 'implicit',
-            detectSessionInUrl: true,
-            persistSession: true,
-            storage: window.localStorage,
-          }
-        });
-        resolve(window._sbClient);
-      };
-      s.onerror = () => resolve(null);
-      document.head.appendChild(s);
-    });
+  async function loadSB() {
+    if (window._sbClient) return window._sbClient;
+    if (!window.supabase) {
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    window._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+    return window._sbClient;
   }
 
-  function saveUser(sbUser) {
+  // Ensure profile row exists — same as auth.js
+  async function ensureProfile(sb, sbUser) {
+    try {
+      const { data: existing } = await sb.from('profiles').select('id,username,role,avatar_url').eq('id', sbUser.id).single();
+      if (existing) return existing;
+
+      const username =
+        sbUser.user_metadata?.username ||
+        sbUser.user_metadata?.full_name ||
+        sbUser.user_metadata?.name ||
+        sbUser.email?.split('@')[0] ||
+        'User' + Math.floor(Math.random() * 9999);
+
+      const { data } = await sb.from('profiles').insert({
+        id: sbUser.id,
+        username,
+        display_name: sbUser.user_metadata?.full_name || username,
+        avatar_url: sbUser.user_metadata?.avatar_url || sbUser.user_metadata?.picture || '',
+        role: sbUser.user_metadata?.role || 'reader',
+      }).select().single();
+
+      return data;
+    } catch(e) {
+      return null;
+    }
+  }
+
+  function saveUser(sbUser, profile) {
     const user = {
       id:        sbUser.id,
-      username:  sbUser.user_metadata?.username
-                 || sbUser.user_metadata?.full_name
-                 || sbUser.user_metadata?.name
-                 || sbUser.email?.split('@')[0]
-                 || 'User',
+      username:  profile?.username || sbUser.user_metadata?.username || sbUser.user_metadata?.full_name || sbUser.email?.split('@')[0] || 'User',
       email:     sbUser.email,
-      role:      sbUser.user_metadata?.role || 'reader',
-      avatar:    sbUser.user_metadata?.avatar_url
-                 || sbUser.user_metadata?.picture
-                 || '',
+      role:      profile?.role || sbUser.user_metadata?.role || 'reader',
+      avatar:    profile?.avatar_url || sbUser.user_metadata?.avatar_url || sbUser.user_metadata?.picture || '',
       createdAt: sbUser.created_at,
     };
     localStorage.setItem('gt-user', JSON.stringify(user));
@@ -68,41 +64,38 @@
     return user;
   }
 
-  async function handleCallback() {
-    const sb = await loadSDK();
+  async function init() {
+    const sb = await loadSB();
     if (!sb) return;
 
+    // Handle URL hash (OAuth redirect)
     const hash = window.location.hash;
-    const hasToken = hash.includes('access_token') || hash.includes('error');
-
-    if (hasToken) {
-      // detectSessionInUrl:true means Supabase already parsed the hash
-      const { data: { session }, error } = await sb.auth.getSession();
-
+    if (hash && (hash.includes('access_token') || hash.includes('error_description'))) {
+      const { data: { session } } = await sb.auth.getSession();
       if (session?.user) {
-        const user = saveUser(session.user);
-
-        // Clean the URL hash
-        window.history.replaceState(null, '', window.location.pathname + window.location.search);
-
-        setTimeout(() => {
-          if (window.showToast) window.showToast(`Welcome, ${user.username}! ✦`);
-          setTimeout(() => window.location.reload(), 800);
-        }, 300);
-
-      } else if (error) {
-        console.error('OAuth error:', error);
-        if (window.showToast) window.showToast('Login failed: ' + error.message, 'error');
+        const profile = await ensureProfile(sb, session.user);
+        const user = saveUser(session.user, profile);
+        window.history.replaceState(null, '', window.location.pathname);
+        if (window.showToast) {
+          setTimeout(() => window.showToast(`Welcome, ${user.username}! ✦`), 300);
+        }
+        return;
       }
-      return;
     }
 
-    // No token in URL — restore existing session
+    // Check session on every page load
     const { data: { session } } = await sb.auth.getSession();
-    if (session?.user) saveUser(session.user);
+    if (session?.user) {
+      const profile = await ensureProfile(sb, session.user);
+      saveUser(session.user, profile);
+    }
 
-    sb.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) saveUser(session.user);
+    // Watch for auth changes (handles Android OAuth)
+    sb.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        const profile = await ensureProfile(sb, session.user);
+        saveUser(session.user, profile);
+      }
       if (event === 'SIGNED_OUT') {
         localStorage.removeItem('gt-user');
         localStorage.removeItem('gt-logged-in');
@@ -110,10 +103,6 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', handleCallback);
-  } else {
-    handleCallback();
-  }
-
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
