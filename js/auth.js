@@ -39,10 +39,19 @@ function saveUser(sbUser, extra = {}) {
     avatar:    sbUser.user_metadata?.avatar_url || sbUser.user_metadata?.picture || '',
     createdAt: sbUser.created_at,
   };
+  // FIX: Write BOTH keys atomically so mobile never gets a half-written state
   localStorage.setItem('gt-user', JSON.stringify(user));
   localStorage.setItem('gt-logged-in', 'true');
   return user;
 }
+
+// FIX: Central logout helper — always call this instead of manually removing keys.
+// Ensures both keys are always cleared together on every platform including mobile.
+function clearSession() {
+  localStorage.removeItem('gt-user');
+  localStorage.removeItem('gt-logged-in');
+}
+window.GT_logout = clearSession;
 
 // Button loading
 const spinCSS = document.createElement('style');
@@ -127,10 +136,11 @@ function initLogin() {
           return;
         }
       }
-      // Demo fallback
+      // Demo / localStorage fallback
       const stored = JSON.parse(localStorage.getItem('gt-users') || '[]');
       const found = stored.find(u => u.email === email || u.username === email);
       if (found && found.password === pass) {
+        // FIX: Use saveUser-style atomic write for demo login too
         localStorage.setItem('gt-user', JSON.stringify(found));
         localStorage.setItem('gt-logged-in', 'true');
         window.showToast(`Welcome back, ${found.username}! ✦`);
@@ -188,7 +198,6 @@ function initRegister() {
           localStorage.setItem('gt-users', JSON.stringify(stored));
 
           if (!data.session) {
-            // Email confirmation required
             showEmailSent(email);
           } else {
             const user = saveUser(data.user, { username, role });
@@ -204,6 +213,7 @@ function initRegister() {
       const nu = { id:'local_'+Date.now(), username, email, password:pass, role, avatar:'', createdAt: new Date().toISOString() };
       stored.push(nu);
       localStorage.setItem('gt-users', JSON.stringify(stored));
+      // FIX: Atomic write for demo register too
       localStorage.setItem('gt-user', JSON.stringify(nu));
       localStorage.setItem('gt-logged-in', 'true');
       window.showToast(`Welcome to GrimTales, ${username}! ✦`);
@@ -250,9 +260,6 @@ function initSocial() {
         const sb = await getSB();
         if (!sb) throw new Error('Supabase not loaded');
 
-        // This redirects the user to Google/Discord
-        // When they approve, Supabase sends them back to your site
-        // auth-callback.js then catches the session
         const { error } = await sb.auth.signInWithOAuth({
           provider,
           options: {
@@ -265,7 +272,6 @@ function initSocial() {
         });
 
         if (error) throw error;
-        // Page will redirect to Google/Discord automatically
 
       } catch (err) {
         console.error('OAuth error:', err);

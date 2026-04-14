@@ -1,5 +1,6 @@
 /* ============================================
    auth-guard.js — Auth + Role Protection
+   FIX: Stricter session validation for mobile
 ============================================ */
 (function () {
   const RULES = {
@@ -12,15 +13,39 @@
   };
 
   function getUser() {
-    try { return JSON.parse(localStorage.getItem('gt-user') || 'null'); }
-    catch { return null; }
+    try {
+      const raw = localStorage.getItem('gt-user');
+      if (!raw) return null;
+      const u = JSON.parse(raw);
+      // Strict validation — must have BOTH id AND username to count as logged in
+      // This prevents stale/partial mobile sessions from triggering guestOnly redirect
+      if (!u || typeof u !== 'object') return null;
+      if (!u.id || !u.username) return null;
+      return u;
+    } catch {
+      return null;
+    }
+  }
+
+  // Also verify the gt-logged-in flag is consistent — if either is missing, treat as guest
+  function isReallyLoggedIn(user) {
+    if (!user) return false;
+    const flag = localStorage.getItem('gt-logged-in');
+    // On mobile, sometimes only one of the two gets written — require both
+    return !!(flag === 'true' && user.id && user.username);
   }
 
   const user     = getUser();
-  const loggedIn = !!(user && user.id && user.username);
+  const loggedIn = isReallyLoggedIn(user);
   const role     = user?.role || 'reader';
   const page     = window.location.pathname.split('/').pop() || 'index.html';
   const rule     = RULES[page];
+
+  // Clean up inconsistent state that commonly occurs on mobile
+  if (!loggedIn && user === null) {
+    // Clear any leftover flags without a valid user object
+    localStorage.removeItem('gt-logged-in');
+  }
 
   function showRedirect(title, subtitle, dest, delay, extraHTML = '') {
     document.documentElement.style.overflow = 'hidden';
@@ -44,16 +69,45 @@
 
   if (rule) {
     if (rule.guestOnly && loggedIn) {
-      const dest = sessionStorage.getItem('gt-redirect-after-login') || 'index.html';
-      sessionStorage.removeItem('gt-redirect-after-login');
-      window.location.href = dest; return;
+      // FIX: Extra safety — re-validate Supabase session before redirecting away from login.
+      // On mobile, Supabase may have invalidated the session server-side even if localStorage persists.
+      // We do a quick async check; if it fails, we clear storage and let them stay on login.
+      (async function checkSessionBeforeRedirect() {
+        try {
+          if (window._sbClient) {
+            const { data } = await window._sbClient.auth.getSession();
+            if (!data?.session) {
+              // Server says no session — clear stale local data and stay on login page
+              localStorage.removeItem('gt-user');
+              localStorage.removeItem('gt-logged-in');
+              return;
+            }
+          }
+        } catch (e) {
+          // If check fails (network issue etc.), stay on login page rather than redirect
+          return;
+        }
+        // Session confirmed valid — redirect away
+        const dest = sessionStorage.getItem('gt-redirect-after-login') || 'index.html';
+        sessionStorage.removeItem('gt-redirect-after-login');
+        window.location.href = dest;
+      })();
+
+      // FIX: Do NOT do a synchronous redirect here anymore.
+      // The async check above handles it. We just expose globals and return.
+      window.GT_User = user;
+      window.GT_isLoggedIn = loggedIn;
+      window.GT_Role = role;
+      return;
     }
+
     if (rule.requireLogin && !loggedIn) {
       sessionStorage.setItem('gt-redirect-after-login', window.location.href);
       showRedirect('Sign in required', 'You need to be signed in to view this page.', 'login.html', 1400);
       return;
     }
-    // Author required — but NOW we show upgrade option instead of register
+
+    // Author required
     if (rule.requireRole === 'author' && loggedIn && role !== 'author' && role !== 'admin') {
       document.documentElement.style.overflow = 'hidden';
       const render = () => {
@@ -82,17 +136,14 @@
           btn.textContent = 'Upgrading...';
           btn.disabled = true;
 
-          // Update role in localStorage
           const u = JSON.parse(localStorage.getItem('gt-user') || '{}');
           u.role = 'author';
           localStorage.setItem('gt-user', JSON.stringify(u));
 
-          // Update in users list too
           const users = JSON.parse(localStorage.getItem('gt-users') || '[]');
           const idx = users.findIndex(x => x.id === u.id || x.email === u.email);
           if (idx > -1) { users[idx].role = 'author'; localStorage.setItem('gt-users', JSON.stringify(users)); }
 
-          // Try update in Supabase if connected
           try {
             if (window._sbClient) {
               await window._sbClient.auth.updateUser({ data: { role: 'author' } });
