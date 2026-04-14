@@ -1,12 +1,11 @@
 /* ============================================
    auth-callback.js
-   Handles Supabase OAuth redirect on EVERY page
-   Must be loaded on index.html and all pages
-   so session is captured after Google/Discord
-   
-   FIX: Supports both hash-based (implicit) AND
-   query-string-based (PKCE) OAuth flows,
-   which is required for mobile browsers (Safari/iOS)
+   Handles Supabase OAuth redirect on EVERY page.
+
+   FIX: Static HTML sites must use implicit flow,
+   NOT pkce. PKCE requires a server to persist the
+   code verifier across the OAuth redirect. On mobile
+   the redirect opens a new context wiping localStorage.
 ============================================ */
 
 (function () {
@@ -16,17 +15,16 @@
 
   if (SUPABASE_URL === 'YOUR_SUPABASE_URL') return;
 
-  // Load Supabase SDK
   function loadSDK() {
     return new Promise((resolve) => {
       if (window._sbClient) { resolve(window._sbClient); return; }
       if (window.supabase) {
         window._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
           auth: {
-            // FIX: detectSessionInUrl must be true so PKCE code in query string is handled
-            detectSessionInUrl: true,
-            // FIX: Use pkce flow as it is more reliable on mobile browsers
-            flowType: 'pkce',
+            flowType: 'implicit',        // ✅ correct for static HTML sites
+            detectSessionInUrl: true,    // reads #access_token from hash automatically
+            persistSession: true,
+            storage: window.localStorage,
           }
         });
         resolve(window._sbClient);
@@ -37,8 +35,10 @@
       s.onload = () => {
         window._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
           auth: {
+            flowType: 'implicit',
             detectSessionInUrl: true,
-            flowType: 'pkce',
+            persistSession: true,
+            storage: window.localStorage,
           }
         });
         resolve(window._sbClient);
@@ -72,66 +72,37 @@
     const sb = await loadSDK();
     if (!sb) return;
 
-    const hash   = window.location.hash;
-    const search = window.location.search;
-
-    // FIX: Check BOTH hash (implicit flow, desktop) AND query string (PKCE flow, mobile)
-    const hasHashToken  = hash.includes('access_token') || hash.includes('error');
-    const hasPKCECode   = search.includes('code=');
-    const hasToken      = hasHashToken || hasPKCECode;
+    const hash = window.location.hash;
+    const hasToken = hash.includes('access_token') || hash.includes('error');
 
     if (hasToken) {
-      // FIX: exchangeCodeForSession handles PKCE; getSession handles implicit
-      // Supabase JS v2 does both automatically when detectSessionInUrl is true
-      // We just need to wait for the session to be ready
-      let session = null;
-      let error   = null;
-
-      if (hasPKCECode) {
-        // PKCE: exchange code for session explicitly for mobile
-        const result = await sb.auth.exchangeCodeForSession(window.location.href);
-        session = result.data?.session;
-        error   = result.error;
-      } else {
-        // Implicit (hash): getSession reads the hash automatically
-        const result = await sb.auth.getSession();
-        session = result.data?.session;
-        error   = result.error;
-      }
+      // detectSessionInUrl:true means Supabase already parsed the hash
+      const { data: { session }, error } = await sb.auth.getSession();
 
       if (session?.user) {
         const user = saveUser(session.user);
 
-        // Clean the URL (remove hash and/or query string OAuth params)
-        window.history.replaceState(null, '', window.location.pathname);
+        // Clean the URL hash
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
 
         setTimeout(() => {
-          if (window.showToast) {
-            window.showToast(`Welcome, ${user.username}! ✦`);
-          }
+          if (window.showToast) window.showToast(`Welcome, ${user.username}! ✦`);
           setTimeout(() => window.location.reload(), 800);
         }, 300);
 
       } else if (error) {
         console.error('OAuth error:', error);
-        if (window.showToast) {
-          window.showToast('Login failed: ' + error.message, 'error');
-        }
+        if (window.showToast) window.showToast('Login failed: ' + error.message, 'error');
       }
       return;
     }
 
-    // No token in URL — check existing session
+    // No token in URL — restore existing session
     const { data: { session } } = await sb.auth.getSession();
-    if (session?.user) {
-      saveUser(session.user);
-    }
+    if (session?.user) saveUser(session.user);
 
-    // Listen for future auth changes
     sb.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        saveUser(session.user);
-      }
+      if (event === 'SIGNED_IN' && session?.user) saveUser(session.user);
       if (event === 'SIGNED_OUT') {
         localStorage.removeItem('gt-user');
         localStorage.removeItem('gt-logged-in');
