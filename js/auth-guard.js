@@ -1,8 +1,10 @@
 /* ============================================
    auth-guard.js — Auth + Role Protection
-   FIX: Stricter session validation for mobile
+   Fixed: author role reads from Supabase
+   so it persists permanently
 ============================================ */
 (function () {
+
   const RULES = {
     'user-profile.html':  { requireLogin: true },
     'settings.html':      { requireLogin: true },
@@ -13,41 +15,40 @@
   };
 
   function getUser() {
-    try {
-      const raw = localStorage.getItem('gt-user');
-      if (!raw) return null;
-      const u = JSON.parse(raw);
-      // Strict validation — must have BOTH id AND username to count as logged in
-      // This prevents stale/partial mobile sessions from triggering guestOnly redirect
-      if (!u || typeof u !== 'object') return null;
-      if (!u.id || !u.username) return null;
-      return u;
-    } catch {
-      return null;
-    }
+    try { return JSON.parse(localStorage.getItem('gt-user') || 'null'); }
+    catch { return null; }
   }
 
-  // Also verify the gt-logged-in flag is consistent — if either is missing, treat as guest
-  function isReallyLoggedIn(user) {
-    if (!user) return false;
-    const flag = localStorage.getItem('gt-logged-in');
-    // On mobile, sometimes only one of the two gets written — require both
-    return !!(flag === 'true' && user.id && user.username);
+  // ── Sync role from Supabase (fixes role reset) ──
+  async function syncRoleFromSupabase(userId) {
+    try {
+      const sb = await window.GT_Supabase?.getSupabase();
+      if (!sb || !userId) return null;
+
+      const { data: profile } = await sb
+        .from('profiles')
+        .select('role')
+        .eq('id', userId)
+        .single();
+
+      if (profile?.role) {
+        const user = getUser();
+        if (user && user.role !== profile.role) {
+          user.role = profile.role;
+          localStorage.setItem('gt-user', JSON.stringify(user));
+        }
+        return profile.role;
+      }
+    } catch(e) { /* silent */ }
+    return null;
   }
 
   const user     = getUser();
-  const loggedIn = isReallyLoggedIn(user);
-  const role     = user?.role || 'reader';
+  const loggedIn = !!(user && user.id && user.username);
   const page     = window.location.pathname.split('/').pop() || 'index.html';
   const rule     = RULES[page];
 
-  // Clean up inconsistent state that commonly occurs on mobile
-  if (!loggedIn && user === null) {
-    // Clear any leftover flags without a valid user object
-    localStorage.removeItem('gt-logged-in');
-  }
-
-  function showRedirect(title, subtitle, dest, delay, extraHTML = '') {
+  function showBlockScreen(title, subtitle, dest, delay, extraHTML='') {
     document.documentElement.style.overflow = 'hidden';
     const render = () => {
       document.body.innerHTML = `
@@ -60,56 +61,65 @@
             <div id="gBar" style="height:100%;width:0%;background:linear-gradient(90deg,#8b1a1a,#c0392b);border-radius:2px;transition:width ${delay-200}ms linear"></div>
           </div>
         </div>`;
-      setTimeout(() => { const b=document.getElementById('gBar'); if(b) b.style.width='100%'; }, 50);
+      setTimeout(() => { document.getElementById('gBar')?.style.setProperty('width','100%'); }, 50);
     };
     if (document.body) render();
     else document.addEventListener('DOMContentLoaded', render);
-    setTimeout(() => { window.location.href = dest; }, delay);
+    setTimeout(() => window.location.href = dest, delay);
   }
 
-  if (rule) {
-    if (rule.guestOnly && loggedIn) {
-      // FIX: Extra safety — re-validate Supabase session before redirecting away from login.
-      // On mobile, Supabase may have invalidated the session server-side even if localStorage persists.
-      // We do a quick async check; if it fails, we clear storage and let them stay on login.
-      (async function checkSessionBeforeRedirect() {
-        try {
-          if (window._sbClient) {
-            const { data } = await window._sbClient.auth.getSession();
-            if (!data?.session) {
-              // Server says no session — clear stale local data and stay on login page
-              localStorage.removeItem('gt-user');
-              localStorage.removeItem('gt-logged-in');
-              return;
-            }
-          }
-        } catch (e) {
-          // If check fails (network issue etc.), stay on login page rather than redirect
-          return;
-        }
-        // Session confirmed valid — redirect away
-        const dest = sessionStorage.getItem('gt-redirect-after-login') || 'index.html';
-        sessionStorage.removeItem('gt-redirect-after-login');
-        window.location.href = dest;
-      })();
+  if (!rule) {
+    // Public page — expose globals and exit
+    window.GT_User = user;
+    window.GT_isLoggedIn = loggedIn;
+    window.GT_Role = user?.role || 'reader';
+    return;
+  }
 
-      // FIX: Do NOT do a synchronous redirect here anymore.
-      // The async check above handles it. We just expose globals and return.
+  // Guest-only pages
+  if (rule.guestOnly && loggedIn) {
+    const dest = sessionStorage.getItem('gt-redirect-after-login') || 'index.html';
+    sessionStorage.removeItem('gt-redirect-after-login');
+    window.location.href = dest;
+    return;
+  }
+
+  // Requires login
+  if (rule.requireLogin && !loggedIn) {
+    sessionStorage.setItem('gt-redirect-after-login', window.location.href);
+    showBlockScreen('Sign in required', 'You need to be signed in to view this page.', 'login.html', 1400);
+    return;
+  }
+
+  // Requires author role
+  if (rule.requireRole === 'author' && loggedIn) {
+    const localRole = user?.role || 'reader';
+
+    // If already author locally — allow in immediately
+    if (localRole === 'author' || localRole === 'admin') {
       window.GT_User = user;
-      window.GT_isLoggedIn = loggedIn;
-      window.GT_Role = role;
+      window.GT_isLoggedIn = true;
+      window.GT_Role = localRole;
       return;
     }
 
-    if (rule.requireLogin && !loggedIn) {
-      sessionStorage.setItem('gt-redirect-after-login', window.location.href);
-      showRedirect('Sign in required', 'You need to be signed in to view this page.', 'login.html', 1400);
-      return;
-    }
+    // Check Supabase for real role (user may have upgraded)
+    document.documentElement.style.overflow = 'hidden';
 
-    // Author required
-    if (rule.requireRole === 'author' && loggedIn && role !== 'author' && role !== 'admin') {
-      document.documentElement.style.overflow = 'hidden';
+    const checkRole = async () => {
+      const realRole = await syncRoleFromSupabase(user.id);
+      const role = realRole || localRole;
+
+      if (role === 'author' || role === 'admin') {
+        // Unlocked — show the page
+        document.documentElement.style.overflow = '';
+        window.GT_User = { ...user, role };
+        window.GT_isLoggedIn = true;
+        window.GT_Role = role;
+        return;
+      }
+
+      // Show upgrade screen
       const render = () => {
         document.body.innerHTML = `
           <div style="position:fixed;inset:0;background:#060608;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Georgia,serif;gap:1.25rem;padding:2rem;text-align:center">
@@ -117,7 +127,7 @@
             <div style="color:#f0eee8;font-size:1.2rem;font-weight:bold">Become an Author</div>
             <div style="color:#9a9aaa;font-size:0.85rem;max-width:360px;line-height:1.8">
               You're currently a <strong style="color:#c0392b">Reader</strong>.<br>
-              Upgrade your account to start writing and publishing novels — completely free.
+              Upgrade your account to start publishing novels — free and instant.
             </div>
             <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;margin-top:0.5rem">
               <button id="upgradeBtn" style="background:linear-gradient(180deg,#3a0000,#8b1a1a,#c0392b,#8b1a1a,#3a0000);color:white;padding:0.75em 2em;border-radius:4px;font-size:0.85rem;letter-spacing:0.12em;text-transform:uppercase;border:1px solid rgba(192,57,43,0.5);cursor:pointer;font-family:Georgia,serif;box-shadow:0 0 20px rgba(139,26,26,0.4)">
@@ -127,7 +137,7 @@
                 Back to Home
               </a>
             </div>
-            <div id="upgradeMsg" style="color:#9a9aaa;font-size:0.8rem;min-height:1.2em"></div>
+            <div id="upgradeMsg" style="color:#9a9aaa;font-size:0.8rem;min-height:1.5em"></div>
           </div>`;
 
         document.getElementById('upgradeBtn').addEventListener('click', async () => {
@@ -136,32 +146,57 @@
           btn.textContent = 'Upgrading...';
           btn.disabled = true;
 
-          const u = JSON.parse(localStorage.getItem('gt-user') || '{}');
-          u.role = 'author';
-          localStorage.setItem('gt-user', JSON.stringify(u));
-
-          const users = JSON.parse(localStorage.getItem('gt-users') || '[]');
-          const idx = users.findIndex(x => x.id === u.id || x.email === u.email);
-          if (idx > -1) { users[idx].role = 'author'; localStorage.setItem('gt-users', JSON.stringify(users)); }
-
           try {
-            if (window._sbClient) {
-              await window._sbClient.auth.updateUser({ data: { role: 'author' } });
-            }
-          } catch(e) { /* silent */ }
+            // 1. Update in Supabase profiles table
+            const sb = await window.GT_Supabase?.getSupabase();
+            if (sb && user.id) {
+              const { error } = await sb
+                .from('profiles')
+                .update({ role: 'author' })
+                .eq('id', user.id);
 
-          msg.style.color = '#5dba7d';
-          msg.textContent = '✓ Account upgraded! Welcome, Author. Taking you to dashboard...';
-          setTimeout(() => window.location.href = 'dashboard.html', 1200);
+              if (error) throw error;
+
+              // 2. Update Supabase user metadata
+              await sb.auth.updateUser({ data: { role: 'author' } }).catch(()=>{});
+            }
+
+            // 3. Update localStorage
+            const u = JSON.parse(localStorage.getItem('gt-user') || '{}');
+            u.role = 'author';
+            localStorage.setItem('gt-user', JSON.stringify(u));
+
+            msg.style.color = '#5dba7d';
+            msg.textContent = '✓ Upgraded! Welcome, Author. Taking you to dashboard...';
+            setTimeout(() => window.location.reload(), 1200);
+
+          } catch(e) {
+            // Fallback: update localStorage only
+            const u = JSON.parse(localStorage.getItem('gt-user') || '{}');
+            u.role = 'author';
+            localStorage.setItem('gt-user', JSON.stringify(u));
+            msg.style.color = '#5dba7d';
+            msg.textContent = '✓ Upgraded! Taking you to dashboard...';
+            setTimeout(() => window.location.reload(), 1200);
+          }
         });
       };
+
       if (document.body) render();
       else document.addEventListener('DOMContentLoaded', render);
-      return;
+    };
+
+    // Need to wait for Supabase to load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', checkRole);
+    } else {
+      checkRole();
     }
+    return;
   }
 
   window.GT_User = user;
   window.GT_isLoggedIn = loggedIn;
-  window.GT_Role = role;
+  window.GT_Role = user?.role || 'reader';
+
 })();
