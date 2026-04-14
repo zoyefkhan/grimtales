@@ -4,8 +4,8 @@
    Ensures profile exists (Android fix)
 ============================================ */
 (function () {
-  const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
-  const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+  const SUPABASE_URL  = 'https://ukgqdgjtbvyybgvpmkcv.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVrZ3FkZ2p0YnZ5eWJndnBta2N2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwOTI2OTEsImV4cCI6MjA5MTY2ODY5MX0.9t4p1Lcvu_j8hg0hWz3imLMb4NDBItPdyCogcTwiIAI';
 
   if (SUPABASE_URL === 'YOUR_SUPABASE_URL') return;
 
