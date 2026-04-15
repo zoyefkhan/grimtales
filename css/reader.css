@@ -286,6 +286,7 @@
 
 .line-height-slider input[type="range"] {
   width: 100%;
+  appearance: none;
   -webkit-appearance: none;
   height: 3px;
   border-radius: 2px;
@@ -293,8 +294,10 @@
   outline: none;
 }
 .line-height-slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
   -webkit-appearance: none;
-  width: 14px; height: 14px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: var(--crimson);
   cursor: pointer;
@@ -365,7 +368,7 @@
   .reader-sidebar-left, .reader-sidebar-right { display: none; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px) {                                                             
   /* Fix for broken text layout on Android */
   .reader-content {
     padding: 1.5rem 1rem;
@@ -398,4 +401,4 @@
   .comments-section { padding: 2rem 1rem; }
   .reader-settings-panel { right: 0.25rem; left: 0.25rem; width: auto; }
   .chapter-meta-row { gap: 0.5rem; font-size: 0.72rem; }
-}
+  }
