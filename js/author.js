@@ -59,6 +59,11 @@ async function initAuthorProfile() {
 
   updateText('.author-tagline', profile.bio || 'Author on GrimTales.');
 
+  const bioText = document.querySelector('.bio-text');
+  if (bioText) {
+    bioText.textContent = profile.bio || 'No biography available for this author.';
+  }
+
   const aboutTitle = document.querySelector('.profile-panel-title');
   if (aboutTitle) aboutTitle.textContent = `About ${authorName}`;
 }
