@@ -36,7 +36,7 @@ grimtales/
 ├── css/novel-detail.css    ← Novel hero, chapters list, sidebar panels
 │
 ├── JAVASCRIPT (13 files)
-├── js/app.js               ← Core: theme, navbar, user dropdown, mock data
+├── js/app.js               ← Core: theme, navbar, user dropdown
 ├── js/home.js              ← Particles, grids, trending, counters
 ├── js/reader.js            ← Progress bar, font/theme settings, bookmarks
 ├── js/browse.js            ← Filters, search, grid/list toggle, pagination

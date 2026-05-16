@@ -168,7 +168,7 @@
 
             msg.style.color = '#5dba7d';
             msg.textContent = '✓ Upgraded! Welcome, Author. Taking you to dashboard...';
-            setTimeout(() => window.location.reload(), 1200);
+            setTimeout(() => window.location.href = 'dashboard.html', 1200);
 
           } catch(e) {
             // Fallback: update localStorage only
@@ -177,7 +177,7 @@
             localStorage.setItem('gt-user', JSON.stringify(u));
             msg.style.color = '#5dba7d';
             msg.textContent = '✓ Upgraded! Taking you to dashboard...';
-            setTimeout(() => window.location.reload(), 1200);
+            setTimeout(() => window.location.href = 'dashboard.html', 1200);
           }
         });
       };
