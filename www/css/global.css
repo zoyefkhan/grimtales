@@ -1,0 +1,507 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ============================================================
+   DARK MODE — Metallic Crimson Red (Image 2)
+   Background panels use deep red metallic gradient
+   LIGHT MODE — Metallic Charcoal (Image 3)
+   Background panels use deep dark grey metallic gradient
+============================================================ */
+
+:root {
+  /* Core palette */
+  --black:            #060608;
+  --charcoal-deep:    #0d0d10;
+  --charcoal:         #141418;
+  --charcoal-mid:     #1c1c22;
+  --charcoal-light:   #26262e;
+  --charcoal-border:  #32323c;
+
+  --crimson:          #8b1a1a;
+  --crimson-bright:   #c0392b;
+  --crimson-glow:     #e74c3c;
+  --crimson-soft:     #a93226;
+  --crimson-deep:     #4a0000;
+
+  --gold:             #c9a84c;
+  --gold-dim:         #8a6f2e;
+
+  --ash:              #9a9aaa;
+  --ash-light:        #c4c4d4;
+  --white:            #f0eee8;
+  --white-dim:        #d4d0c8;
+
+  /* Metallic surface gradient — DARK MODE (crimson red like Image 2) */
+  --metal-surface: linear-gradient(
+    180deg,
+    #1a0000 0%,
+    #2d0505 8%,
+    #5a0f0f 20%,
+    #8b1a1a 38%,
+    #c0392b 50%,
+    #8b1a1a 62%,
+    #5a0f0f 80%,
+    #2d0505 92%,
+    #1a0000 100%
+  );
+
+  --metal-surface-subtle: linear-gradient(
+    160deg,
+    #0d0000 0%,
+    #1a0505 15%,
+    #3d0a0a 35%,
+    #6b1515 50%,
+    #3d0a0a 65%,
+    #1a0505 85%,
+    #0d0000 100%
+  );
+
+  --metal-card: linear-gradient(
+    170deg,
+    #110000 0%,
+    #220505 20%,
+    #4a0e0e 45%,
+    #3d0a0a 55%,
+    #220505 80%,
+    #110000 100%
+  );
+
+  --metal-sheen: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255,80,80,0.08) 50%,
+    transparent 70%
+  );
+
+  /* Typography */
+  --font-display: 'Cinzel Decorative', serif;
+  --font-heading:  'Cinzel', serif;
+  --font-body:     'EB Garamond', serif;
+  --font-read:     'Crimson Text', serif;
+
+  /* Shadows */
+  --shadow-crimson: 0 0 30px rgba(139,26,26,0.5), 0 0 60px rgba(139,26,26,0.2);
+  --shadow-deep:    0 8px 40px rgba(0,0,0,0.8);
+  --shadow-card:    0 4px 24px rgba(0,0,0,0.6);
+
+  /* Borders */
+  --border-subtle:  1px solid rgba(139,26,26,0.25);
+  --border-crimson: 1px solid rgba(139,26,26,0.5);
+  --border-sheen:   1px solid rgba(255,80,80,0.12);
+
+  --radius:    4px;
+  --radius-lg: 8px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(139,26,26,0.12), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 20% 100%, rgba(139,26,26,0.08), transparent 50%);
+  color: var(--white-dim);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── Custom Scrollbar (metallic red) ──────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #0d0000; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b1a1a, #c0392b, #8b1a1a);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #c0392b, #e74c3c, #c0392b); }
+
+/* ─── Typography ────────────────────────────── */
+h1, h2, h3 { font-family: var(--font-heading); font-weight: 600; color: var(--white); letter-spacing: 0.05em; }
+h4, h5, h6 { font-family: var(--font-heading); color: var(--ash-light); }
+a { color: var(--crimson-glow); text-decoration: none; transition: var(--transition); }
+a:hover { color: var(--gold); }
+img { max-width: 100%; display: block; }
+
+/* ─── Inputs ────────────────────────────────── */
+input, textarea, select {
+  font-family: var(--font-body);
+  background: linear-gradient(180deg, #0d0000, #1a0505, #0d0000);
+  border: var(--border-subtle);
+  color: var(--white-dim);
+  border-radius: var(--radius);
+  padding: 0.6em 1em;
+  outline: none;
+  transition: var(--transition);
+  width: 100%;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(139,26,26,0.1);
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--crimson-bright);
+  box-shadow: 0 0 0 2px rgba(139,26,26,0.25), inset 0 2px 6px rgba(0,0,0,0.5);
+  background: linear-gradient(180deg, #110000, #200505, #110000);
+}
+button { font-family: var(--font-heading); cursor: pointer; border: none; outline: none; transition: var(--transition); }
+
+/* ─── Layout ─────────────────────────────────── */
+.container    { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
+.container-sm { max-width: 900px;  margin: 0 auto; padding: 0 2rem; }
+
+/* ─── METALLIC BUTTONS ───────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.65em 1.8em;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+/* Sheen sweep on hover */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%);
+  transition: left 0.4s ease;
+}
+.btn:hover::before { left: 100%; }
+
+/* Primary crimson metallic */
+.btn-crimson {
+  background: linear-gradient(
+    180deg,
+    #3a0000 0%,
+    #6b1010 15%,
+    #a82020 35%,
+    #c0392b 48%,
+    #d44235 52%,
+    #c0392b 55%,
+    #a82020 65%,
+    #6b1010 85%,
+    #3a0000 100%
+  );
+  color: #fff;
+  border: 1px solid rgba(192,57,43,0.5);
+  box-shadow:
+    0 3px 12px rgba(0,0,0,0.5),
+    0 0 18px rgba(139,26,26,0.3),
+    inset 0 1px 0 rgba(255,100,100,0.2),
+    inset 0 -1px 0 rgba(0,0,0,0.4);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.btn-crimson:hover {
+  box-shadow:
+    0 5px 20px rgba(0,0,0,0.6),
+    0 0 30px rgba(192,57,43,0.5),
+    inset 0 1px 0 rgba(255,100,100,0.25);
+  transform: translateY(-1px);
+  color: #fff;
+}
+.btn-crimson:active { transform: translateY(0); }
+
+/* Outline button */
+.btn-outline {
+  background: linear-gradient(180deg, #0d0000, #1a0505, #0d0000);
+  color: var(--ash-light);
+  border: var(--border-subtle);
+  box-shadow: inset 0 1px 0 rgba(255,80,80,0.05), 0 2px 6px rgba(0,0,0,0.4);
+}
+.btn-outline:hover {
+  border-color: var(--crimson-bright);
+  color: var(--crimson-glow);
+  background: linear-gradient(180deg, #150000, #250505, #150000);
+  box-shadow: 0 0 12px rgba(139,26,26,0.2);
+}
+
+/* Gold metallic */
+.btn-gold {
+  background: linear-gradient(180deg, #3a2800, #7a5a10, #c9a84c, #e0bf6a, #c9a84c, #7a5a10, #3a2800);
+  color: var(--black);
+  border: 1px solid rgba(201,168,76,0.4);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,220,100,0.2);
+}
+.btn-gold:hover { box-shadow: 0 0 20px rgba(201,168,76,0.4), 0 5px 15px rgba(0,0,0,0.5); transform: translateY(-1px); }
+
+/* ─── METALLIC CARDS / PANELS ───────────────── */
+/* Every surface gets the metallic treatment */
+.novel-card,
+.trending-item,
+.genre-card,
+.featured-novel,
+.dash-panel,
+.stat-card,
+.sidebar-panel,
+.filter-panel,
+.settings-card,
+.comment-item,
+.history-item,
+.notif-item,
+.profile-bio-panel,
+.profile-sidebar-panel,
+.auth-form-side,
+.chapters-panel,
+.newsletter-section,
+.author-result-card,
+.novel-list-item {
+  background: var(--metal-card) !important;
+  border: var(--border-subtle) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,60,60,0.06) !important;
+  position: relative;
+}
+
+/* Top edge sheen on cards */
+.novel-card::after,
+.stat-card::after,
+.dash-panel::after,
+.sidebar-panel::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(192,57,43,0.3), transparent);
+  pointer-events: none;
+}
+
+/* Card hover */
+.novel-card:hover,
+.trending-item:hover,
+.novel-list-item:hover {
+  border-color: rgba(192,57,43,0.5) !important;
+  box-shadow: var(--shadow-crimson), 0 6px 24px rgba(0,0,0,0.7) !important;
+}
+
+/* ─── Section backgrounds ────────────────────── */
+section,
+.section,
+.browse-hero,
+.novel-hero,
+.author-hero,
+.profile-top,
+.search-hero {
+  background: linear-gradient(
+    180deg,
+    #060608 0%,
+    #0d0005 30%,
+    #110008 60%,
+    #060608 100%
+  ) !important;
+  border-color: rgba(139,26,26,0.2) !important;
+}
+
+/* Alternating section */
+section:nth-child(even),
+.section:nth-child(even) {
+  background: linear-gradient(
+    180deg,
+    #080005 0%,
+    #0f0008 40%,
+    #14000c 60%,
+    #080005 100%
+  ) !important;
+}
+
+/* ─── Navbar ─────────────────────────────────── */
+.navbar {
+  background: linear-gradient(
+    180deg,
+    rgba(10,0,0,0.97) 0%,
+    rgba(18,0,5,0.97) 100%
+  ) !important;
+  border-bottom: 1px solid rgba(139,26,26,0.3) !important;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.7), 0 0 40px rgba(139,26,26,0.1) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+/* ─── Filter bar, tab bars ───────────────────── */
+.filter-bar,
+.profile-tabs,
+.search-tabs {
+  background: linear-gradient(180deg, #0d0003, #150008) !important;
+  border-bottom: var(--border-subtle) !important;
+}
+
+/* ─── Sidebar nav ────────────────────────────── */
+.dash-sidebar,
+.settings-sidebar,
+.browse-sidebar .filter-panel {
+  background: linear-gradient(
+    160deg,
+    #0d0000 0%,
+    #180505 30%,
+    #220808 60%,
+    #180505 80%,
+    #0d0000 100%
+  ) !important;
+  border-color: rgba(139,26,26,0.2) !important;
+}
+
+/* ─── Auth visual side ───────────────────────── */
+.auth-visual {
+  background: linear-gradient(
+    150deg,
+    #050000 0%,
+    #120308 25%,
+    #220810 50%,
+    #120308 75%,
+    #050000 100%
+  ) !important;
+}
+
+/* ─── Reader content area ────────────────────── */
+.reader-content {
+  background: linear-gradient(180deg, #080003, #0d0005, #080003) !important;
+}
+
+/* ─── Tags ───────────────────────────────────── */
+.tag {
+  display: inline-block;
+  padding: 0.2em 0.75em;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  background: linear-gradient(135deg, #200000, #3d0a0a, #200000);
+  color: var(--crimson-glow);
+  border: 1px solid rgba(139,26,26,0.4);
+  box-shadow: inset 0 1px 0 rgba(255,60,60,0.08);
+}
+
+/* ─── Divider ────────────────────────────────── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--crimson), transparent);
+  margin: 2rem 0;
+  opacity: 0.5;
+}
+
+/* ─── Ornament ───────────────────────────────── */
+.ornament {
+  text-align: center;
+  color: var(--crimson);
+  opacity: 0.6;
+  font-size: 1.2rem;
+  letter-spacing: 0.5em;
+  margin: 1.5rem 0;
+  text-shadow: 0 0 10px rgba(139,26,26,0.5);
+}
+
+/* ─── Novel status badges ────────────────────── */
+.novel-status { font-size: 0.65rem; padding: 0.2em 0.5em; border-radius: 2px; font-family: var(--font-heading); letter-spacing: 0.08em; text-transform: uppercase; }
+.status-ongoing   { background: linear-gradient(135deg, #001a40, #002a60); color: #6ab0f5; border: 1px solid rgba(40,100,180,0.4); }
+.status-completed { background: linear-gradient(135deg, #001a10, #002a18); color: #5dba7d; border: 1px solid rgba(93,186,125,0.3); }
+.status-hiatus    { background: linear-gradient(135deg, #1a1000, #2a1800); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+.status-draft     { background: linear-gradient(135deg, #0d0000, #1a0505); color: var(--ash); border: var(--border-subtle); }
+
+/* ─── Utility ─────────────────────────────────── */
+.animate-fadeInUp { animation: fadeInUp 0.7s ease both; }
+.animate-fadeIn   { animation: fadeIn 0.5s ease both; }
+
+/* ─── Grain overlay ──────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ─── Keyframes ──────────────────────────────── */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes flicker  { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
+@keyframes pulse-crimson {
+  0%, 100% { box-shadow: 0 0 10px rgba(139,26,26,0.4); }
+  50%       { box-shadow: 0 0 25px rgba(192,57,43,0.7), 0 0 50px rgba(139,26,26,0.3); }
+}
+
+/* ─── LIGHT MODE — Metallic Charcoal (Image 3) ─ */
+body.light-mode {
+  background: #1a1a1e;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(60,60,70,0.3), transparent 60%);
+  color: #d4d0c8;
+}
+
+body.light-mode :root,
+body.light-mode {
+  --black:           #1a1a1e;
+  --charcoal-deep:   #222228;
+  --charcoal:        #2c2c34;
+  --charcoal-mid:    #38383f;
+  --charcoal-light:  #44444e;
+  --charcoal-border: #555560;
+  --ash:             #8a8a9a;
+  --ash-light:       #b4b4c4;
+  --white:           #f0eee8;
+  --white-dim:       #d4d0c8;
+  --border-subtle:   1px solid rgba(80,80,100,0.35);
+}
+
+/* Light mode metallic surface — charcoal grey (Image 3) */
+body.light-mode .novel-card,
+body.light-mode .trending-item,
+body.light-mode .genre-card,
+body.light-mode .featured-novel,
+body.light-mode .dash-panel,
+body.light-mode .stat-card,
+body.light-mode .sidebar-panel,
+body.light-mode .filter-panel,
+body.light-mode .settings-card,
+body.light-mode .comment-item,
+body.light-mode .history-item,
+body.light-mode .notif-item,
+body.light-mode .profile-bio-panel,
+body.light-mode .chapters-panel,
+body.light-mode .newsletter-section,
+body.light-mode .novel-list-item {
+  background: linear-gradient(
+    170deg,
+    #111115 0%,
+    #1e1e24 20%,
+    #2e2e38 45%,
+    #262630 55%,
+    #1e1e24 80%,
+    #111115 100%
+  ) !important;
+  border-color: rgba(80,80,100,0.3) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(120,120,140,0.08) !important;
+}
+
+body.light-mode section,
+body.light-mode .section,
+body.light-mode .browse-hero,
+body.light-mode .filter-bar,
+body.light-mode .profile-tabs {
+  background: linear-gradient(180deg, #1a1a1e, #222228, #1a1a1e) !important;
+}
+
+body.light-mode .navbar {
+  background: linear-gradient(180deg, rgba(18,18,22,0.98), rgba(22,22,28,0.98)) !important;
+  border-bottom-color: rgba(80,80,100,0.3) !important;
+}
+
+body.light-mode ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #444450, #606070, #444450);
+}
+
+/* ─── Responsive ─────────────────────────────── */
+@media (max-width: 768px) {
+  .container    { padding: 0 1rem; }
+  .container-sm { padding: 0 1rem; }
+  body          { font-size: 16px; }
+}

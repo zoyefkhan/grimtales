@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Email — GrimTales</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+<div class="page-auth">
+
+  <!-- Visual Side -->
+  <div class="auth-visual">
+    <div class="auth-visual-bg"></div>
+    <div class="auth-visual-pattern"></div>
+    <div class="auth-visual-content">
+      <a href="index.html" class="auth-logo">
+        <div class="auth-logo-icon"></div>
+        <span class="auth-logo-text">Grim<span>Tales</span></span>
+      </a>
+      <h2 class="auth-visual-title">One Last <span>Step</span></h2>
+      <p class="auth-visual-desc">Verify your email address to unlock all features and secure your account in the dark archives.</p>
+      <div class="auth-features">
+        <div class="auth-feature">
+          <span class="auth-feature-icon">🔔</span>
+          <div class="auth-feature-text">
+            <strong>Chapter Alerts</strong>
+            Get notified when your favourite authors post new chapters.
+          </div>
+        </div>
+        <div class="auth-feature">
+          <span class="auth-feature-icon">✍️</span>
+          <div class="auth-feature-text">
+            <strong>Publish Stories</strong>
+            Verification required to publish your own novels.
+          </div>
+        </div>
+        <div class="auth-feature">
+          <span class="auth-feature-icon">🔐</span>
+          <div class="auth-feature-text">
+            <strong>Account Security</strong>
+            Protect your account and enable password recovery.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form / Status Side -->
+  <div class="auth-form-side">
+    <div class="auth-form-container">
+
+      <!-- Verifying State -->
+      <div id="verifyingState" style="text-align:center">
+        <div style="font-size:3rem;margin-bottom:1.5rem;animation:flicker 1.5s ease-in-out infinite">🕯️</div>
+        <h1 class="auth-form-title" style="font-size:1.4rem">Verifying...</h1>
+        <p style="color:var(--ash);font-size:0.9rem;margin-top:0.5rem">Please wait while we verify your email address.</p>
+      </div>
+
+      <!-- Success State -->
+      <div id="successState" style="display:none;text-align:center">
+        <div style="font-size:3.5rem;margin-bottom:1.5rem">✦</div>
+        <h1 class="auth-form-title" style="font-size:1.6rem">Email Verified!</h1>
+        <p style="color:var(--ash);font-size:0.92rem;margin:0.75rem 0 2rem;line-height:1.7">
+          Your email address has been verified successfully. Welcome to the GrimTales community.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:0.75rem">
+          <a href="browse.html" class="auth-submit" style="display:block;text-align:center;text-decoration:none">Explore Novels →</a>
+          <a href="index.html" style="font-size:0.78rem;color:var(--ash);text-align:center">Back to Home</a>
+        </div>
+      </div>
+
+      <!-- Invalid Token State -->
+      <div id="errorState" style="display:none;text-align:center">
+        <div style="font-size:3rem;margin-bottom:1.5rem">⚠️</div>
+        <h1 class="auth-form-title" style="font-size:1.4rem">Link Invalid</h1>
+        <p style="color:var(--ash);font-size:0.9rem;margin:0.75rem 0 2rem;line-height:1.7">
+          This verification link is invalid or has already been used. Request a new one below.
+        </p>
+
+        <div class="auth-form">
+          <div class="form-group">
+            <label class="form-label">Your Email Address</label>
+            <div class="form-input-wrap">
+              <input type="email" id="resendEmail" placeholder="you@example.com" />
+              <span class="form-input-icon">✉</span>
+            </div>
+          </div>
+          <button class="auth-submit" id="resendBtn">Resend Verification Email</button>
+          <div style="text-align:center">
+            <a href="login.html" style="font-size:0.78rem;color:var(--ash)">← Back to Sign In</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/verify-email.js"></script>
+</body>
+</html>

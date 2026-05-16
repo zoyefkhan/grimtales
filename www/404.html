@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Page Lost in Darkness — GrimTales</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <style>
+    .error-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .error-bg {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 60% at 50% 50%, rgba(139,26,26,0.1), transparent 70%),
+        var(--black);
+      z-index: 0;
+    }
+    .error-content {
+      position: relative;
+      z-index: 1;
+      max-width: 500px;
+    }
+    .error-number {
+      font-family: var(--font-display);
+      font-size: clamp(6rem, 20vw, 10rem);
+      color: var(--crimson);
+      line-height: 1;
+      opacity: 0.15;
+      user-select: none;
+      margin-bottom: -2rem;
+    }
+    .error-icon { font-size: 3.5rem; margin-bottom: 1.5rem; display: block; animation: flicker 3s ease-in-out infinite; }
+    .error-title { font-family: var(--font-display); font-size: 1.8rem; color: var(--white); margin-bottom: 1rem; }
+    .error-desc { color: var(--ash); line-height: 1.7; margin-bottom: 2.5rem; font-size: 0.95rem; }
+    .error-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .error-quote {
+      margin-top: 3rem;
+      padding: 1.25rem;
+      border-left: 2px solid var(--crimson);
+      text-align: left;
+      background: rgba(139,26,26,0.04);
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    .error-quote p { font-style: italic; color: var(--ash); font-size: 0.88rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="error-bg"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo">
+        <div class="logo-icon"></div>
+        <span class="logo-text">Grim<span>Tales</span></span>
+      </a>
+      <div class="navbar-actions">
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+        <a href="login.html" class="btn btn-outline" style="font-size:0.75rem;padding:0.5em 1.2em;">Sign In</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="error-page">
+    <div class="error-content">
+      <div class="error-number">404</div>
+      <span class="error-icon">🕯️</span>
+      <h1 class="error-title">Lost in the Dark</h1>
+      <p class="error-desc">
+        The page you seek has wandered beyond the veil. Perhaps it was never here, 
+        or perhaps it dissolved into shadow. Either way — it's gone.
+      </p>
+      <div class="error-actions">
+        <a href="index.html" class="btn btn-crimson">← Return Home</a>
+        <a href="browse.html" class="btn btn-outline">Browse Novels</a>
+      </div>
+      <div class="error-quote">
+        <p>"Not all those who wander are lost — but this page definitely is."</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

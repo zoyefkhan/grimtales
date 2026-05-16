@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Author Profile — GrimTales</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <style>
+    .page-author { padding-top: 70px; }
+
+    .author-hero {
+      background: var(--charcoal-deep);
+      border-bottom: var(--border-subtle);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .author-hero-banner {
+      height: 200px;
+      background: linear-gradient(135deg, #1a0808 0%, #2d1010 40%, #0d0d1a 100%);
+      position: relative;
+    }
+
+    .author-hero-banner::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(139,26,26,0.04) 30px, rgba(139,26,26,0.04) 31px);
+    }
+
+    .author-hero-body {
+      padding: 0 0 2.5rem;
+    }
+
+    .author-hero-inner {
+      display: flex;
+      align-items: flex-end;
+      gap: 2rem;
+      padding: 0 2rem;
+      margin-top: -50px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .author-avatar-large {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid var(--charcoal-deep);
+      background: linear-gradient(135deg, #2d0f0f, #1a0808);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      color: var(--crimson-glow);
+      flex-shrink: 0;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .author-hero-info { flex: 1; padding-bottom: 0.5rem; }
+
+    .author-name-large {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+
+    .author-badges { display: flex; gap: 0.4rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+
+    .author-badge {
+      padding: 0.2em 0.6em;
+      font-family: var(--font-heading);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-radius: 2px;
+    }
+
+    .badge-verified { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+    .badge-top-author { background: rgba(139,26,26,0.15); color: var(--crimson-glow); border: 1px solid rgba(139,26,26,0.3); }
+    .badge-prolific { background: rgba(93,186,125,0.1); color: #5dba7d; border: 1px solid rgba(93,186,125,0.2); }
+
+    .author-tagline { color: var(--ash); font-style: italic; font-size: 0.92rem; }
+
+    .author-hero-actions {
+      display: flex;
+      gap: 0.75rem;
+      padding: 1.5rem 2rem 0;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .author-stats-row {
+      display: flex;
+      gap: 2.5rem;
+    }
+
+    .author-stat { text-align: center; }
+    .author-stat-num { font-family: var(--font-display); font-size: 1.3rem; color: var(--crimson-glow); }
+    .author-stat-label { font-size: 0.72rem; color: var(--ash); text-transform: uppercase; letter-spacing: 0.1em; font-family: var(--font-heading); }
+
+    /* Profile Layout */
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 3rem;
+      padding: 3rem 0;
+      align-items: start;
+    }
+
+    .profile-bio-panel, .profile-sidebar-panel {
+      background: var(--charcoal);
+      border: var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-panel-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: var(--border-subtle);
+    }
+
+    .profile-panel-title {
+      font-family: var(--font-heading);
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ash-light);
+    }
+
+    .profile-panel-body { padding: 1.5rem; }
+
+    .bio-text { font-size: 0.92rem; line-height: 1.8; color: var(--ash-light); }
+    .bio-text p { margin-bottom: 1em; }
+
+    /* Novel Cards Grid */
+    .author-novels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* Profile sidebar info */
+    .profile-info-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .profile-info-item {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      padding-bottom: 0.75rem;
+      border-bottom: var(--border-subtle);
+      font-size: 0.85rem;
+    }
+
+    .profile-info-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .profile-info-icon { font-size: 1rem; flex-shrink: 0; width: 20px; text-align: center; }
+    .profile-info-key { color: var(--ash); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--font-heading); display: block; margin-bottom: 0.15rem; }
+    .profile-info-val { color: var(--ash-light); }
+
+    @media (max-width: 1024px) {
+      .profile-layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .author-hero-inner { flex-direction: column; align-items: flex-start; margin-top: -40px; }
+      .author-avatar-large { width: 90px; height: 90px; font-size: 1.8rem; }
+      .author-name-large { font-size: 1.5rem; }
+      .author-stats-row { gap: 1.5rem; }
+      .author-hero-actions { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body class="page-author">
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo">
+        <div class="logo-icon"></div>
+        <span class="logo-text">Grim<span>Tales</span></span>
+      </a>
+      <ul class="navbar-nav">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="browse.html">Browse</a></li>
+        <li><a href="dashboard.html">Write</a></li>
+      </ul>
+      <div class="navbar-actions">
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+        <a href="login.html" class="btn btn-outline" style="font-size:0.75rem;padding:0.5em 1.2em;">Sign In</a>
+      </div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">🏠 Home</a>
+    <a href="browse.html">📚 Browse</a>
+  </div>
+
+  <!-- AUTHOR HERO -->
+  <section class="author-hero">
+    <div class="author-hero-banner"></div>
+    <div class="author-hero-body">
+      <div class="author-hero-inner container">
+        <div class="author-avatar-large"></div>
+        <div class="author-hero-info">
+          <h1 class="author-name-large">Author</h1>
+          <div class="author-badges"></div>
+          <div class="author-tagline">Loading author profile…</div>
+        </div>
+      </div>
+      <div class="author-hero-actions container">
+        <div class="author-stats-row">
+          <div class="author-stat">
+            <div class="author-stat-num">—</div>
+            <div class="author-stat-label">Novels</div>
+          </div>
+          <div class="author-stat">
+            <div class="author-stat-num">—</div>
+            <div class="author-stat-label">Followers</div>
+          </div>
+          <div class="author-stat">
+            <div class="author-stat-num">—</div>
+            <div class="author-stat-label">Total Views</div>
+          </div>
+          <div class="author-stat">
+            <div class="author-stat-num">—</div>
+            <div class="author-stat-label">Chapters Written</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.75rem">
+          <button class="btn btn-crimson" id="followAuthorBtn">♡ Follow Author</button>
+          <button class="btn btn-outline">💬 Message</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROFILE BODY -->
+  <div class="container">
+    <div class="profile-layout">
+      <!-- Main -->
+      <div>
+        <!-- Bio -->
+        <div class="profile-bio-panel">
+          <div class="profile-panel-header">
+            <span class="profile-panel-title">About this Author</span>
+          </div>
+          <div class="profile-panel-body">
+            <div class="bio-text">
+              <p>Loading author biography…</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Novels -->
+        <div class="profile-bio-panel">
+          <div class="profile-panel-header">
+            <span class="profile-panel-title">Published Novels</span>
+          </div>
+          <div class="profile-panel-body">
+            <div class="author-novels-grid" id="authorNovelsGrid">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Latest Updates -->
+        <div class="profile-bio-panel">
+          <div class="profile-panel-header">
+            <span class="profile-panel-title">Recent Chapter Updates</span>
+          </div>
+          <div id="recentUpdates">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div>
+        <div class="profile-sidebar-panel">
+          <div class="profile-panel-header">
+            <span class="profile-panel-title">Author Details</span>
+          </div>
+          <div class="profile-panel-body">
+            <div class="profile-info-list">
+              <div class="profile-info-item">
+                <span class="profile-info-icon">📅</span>
+                <div>
+                  <span class="profile-info-key">Member Since</span>
+                  <span class="profile-info-val">—</span>
+                </div>
+              </div>
+              <div class="profile-info-item">
+                <span class="profile-info-icon">🌍</span>
+                <div>
+                  <span class="profile-info-key">Location</span>
+                  <span class="profile-info-val">Unknown</span>
+                </div>
+              </div>
+              <div class="profile-info-item">
+                <span class="profile-info-icon">✍️</span>
+                <div>
+                  <span class="profile-info-key">Update Schedule</span>
+                  <span class="profile-info-val">—</span>
+                </div>
+              </div>
+              <div class="profile-info-item">
+                <span class="profile-info-icon">📝</span>
+                <div>
+                  <span class="profile-info-key">Total Words</span>
+                  <span class="profile-info-val">—</span>
+                </div>
+              </div>
+              <div class="profile-info-item">
+                <span class="profile-info-icon">⭐</span>
+                <div>
+                  <span class="profile-info-key">Avg. Rating</span>
+                  <span class="profile-info-val">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/author.js"></script>
+</body>
+</html>

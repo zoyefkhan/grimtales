@@ -1,0 +1,388 @@
+/* ===== NOVEL DETAIL PAGE ===== */
+.page-novel { padding-top: 70px; }
+
+/* Novel Hero */
+.novel-hero {
+  position: relative;
+  background: var(--charcoal-deep);
+  overflow: hidden;
+  padding: 4rem 0 3rem;
+}
+
+.novel-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,10,11,0) 0%, var(--black) 100%);
+  z-index: 1;
+}
+
+.novel-hero-blur {
+  position: absolute;
+  inset: -20px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.15);
+  z-index: 0;
+}
+
+.novel-hero-inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.novel-hero-cover {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-deep), 0 0 40px rgba(139,26,26,0.2);
+  flex-shrink: 0;
+}
+
+.novel-hero-cover img {
+  width: 220px;
+  height: 320px;
+  object-fit: cover;
+  display: block;
+}
+
+.novel-hero-cover-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.5));
+}
+
+.novel-hero-content { padding-top: 0.5rem; }
+
+.novel-status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.novel-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
+}
+
+.novel-hero-author {
+  font-size: 0.95rem;
+  color: var(--ash);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.novel-hero-author a { color: var(--crimson-glow); }
+.novel-hero-author a:hover { color: var(--gold); }
+
+.novel-hero-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.rating-stars { color: var(--gold); font-size: 0.95rem; letter-spacing: 0.05em; }
+
+.rating-score {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  color: var(--white);
+}
+
+.rating-count { font-size: 0.8rem; color: var(--ash); }
+
+.novel-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.novel-hero-stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 1.25rem 0;
+  border-top: var(--border-subtle);
+  border-bottom: var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.hero-stat-item { text-align: center; }
+.hero-stat-val { font-family: var(--font-display); font-size: 1.3rem; color: var(--white); display: block; }
+.hero-stat-key { font-size: 0.72rem; color: var(--ash); text-transform: uppercase; letter-spacing: 0.12em; font-family: var(--font-heading); }
+
+.novel-hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+/* Novel Body */
+.novel-body {
+  padding: 3rem 0;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 3rem;
+  align-items: start;
+}
+
+/* Synopsis */
+.synopsis-section { margin-bottom: 2.5rem; }
+
+.synopsis-text {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--ash-light);
+  position: relative;
+}
+
+.synopsis-text.collapsed {
+  max-height: 120px;
+  overflow: hidden;
+}
+
+.synopsis-text.collapsed::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(transparent, var(--black));
+}
+
+.synopsis-toggle {
+  background: none;
+  border: none;
+  color: var(--crimson-glow);
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  transition: var(--transition);
+}
+
+.synopsis-toggle:hover { color: var(--gold); }
+
+/* Chapters List */
+.chapters-panel {
+  background: var(--charcoal);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+}
+
+.chapters-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chapters-title {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ash-light);
+}
+
+.chapters-sort { display: flex; gap: 0.4rem; }
+
+.sort-btn {
+  padding: 0.3em 0.7em;
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 3px;
+  background: transparent;
+  border: var(--border-subtle);
+  color: var(--ash);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.sort-btn.active { background: var(--crimson); border-color: var(--crimson); color: white; }
+.sort-btn:hover:not(.active) { border-color: var(--charcoal-border); color: var(--ash-light); }
+
+.chapters-list { max-height: 500px; overflow-y: auto; }
+
+.chapter-list-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1.5rem;
+  border-bottom: var(--border-subtle);
+  transition: var(--transition);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.chapter-list-item:last-child { border-bottom: none; }
+.chapter-list-item:hover { background: rgba(139,26,26,0.05); }
+
+.chapter-list-num {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  color: var(--ash);
+  min-width: 28px;
+  flex-shrink: 0;
+}
+
+.chapter-list-title {
+  font-size: 0.88rem;
+  color: var(--ash-light);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: var(--transition);
+}
+
+.chapter-list-item:hover .chapter-list-title { color: var(--white); }
+.chapter-list-item.read .chapter-list-title { color: var(--ash); }
+
+.chapter-list-date {
+  font-size: 0.72rem;
+  color: var(--ash);
+  flex-shrink: 0;
+  font-family: var(--font-heading);
+}
+
+.chapter-read-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--crimson);
+  flex-shrink: 0;
+  opacity: 0;
+}
+
+.chapter-list-item.unread .chapter-read-indicator { opacity: 1; }
+
+.chapters-load-more {
+  padding: 1rem;
+  text-align: center;
+  border-top: var(--border-subtle);
+}
+
+/* Novel Sidebar */
+.novel-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.sidebar-panel {
+  background: var(--charcoal);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.sidebar-panel-header {
+  padding: 1rem 1.25rem;
+  border-bottom: var(--border-subtle);
+}
+
+.sidebar-panel-title {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ash);
+}
+
+.sidebar-panel-body { padding: 1.25rem; }
+
+/* Author Card */
+.author-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.author-card-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--crimson);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.author-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.author-card-name { font-family: var(--font-heading); font-size: 0.9rem; color: var(--white); margin-bottom: 0.15rem; }
+.author-card-novels { font-size: 0.75rem; color: var(--ash); }
+
+.author-card-bio { font-size: 0.82rem; color: var(--ash); line-height: 1.6; margin-bottom: 1rem; }
+
+/* Info List */
+.info-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  padding-bottom: 0.6rem;
+  border-bottom: var(--border-subtle);
+}
+
+.info-row:last-child { border-bottom: none; padding-bottom: 0; }
+.info-key { color: var(--ash); font-family: var(--font-heading); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.info-val { color: var(--white-dim); font-size: 0.82rem; }
+
+/* Similar Novels */
+.similar-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.similar-item {
+  display: flex;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 0.4rem;
+  border-radius: var(--radius);
+}
+
+.similar-item:hover { background: rgba(139,26,26,0.05); }
+
+.similar-cover {
+  width: 44px;
+  height: 60px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--charcoal-mid);
+  flex-shrink: 0;
+}
+
+.similar-cover img { width: 100%; height: 100%; object-fit: cover; }
+.similar-title { font-family: var(--font-heading); font-size: 0.8rem; color: var(--white-dim); margin-bottom: 0.2rem; line-height: 1.3; }
+.similar-author { font-size: 0.72rem; color: var(--ash); }
+.similar-rating { font-size: 0.72rem; color: var(--gold); margin-top: 0.2rem; }
+
+@media (max-width: 1024px) {
+  .novel-body { grid-template-columns: 1fr; }
+  .novel-sidebar { display: grid; grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .novel-hero-inner { grid-template-columns: 1fr; }
+  .novel-hero-cover { width: 160px; height: 230px; }
+  .novel-hero-cover img { width: 160px; height: 230px; }
+  .novel-hero-stats { gap: 1rem; }
+  .novel-sidebar { display: flex; }
+}
