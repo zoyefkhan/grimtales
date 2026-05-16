@@ -220,7 +220,6 @@ function initLogin() {
         }
 
         if (data?.user) {
-          // ── CRITICAL: Ensure profile exists on every login ──
           const profile = await ensureProfile(sb, data.user);
           const user = buildUser(data.user, profile);
           saveUser(user);
@@ -233,18 +232,7 @@ function initLogin() {
         }
       }
 
-      // ── Offline demo fallback ──
-      const stored = JSON.parse(localStorage.getItem('gt-users') || '[]');
-      const found  = stored.find(u => u.email === email || u.username === email);
-      if (found && found.password === pass) {
-        saveUser(found);
-        window.showToast(`Welcome back, ${found.username}! ✦`);
-        const dest = sessionStorage.getItem('gt-redirect-after-login') || 'index.html';
-        sessionStorage.removeItem('gt-redirect-after-login');
-        setTimeout(() => window.location.href = dest, 700);
-      } else {
-        window.showToast('Wrong email or password.', 'error');
-      }
+      window.showToast('Wrong email or password.', 'error');
 
     } catch (e) {
       console.error('Login error:', e);
@@ -338,23 +326,7 @@ function initRegister() {
         }
       }
 
-      // ── Demo fallback (no backend) ──
-      const stored = JSON.parse(localStorage.getItem('gt-users') || '[]');
-      if (stored.find(u => u.email === email || u.username === username)) {
-        window.showToast('Email or username already taken.', 'error');
-        return;
-      }
-      const newUser = {
-        id: 'local_' + Date.now(),
-        username, email, password: pass, role,
-        avatar: '', bio: '',
-        createdAt: new Date().toISOString(),
-      };
-      stored.push(newUser);
-      localStorage.setItem('gt-users', JSON.stringify(stored));
-      saveUser(newUser);
-      window.showToast(`Welcome to GrimTales, ${username}! ✦`);
-      setTimeout(() => window.location.href = 'index.html', 800);
+      window.showToast('Registration failed. Check your connection or try again later.', 'error');
 
     } catch (e) {
       console.error('Register error:', e);

@@ -163,9 +163,25 @@ async function fetchComments(chapterId) {
   if (!sb) return [];
   const { data } = await sb.from('comments')
     .select('*, author:profiles(username,avatar_url)')
-    .eq('chapter_id',chapterId).eq('is_deleted',false).is('parent_id',null)
-    .order('created_at',{ascending:false}).limit(30);
-  return data||[];
+    .eq('chapter_id', chapterId)
+    .eq('is_deleted', false)
+    .is('parent_id', null)
+    .order('created_at', { ascending: false })
+    .limit(30);
+  return data || [];
+}
+
+async function fetchNovelComments(novelId) {
+  const sb = await window.GT_Supabase?.getSupabase();
+  if (!sb) return [];
+  const { data } = await sb.from('comments')
+    .select('*, author:profiles(username,avatar_url)')
+    .eq('novel_id', novelId)
+    .eq('is_deleted', false)
+    .is('parent_id', null)
+    .order('created_at', { ascending: false })
+    .limit(30);
+  return data || [];
 }
 
 async function postComment(chapterId, novelId, text) {
@@ -197,7 +213,7 @@ async function toggleBookmark(novelId) {
   return true;
 }
 
-window.GT_Data = { fetchNovels, fetchNovel, fetchChapters, fetchComments, postComment, toggleBookmark };
+window.GT_Data = { fetchNovels, fetchNovel, fetchChapters, fetchComments, fetchNovelComments, postComment, toggleBookmark };
 
 // ════════════════════════════════════════════
 //   NAVBAR SESSION — runs immediately

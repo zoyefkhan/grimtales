@@ -95,18 +95,32 @@ async function loadProfileData() {
   if (!sb || !user.id) return;
 
   try {
-    const [bookmarksRes, commentsRes, followingRes] = await Promise.all([
+    const [bookmarksRes, commentsRes, followingRes, historyRes] = await Promise.all([
       sb.from('bookmarks').select('*', {count:'exact',head:true}).eq('user_id', user.id),
       sb.from('comments').select('*', {count:'exact',head:true}).eq('author_id', user.id),
       sb.from('follows').select('*', {count:'exact',head:true}).eq('follower_id', user.id),
+      sb.from('reading_history').select('*', {count:'exact',head:true}).eq('user_id', user.id),
     ]);
 
+    const booksRead = bookmarksRes.count || 0;
+    const commentCount = commentsRes.count || 0;
+
     const stats = {
-      booksRead: bookmarksRes.count || 0,
-      chapters:  0,
+      booksRead,
+      chapters:  historyRes.count || 0,
       following: followingRes.count || 0,
-      comments:  commentsRes.count || 0,
-      badges:    3,
+      comments:  commentCount,
+      badges:    [
+        true,
+        booksRead >= 10,
+        commentCount >= 10,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+      ].filter(Boolean).length,
     };
 
     const el = id => document.getElementById(id);

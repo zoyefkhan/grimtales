@@ -121,68 +121,89 @@ function initBrowseSearch() {
   }
 }
 
-// ─── Render Novels ────────────────────────────
-function getFilteredNovels(q = '') {
-  let novels = [...(window.MOCK_NOVELS || [])];
-
-  // Genre filter
-  if (currentGenre !== 'all') {
-    novels = novels.filter(n => n.genre.toLowerCase().replace(/\s/g, '-').includes(currentGenre));
-  }
-
-  // Search filter
-  if (q) {
-    const lower = q.toLowerCase();
-    novels = novels.filter(n =>
-      n.title.toLowerCase().includes(lower) ||
-      n.author.toLowerCase().includes(lower) ||
-      n.genre.toLowerCase().includes(lower)
-    );
-  }
-
-  // Sort
-  if (currentSort === 'rating') novels.sort((a, b) => b.rating - a.rating);
-  else if (currentSort === 'new') novels.sort((a, b) => (b.badge === 'new' ? 1 : 0) - (a.badge === 'new' ? 1 : 0));
-  else if (currentSort === 'views') {
-    const toNum = v => parseFloat(v) * (v.includes('M') ? 1000000 : v.includes('K') ? 1000 : 1);
-    novels.sort((a, b) => toNum(b.views) - toNum(a.views));
-  }
-
-  return novels;
+// ─── Browse API ─────────────────────────────
+async function getSupabase() {
+  return window.GT_Supabase?.getSupabase();
 }
 
-function renderNovels(q = '') {
-  const novels = getFilteredNovels(q);
+async function fetchBrowseNovels(q = '') {
+  const sb = await getSupabase();
+  if (!sb) return { novels: [], total: 0 };
+
+  const offset = (currentPage - 1) * PER_PAGE;
+  const likeQuery = q ? `%${q}%` : null;
+  let query = sb.from('novels')
+    .select('*, author:profiles(username,avatar_url)', { count: 'exact' })
+    .eq('is_visible', true);
+
+  if (currentGenre !== 'all') {
+    query = query.contains('genres', [currentGenre]);
+  }
+
+  if (likeQuery) {
+    query = query.or(`title.ilike.${likeQuery},author.username.ilike.${likeQuery}`);
+  }
+
+  const sortMap = {
+    trending: { column: 'total_views', ascending: false },
+    new: { column: 'created_at', ascending: false },
+    rating: { column: 'avg_rating', ascending: false },
+    views: { column: 'total_views', ascending: false },
+    updated: { column: 'last_chapter_at', ascending: false },
+  };
+
+  const sort = sortMap[currentSort] || sortMap.trending;
+  query = query.order(sort.column, { ascending: sort.ascending }).range(offset, offset + PER_PAGE - 1);
+
+  const { data, count, error } = await query;
+  if (error) {
+    console.warn('browse.js fetchBrowseNovels:', error.message);
+    return { novels: [], total: 0 };
+  }
+
+  return { novels: data || [], total: count || 0 };
+}
+
+function updateResultsCount(total) {
+  const countEl = document.getElementById('resultsCount');
+  if (countEl) countEl.textContent = total.toLocaleString();
+}
+
+function renderNovelsPage(pageNovels) {
   const grid = document.getElementById('novelsGrid');
   const list = document.getElementById('novelsList');
-  const countEl = document.getElementById('resultsCount');
+  const emptyMessage = '<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--ash)">No novels found matching your criteria.</div>';
 
-  if (countEl) countEl.textContent = (novels.length * 84).toLocaleString(); // Simulate large count
-
-  const start = (currentPage - 1) * PER_PAGE;
-  const page = novels.slice(start, start + PER_PAGE);
-
-  if (grid) grid.innerHTML = page.length ? page.map(n => window.renderNovelCard(n)).join('') : '<div style="grid-column:1/-1;text-align:center;padding:4rem;color:var(--ash)">No novels found matching your criteria.</div>';
-
-  if (list) list.innerHTML = page.map(n => window.renderNovelListItem(n)).join('');
-
-  renderPagination(novels.length);
+  if (grid) grid.innerHTML = pageNovels.length ? pageNovels.map(n => window.renderNovelCard(n)).join('') : emptyMessage;
+  if (list) list.innerHTML = pageNovels.length ? pageNovels.map(n => window.renderNovelListItem(n)).join('') : '';
 }
 
-// ─── Pagination ───────────────────────────────
+async function renderNovels(q = '') {
+  const { novels, total } = await fetchBrowseNovels(q);
+  updateResultsCount(total);
+
+  const pageNovels = novels.slice(0, PER_PAGE);
+  renderNovelsPage(pageNovels);
+  renderPagination(total);
+}
+
+// ─── Pagination ─────────────────────────────
 function renderPagination(total) {
-  const totalPages = Math.ceil((total * 84) / PER_PAGE); // simulated
+  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
   const pagination = document.getElementById('pagination');
   if (!pagination) return;
 
   let html = `<button class="page-btn ${currentPage === 1 ? 'disabled' : ''}" id="prevPage">‹</button>`;
-
   const range = [];
-  for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+
+  for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i += 1) {
     range.push(i);
   }
 
-  if (range[0] > 1) { html += `<button class="page-btn" data-page="1">1</button>`; if (range[0] > 2) html += `<span style="color:var(--ash);padding:0 0.25rem">...</span>`; }
+  if (range[0] > 1) {
+    html += `<button class="page-btn" data-page="1">1</button>`;
+    if (range[0] > 2) html += `<span style="color:var(--ash);padding:0 0.25rem">...</span>`;
+  }
 
   range.forEach(p => {
     html += `<button class="page-btn ${p === currentPage ? 'active' : ''}" data-page="${p}">${p}</button>`;
@@ -194,22 +215,31 @@ function renderPagination(total) {
   }
 
   html += `<button class="page-btn ${currentPage >= totalPages ? 'disabled' : ''}" id="nextPage">›</button>`;
-
   pagination.innerHTML = html;
 
-  // Bind page buttons
   pagination.querySelectorAll('[data-page]').forEach(btn => {
     btn.addEventListener('click', () => {
-      currentPage = parseInt(btn.dataset.page);
-      renderNovels();
+      currentPage = parseInt(btn.dataset.page, 10);
+      renderNovels(document.getElementById('browseSearch')?.value.trim() || '');
       window.scrollTo({ top: 300, behavior: 'smooth' });
     });
   });
 
-  const prev = document.getElementById('prevPage');
-  const next = document.getElementById('nextPage');
-  prev?.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderNovels(); window.scrollTo({ top: 300, behavior: 'smooth' }); } });
-  next?.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; renderNovels(); window.scrollTo({ top: 300, behavior: 'smooth' }); } });
+  document.getElementById('prevPage')?.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage -= 1;
+      renderNovels(document.getElementById('browseSearch')?.value.trim() || '');
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+    }
+  });
+
+  document.getElementById('nextPage')?.addEventListener('click', () => {
+    if (currentPage < totalPages) {
+      currentPage += 1;
+      renderNovels(document.getElementById('browseSearch')?.value.trim() || '');
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+    }
+  });
 }
 
 // ─── Sort Buttons ─────────────────────────────
