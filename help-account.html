@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account & Profile — GrimTales Help</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <style>
+    .page-help-topic { padding-top: 70px; min-height: 100vh; }
+    .topic-hero { background: linear-gradient(180deg,#0d0000,#060608); border-bottom: var(--border-subtle); padding: 2.5rem 0; }
+    .breadcrumb { font-family: var(--font-heading); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ash); margin-bottom: 0.75rem; }
+    .breadcrumb a { color: var(--crimson-glow); text-decoration: none; }
+    .topic-hero h1 { font-family: var(--font-display); font-size: 1.8rem; color: var(--white); margin-bottom: 0.4rem; }
+    .topic-hero p { color: var(--ash); font-size: 0.9rem; }
+    .topic-body { display: grid; grid-template-columns: 200px 1fr; gap: 2.5rem; padding: 3rem 0; align-items: start; }
+    .topic-sidebar { position: sticky; top: 90px; background: var(--metal-card); border: var(--border-subtle); border-radius: var(--radius-lg); padding: 1rem; }
+    .topic-sidebar h4 { font-family: var(--font-heading); font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ash); margin-bottom: 0.75rem; padding: 0 0.25rem; }
+    .topic-sidebar a { display: block; padding: 0.55rem 0.75rem; font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.04em; color: var(--ash-light); text-decoration: none; border-radius: var(--radius); border-left: 2px solid transparent; transition: var(--transition); margin-bottom: 0.15rem; }
+    .topic-sidebar a:hover, .topic-sidebar a.active { background: rgba(139,26,26,0.1); color: var(--crimson-glow); border-left-color: var(--crimson); }
+    .help-section { margin-bottom: 3rem; scroll-margin-top: 90px; }
+    .help-section h2 { font-family: var(--font-heading); font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--crimson-glow); border-bottom: var(--border-subtle); padding-bottom: 0.6rem; margin-bottom: 1.25rem; }
+    .help-step { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start; }
+    .step-num { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(180deg,#3a0000,#8b1a1a,#c0392b,#8b1a1a,#3a0000); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 0.72rem; color: #fff; flex-shrink: 0; margin-top: 0.15rem; }
+    .step-text { color: var(--ash-light); font-size: 0.9rem; line-height: 1.75; }
+    .step-text strong { color: var(--white); }
+    .help-tip { background: rgba(139,26,26,0.07); border: 1px solid rgba(139,26,26,0.2); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin: 1.25rem 0; font-size: 0.88rem; color: var(--ash-light); line-height: 1.7; }
+    .help-tip strong { color: var(--crimson-glow); }
+    .help-p { color: var(--ash-light); font-size: 0.9rem; line-height: 1.8; margin-bottom: 1rem; }
+    .help-p a { color: var(--crimson-glow); }
+    details.faq-item { background: var(--metal-card); border: var(--border-subtle); border-radius: var(--radius-lg); margin-bottom: 0.6rem; overflow: hidden; }
+    summary.faq-q { padding: 1.1rem 1.4rem; font-family: var(--font-heading); font-size: 0.85rem; color: var(--white); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; user-select: none; }
+    summary.faq-q::-webkit-details-marker { display: none; }
+    .faq-arrow { color: var(--crimson-glow); transition: transform 0.25s; flex-shrink: 0; }
+    details[open] .faq-arrow { transform: rotate(180deg); }
+    .faq-a { padding: 0 1.4rem 1.1rem; color: var(--ash-light); font-size: 0.88rem; line-height: 1.8; }
+    .faq-a a { color: var(--crimson-glow); }
+    .contact-strip { background: var(--metal-card); border: var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 3rem; }
+    .contact-strip p { color: var(--ash); font-size: 0.88rem; }
+    @media (max-width: 768px) { .topic-body { grid-template-columns: 1fr; } .topic-sidebar { position: static; } }
+</style>
+</head>
+<body class="page-help-topic">
+  <script src="js/loading.js"></script>
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo"><div class="logo-icon"></div><span class="logo-text">Grim<span>Tales</span></span></a>
+      <ul class="navbar-nav"><li><a href="index.html">Home</a></li><li><a href="browse.html">Browse</a></li><li><a href="help.html">Help</a></li></ul>
+      <div class="navbar-actions"><button class="theme-toggle" id="themeToggle">🌙</button></div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobileNav"><a href="index.html">🏠 Home</a><a href="help.html">❓ Help</a></div>
+
+  <section class="topic-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="help.html">Help Centre</a> › Account & Profile</div>
+      <h1>👤 Account & Profile</h1>
+      <p>Create an account, sign in, reset your password and manage your profile.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="topic-body">
+      <aside class="topic-sidebar">
+        <h4>On this page</h4>
+        <a href="#create-account">Create Account</a><a href="#login">Signing In</a><a href="#password-reset">Reset Password</a><a href="#edit-profile">Edit Profile</a><a href="#upgrade-author">Become an Author</a><a href="#delete-account">Delete Account</a><a href="#faq">FAQs</a>
+        <div style="border-top:var(--border-subtle);margin-top:1rem;padding-top:1rem">
+          <a href="help.html" style="color:var(--ash)">← All Topics</a>
+          <a href="contact.html" style="color:var(--ash)">📬 Contact Us</a>
+        </div>
+      </aside>
+
+      <main>
+        
+<div class="help-section" id="create-account">
+  <h2>Creating an Account</h2>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text">Click <strong>Join Free</strong> in the top navigation bar or go to <a href="register.html" style="color:var(--crimson-glow)">Register</a>.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text">Enter your <strong>username</strong> (3–30 characters, letters/numbers/underscores only), <strong>email address</strong> and a <strong>secure password</strong> (8+ characters).</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text">Choose your account type: <strong>Reader</strong> (browse and read) or <strong>Author</strong> (write and publish). You can upgrade from Reader to Author for free at any time.</div></div>
+  <div class="help-step"><div class="step-num">4</div><div class="step-text">Agree to the Terms of Service and click <strong>Create My Account</strong>. You may need to confirm your email address — check your inbox.</div></div>
+  <div class="help-tip"><strong>Social Sign-in:</strong> You can also register instantly with <strong>Google</strong> or <strong>Discord</strong> — no password needed.</div>
+</div>
+
+<div class="help-section" id="login">
+  <h2>Signing In</h2>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text">Click <strong>Sign In</strong> in the top navigation bar.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text">Enter your <strong>email address</strong> and <strong>password</strong>, then click <strong>Sign In to GrimTales</strong>.</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text">Alternatively, use <strong>Google</strong> or <strong>Discord</strong> to sign in instantly with your social account.</div></div>
+  <div class="help-tip"><strong>Staying signed in:</strong> GrimTales keeps you logged in automatically. To sign out manually, click your avatar in the top-right corner → Sign Out.</div>
+</div>
+
+<div class="help-section" id="password-reset">
+  <h2>Resetting Your Password</h2>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text">Go to the <a href="login.html" style="color:var(--crimson-glow)">Sign In page</a> and click <strong>Forgot password?</strong> below the password field.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text">Enter your <strong>email address</strong> and submit. A reset link will be sent to your inbox within a few minutes.</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text">Click the link in the email, then enter your new password twice to confirm.</div></div>
+  <div class="help-tip"><strong>Check your spam folder</strong> if the email doesn't arrive. The reset link expires after 60 minutes — request a new one if needed.</div>
+</div>
+
+<div class="help-section" id="edit-profile">
+  <h2>Editing Your Profile</h2>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text">Click your avatar in the top-right corner → <strong>Settings</strong>, or go directly to <a href="settings.html" style="color:var(--crimson-glow)">Settings</a>.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text">In the <strong>Profile</strong> tab you can change your username, display name, bio, location and website.</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text">To upload a <strong>profile photo</strong>, click <strong>📷 Upload Photo</strong> and select an image (JPG, PNG or WEBP, max 2MB).</div></div>
+  <div class="help-step"><div class="step-num">4</div><div class="step-text">Click <strong>Save Profile</strong> to apply your changes.</div></div>
+</div>
+
+<div class="help-section" id="upgrade-author">
+  <h2>Upgrading to Author</h2>
+  <p class="help-p">If you registered as a Reader, you can upgrade to Author at any time — for free, instantly, without creating a new account.</p>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text">Go to <a href="settings.html" style="color:var(--crimson-glow)">Settings → Profile</a>.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text">Click <strong>Upgrade to Author — Free</strong> in the banner at the top.</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text">Your account is instantly upgraded. The Writing Dashboard will now be available from your navigation menu.</div></div>
+</div>
+
+<div class="help-section" id="delete-account">
+  <h2>Deleting Your Account</h2>
+  <p class="help-p">Account deletion is permanent and cannot be undone. All your data — reading history, comments, ratings and (if you are an author) published novels — will be removed.</p>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text">Go to <a href="settings.html" style="color:var(--crimson-glow)">Settings → Danger Zone</a>.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text">Click <strong>Delete Account</strong> and confirm the action.</div></div>
+  <div class="help-tip"><strong>Before deleting</strong>, consider exporting your data from Settings → Danger Zone → Export My Data. You have 30 days to request your data back after deletion.</div>
+</div>
+
+
+        <div class="help-section" id="faq">
+          <h2>Frequently Asked Questions</h2>
+          
+        <details class="faq-item">
+          <summary class="faq-q">I can't sign in — what should I do? <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">Make sure you're using the correct email and password. Try Forgot Password if you've forgotten it. If you signed up with Google or Discord, use the same social sign-in button. See <a href="help-technical.html">Technical Issues</a> for more help.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Can I change my username? <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">Yes — go to Settings → Profile → Username field and save. Usernames must be 3–30 characters and contain only letters, numbers and underscores.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Can I have more than one account? <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">One account per person. If you need both Reader and Author features, upgrade your existing account to Author for free.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">I didn't receive my confirmation email. <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">Check your spam folder first. Wait a few minutes, then try requesting a new confirmation from the login page. Make sure the email address is correct.</div>
+        </details>
+        </div>
+
+        <div class="contact-strip">
+          <p>Didn't find what you were looking for?</p>
+          <a href="contact.html" class="btn btn-crimson" style="font-size:0.8rem;padding:0.6em 1.4em">Contact Support →</a>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Highlight active sidebar link on scroll
+    const sections = document.querySelectorAll('.help-section[id]');
+    const links = document.querySelectorAll('.topic-sidebar a[href^="#"]');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.topic-sidebar a[href="#${e.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

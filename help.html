@@ -8,31 +8,172 @@
   <link rel="stylesheet" href="css/navbar.css" />
   <style>
     .page-help { padding-top: 70px; min-height: 100vh; }
-    .help-hero { background: var(--charcoal-deep); border-bottom: var(--border-subtle); padding: 3rem 0; text-align: center; }
-    .help-title { font-family: var(--font-display); font-size: 2rem; color: var(--white); margin-bottom: 0.75rem; }
-    .help-search { display: flex; gap: 0.75rem; max-width: 500px; margin: 1.5rem auto 0; }
-    .help-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; padding: 3rem 0; }
-    .help-card { background: var(--metal-card); border: var(--border-subtle); border-radius: var(--radius-lg); padding: 1.75rem; cursor: pointer; transition: var(--transition); }
-    .help-card:hover { border-color: rgba(139,26,26,0.4); transform: translateY(-3px); }
-    .help-card-icon { font-size: 2rem; margin-bottom: 1rem; }
-    .help-card-title { font-family: var(--font-heading); font-size: 0.9rem; color: var(--white); margin-bottom: 0.5rem; }
-    .help-card-desc { font-size: 0.82rem; color: var(--ash); line-height: 1.6; }
-    .faq-list { padding: 3rem 0; max-width: 760px; margin: 0 auto; }
-    .faq-item { background: var(--metal-card); border: var(--border-subtle); border-radius: var(--radius-lg); margin-bottom: 0.75rem; overflow: hidden; }
-    .faq-q { padding: 1.25rem 1.5rem; font-family: var(--font-heading); font-size: 0.88rem; color: var(--white); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-    .faq-q:hover { background: rgba(139,26,26,0.05); }
-    .faq-a { padding: 0 1.5rem 1.25rem; color: var(--ash-light); font-size: 0.88rem; line-height: 1.75; display: none; }
-    .faq-item.open .faq-a { display: block; }
-    .faq-item.open .faq-arrow { transform: rotate(180deg); }
-    .faq-arrow { transition: transform 0.2s ease; color: var(--crimson-glow); }
-    .contact-box { background: var(--metal-card); border: var(--border-crimson); border-radius: var(--radius-lg); padding: 2.5rem; text-align: center; margin: 3rem 0; }
+
+    /* Hero */
+    .help-hero {
+      background: linear-gradient(180deg, #0d0000 0%, #060608 100%);
+      border-bottom: var(--border-subtle);
+      padding: 3.5rem 0 2.5rem;
+      text-align: center;
+    }
+    .help-eyebrow {
+      font-family: var(--font-heading);
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--crimson-glow);
+      margin-bottom: 0.75rem;
+    }
+    .help-hero h1 {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      color: var(--white);
+      margin-bottom: 0.6rem;
+    }
+    .help-hero p { color: var(--ash); font-size: 0.95rem; margin-bottom: 2rem; }
+    .help-search-wrap {
+      display: flex;
+      gap: 0.6rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .help-search-wrap input {
+      flex: 1;
+      background: rgba(26,0,0,0.8);
+      border: var(--border-subtle);
+      color: var(--white-dim);
+      border-radius: var(--radius);
+      padding: 0.7em 1.2em;
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      outline: none;
+    }
+    .help-search-wrap input:focus { border-color: var(--crimson-bright); }
+
+    /* Category Grid */
+    .help-categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.1rem;
+      padding: 3rem 0;
+    }
+    .help-card {
+      background: var(--metal-card);
+      border: var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .help-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.04) 50%, transparent 60%);
+      transition: left 0.5s ease;
+    }
+    .help-card:hover::before { left: 100%; }
+    .help-card:hover {
+      border-color: rgba(192,57,43,0.5);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-crimson);
+    }
+    .help-card-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .help-card-title {
+      font-family: var(--font-heading);
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 0.6rem;
+    }
+    .help-card-desc { font-size: 0.82rem; color: var(--ash-light); line-height: 1.65; }
+
+    /* FAQ Section */
+    .faq-section { padding: 3rem 0; max-width: 780px; margin: 0 auto; }
+    .faq-section h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    details.faq-item {
+      background: var(--metal-card);
+      border: var(--border-subtle);
+      border-radius: var(--radius-lg);
+      margin-bottom: 0.65rem;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    details.faq-item:hover { border-color: rgba(139,26,26,0.4); }
+    details.faq-item[open] { border-color: rgba(139,26,26,0.5); }
+    summary.faq-q {
+      padding: 1.2rem 1.5rem;
+      font-family: var(--font-heading);
+      font-size: 0.88rem;
+      color: var(--white);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      user-select: none;
+    }
+    summary.faq-q::-webkit-details-marker { display: none; }
+    .faq-arrow { color: var(--crimson-glow); font-size: 0.9rem; transition: transform 0.25s; flex-shrink: 0; }
+    details[open] .faq-arrow { transform: rotate(180deg); }
+    .faq-a {
+      padding: 0 1.5rem 1.25rem;
+      color: var(--ash-light);
+      font-size: 0.9rem;
+      line-height: 1.8;
+      border-top: var(--border-subtle);
+      padding-top: 1rem;
+      margin-top: 0;
+    }
+    .faq-a a { color: var(--crimson-glow); }
+
+    /* Contact box */
+    .contact-box {
+      background: var(--metal-card);
+      border: var(--border-crimson);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      text-align: center;
+      margin: 3rem 0;
+    }
+    .contact-box h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .contact-box p { color: var(--ash); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    @media (max-width: 768px) {
+      .help-categories { grid-template-columns: 1fr 1fr; }
+      .help-hero h1 { font-size: 1.6rem; }
+    }
+    @media (max-width: 480px) {
+      .help-categories { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body class="page-help">
   <script src="js/loading.js"></script>
+
   <nav class="navbar" id="navbar">
     <div class="navbar-inner">
-      <a href="index.html" class="navbar-logo"><div class="logo-icon"></div><span class="logo-text">Grim<span>Tales</span></span></a>
+      <a href="index.html" class="navbar-logo">
+        <div class="logo-icon"></div>
+        <span class="logo-text">Grim<span>Tales</span></span>
+      </a>
       <ul class="navbar-nav">
         <li><a href="index.html">Home</a></li>
         <li><a href="browse.html">Browse</a></li>
@@ -43,53 +184,153 @@
       <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
     </div>
   </nav>
-  <div class="mobile-nav" id="mobileNav"><a href="index.html">🏠 Home</a><a href="browse.html">📚 Browse</a></div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">🏠 Home</a>
+    <a href="browse.html">📚 Browse</a>
+  </div>
 
+  <!-- Hero -->
   <section class="help-hero">
     <div class="container">
-      <div style="font-family:var(--font-heading);font-size:0.72rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--crimson-glow);margin-bottom:0.75rem">Support</div>
-      <h1 class="help-title">Help Centre</h1>
-      <p style="color:var(--ash)">Find answers or get in touch with our team</p>
-      <div class="help-search">
-        <input type="text" id="helpSearch" placeholder="Search for answers..." />
-        <button class="btn btn-crimson">Search</button>
+      <div class="help-eyebrow">Support</div>
+      <h1>Help Centre</h1>
+      <p>Find answers or get in touch with our team</p>
+      <div class="help-search-wrap">
+        <input type="text" id="helpSearchInput" placeholder="Search for answers..." />
+        <button class="btn btn-crimson" onclick="runSearch()">Search</button>
       </div>
     </div>
   </section>
 
   <div class="container">
-    <div class="help-grid">
-      <div class="help-card"><div class="help-card-icon">📖</div><div class="help-card-title">Reading & Navigation</div><div class="help-card-desc">How to read novels, use the reader, bookmark chapters and track your progress.</div></div>
-      <div class="help-card"><div class="help-card-icon">👤</div><div class="help-card-title">Account & Profile</div><div class="help-card-desc">Create an account, login issues, password reset and profile settings.</div></div>
-      <div class="help-card"><div class="help-card-icon">✍️</div><div class="help-card-title">Writing & Publishing</div><div class="help-card-desc">How to create a novel, write chapters, publish and manage your work.</div></div>
-      <div class="help-card"><div class="help-card-icon">🔒</div><div class="help-card-title">Privacy & Safety</div><div class="help-card-desc">Reporting content, blocking users and managing your privacy settings.</div></div>
-      <div class="help-card"><div class="help-card-icon">🔔</div><div class="help-card-title">Notifications</div><div class="help-card-desc">Managing email alerts, chapter notifications and following authors.</div></div>
-      <div class="help-card"><div class="help-card-icon">⚙️</div><div class="help-card-title">Technical Issues</div><div class="help-card-desc">Page not loading, login errors and other technical problems.</div></div>
+
+    <!-- Category Cards -->
+    <div class="help-categories">
+      <a href="help-reading.html" class="help-card">
+        <span class="help-card-icon">📖</span>
+        <div class="help-card-title">Reading &amp; Navigation</div>
+        <div class="help-card-desc">How to read novels, use the reader, bookmark chapters and track your progress.</div>
+      </a>
+      <a href="help-account.html" class="help-card">
+        <span class="help-card-icon">👤</span>
+        <div class="help-card-title">Account &amp; Profile</div>
+        <div class="help-card-desc">Create an account, login issues, password reset and profile settings.</div>
+      </a>
+      <a href="help-writing.html" class="help-card">
+        <span class="help-card-icon">✍️</span>
+        <div class="help-card-title">Writing &amp; Publishing</div>
+        <div class="help-card-desc">How to create a novel, write chapters, publish and manage your work.</div>
+      </a>
+      <a href="help-privacy.html" class="help-card">
+        <span class="help-card-icon">🔒</span>
+        <div class="help-card-title">Privacy &amp; Safety</div>
+        <div class="help-card-desc">Reporting content, blocking users and managing your privacy settings.</div>
+      </a>
+      <a href="help-notifications.html" class="help-card">
+        <span class="help-card-icon">🔔</span>
+        <div class="help-card-title">Notifications</div>
+        <div class="help-card-desc">Managing email alerts, chapter notifications and following authors.</div>
+      </a>
+      <a href="help-technical.html" class="help-card">
+        <span class="help-card-icon">⚙️</span>
+        <div class="help-card-title">Technical Issues</div>
+        <div class="help-card-desc">Page not loading, login errors and other technical problems.</div>
+      </a>
     </div>
 
-    <h2 style="font-family:var(--font-display);font-size:1.4rem;color:var(--white);margin-bottom:1.5rem;text-align:center">Frequently Asked Questions</h2>
+    <!-- FAQ -->
+    <div class="faq-section">
+      <h2>Frequently Asked Questions</h2>
 
-    <div class="faq-list">
-      <div class="faq-item"><div class="faq-q">Is GrimTales free to use? <span class="faq-arrow">▾</span></div><div class="faq-a">Yes! GrimTales is completely free for readers. Read unlimited novels, follow authors and leave comments at no cost. Creating an author account and publishing novels is also free.</div></div>
-      <div class="faq-item"><div class="faq-q">How do I become an Author? <span class="faq-arrow">▾</span></div><div class="faq-a">If you already have a Reader account, go to <strong>Settings</strong> and click <strong>Upgrade to Author</strong> — it's free and instant. Or register with the Author option selected.</div></div>
-      <div class="faq-item"><div class="faq-q">I forgot my password. How do I reset it? <span class="faq-arrow">▾</span></div><div class="faq-a">Click <strong>Sign In</strong> → <strong>Forgot Password</strong> → enter your email. You'll receive a reset link within a few minutes. Check your spam folder if you don't see it.</div></div>
-      <div class="faq-item"><div class="faq-q">How do I report inappropriate content? <span class="faq-arrow">▾</span></div><div class="faq-a">Each chapter and novel has a report button. Click it and fill in the reason. Our moderation team reviews all reports within 24 hours. You can also email us directly.</div></div>
-      <div class="faq-item"><div class="faq-q">Can I read novels offline? <span class="faq-arrow">▾</span></div><div class="faq-a">Not yet — GrimTales currently requires an internet connection. Offline reading is on our roadmap for a future update.</div></div>
-      <div class="faq-item"><div class="faq-q">How do I delete my account? <span class="faq-arrow">▾</span></div><div class="faq-a">Go to <strong>Settings → Danger Zone → Delete Account</strong>. This permanently removes all your data. If you're an author, your published novels will also be removed.</div></div>
+      <details class="faq-item">
+        <summary class="faq-q">Is GrimTales free to use? <span class="faq-arrow">▾</span></summary>
+        <div class="faq-a">Yes! GrimTales is completely free for readers. Browse, read, comment, rate and follow authors with no cost. Creating an Author account and publishing your novels is also free.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">How do I become an Author? <span class="faq-arrow">▾</span></summary>
+        <div class="faq-a">Go to <a href="settings.html">Settings</a> and click <strong>Upgrade to Author</strong> — it's free and instant. Or register a new account and select the <strong>Author</strong> option. See <a href="help-writing.html">Writing &amp; Publishing</a> for a full guide.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">I forgot my password. How do I reset it? <span class="faq-arrow">▾</span></summary>
+        <div class="faq-a">Click <strong>Sign In</strong> → <strong>Forgot Password</strong> → enter your email. You'll receive a reset link within a few minutes. Check your spam folder if you don't see it. See <a href="help-account.html#password-reset">Account Help</a> for more detail.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">How do I report inappropriate content? <span class="faq-arrow">▾</span></summary>
+        <div class="faq-a">Each chapter and novel has a <strong>⚑ Report</strong> button. Click it, select a reason, add details, and submit. Our moderation team reviews all reports within 4 hours. You can also use the <a href="report.html">Report Content page</a>.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">How do I customise the reading experience? <span class="faq-arrow">▾</span></summary>
+        <div class="faq-a">Open any chapter and click the <strong>⚙ Settings</strong> icon in the reader header. You can change font size, font family, background theme (Dark / Sepia / Light / AMOLED) and line spacing. See <a href="help-reading.html">Reading Help</a>.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">Can I read novels offline? <span class="faq-arrow">▾</span></summary>
+        <div class="faq-a">Not yet — GrimTales currently requires an internet connection. Offline reading is planned for a future update. Install GrimTales as a PWA on your phone for the best mobile reading experience.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q">How do I delete my account? <span class="faq-arrow">▾</span></summary>
+        <div class="faq-a">Go to <a href="settings.html">Settings → Danger Zone → Delete Account</a>. This permanently removes all your data and cannot be undone. If you're an author, your published novels will also be removed.</div>
+      </details>
+
+      <!-- Search Results Container (hidden by default) -->
+      <div id="searchResults" style="display:none;margin-top:2rem"></div>
     </div>
 
+    <!-- Contact CTA -->
     <div class="contact-box">
       <div style="font-size:2.5rem;margin-bottom:1rem">📬</div>
-      <h2 style="font-family:var(--font-display);font-size:1.2rem;color:var(--white);margin-bottom:0.5rem">Still need help?</h2>
-      <p style="color:var(--ash);margin-bottom:1.5rem;font-size:0.9rem">Our support team responds within 24 hours.</p>
+      <h3>Still need help?</h3>
+      <p>Our support team responds within 24 hours.</p>
       <a href="contact.html" class="btn btn-crimson">Contact Us →</a>
     </div>
+
   </div>
 
   <script src="js/app.js"></script>
   <script>
-    document.querySelectorAll('.faq-q').forEach(q => {
-      q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
+    // Simple FAQ search
+    function runSearch() {
+      const q = document.getElementById('helpSearchInput').value.trim().toLowerCase();
+      const results = document.getElementById('searchResults');
+      if (!q) { results.style.display = 'none'; return; }
+
+      const allFAQ = [
+        { q: 'Is GrimTales free?', a: 'Yes, completely free for readers and authors.', link: '' },
+        { q: 'How to become an author?', a: 'Go to Settings → Upgrade to Author.', link: 'help-writing.html' },
+        { q: 'Forgot password reset', a: 'Sign In → Forgot Password → check your email.', link: 'help-account.html#password-reset' },
+        { q: 'Report inappropriate content', a: 'Click the ⚑ Report button on any chapter or novel.', link: 'help-privacy.html' },
+        { q: 'Customise reader theme font size', a: 'Open a chapter → click ⚙ Settings in the reader header.', link: 'help-reading.html' },
+        { q: 'Delete account', a: 'Settings → Danger Zone → Delete Account.', link: 'settings.html' },
+        { q: 'Reading history bookmarks library', a: 'Your saved novels and reading history are in My Profile.', link: 'help-reading.html' },
+        { q: 'Notifications email alerts', a: 'Manage notifications in Settings → Notifications.', link: 'help-notifications.html' },
+        { q: 'Login error cannot sign in', a: 'Check your email and password, or use Forgot Password.', link: 'help-account.html' },
+        { q: 'Page not loading site broken', a: 'Try clearing your browser cache, or contact support.', link: 'help-technical.html' },
+      ];
+
+      const matches = allFAQ.filter(item =>
+        item.q.toLowerCase().includes(q) || item.a.toLowerCase().includes(q)
+      );
+
+      if (!matches.length) {
+        results.style.display = 'block';
+        results.innerHTML = `<div class="faq-item" style="padding:1.5rem;text-align:center;color:var(--ash)">No results for "<strong style="color:var(--white)">${q}</strong>". Try <a href="contact.html" style="color:var(--crimson-glow)">contacting us</a>.</div>`;
+        return;
+      }
+
+      results.style.display = 'block';
+      results.innerHTML = `
+        <div style="font-family:var(--font-heading);font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ash);margin-bottom:1rem">${matches.length} result${matches.length>1?'s':''} for "${q}"</div>
+        ${matches.map(m => `
+          <div class="faq-item" style="padding:1.1rem 1.5rem;margin-bottom:0.5rem;display:flex;justify-content:space-between;align-items:center;gap:1rem">
+            <div>
+              <div style="font-family:var(--font-heading);font-size:0.85rem;color:var(--white);margin-bottom:0.2rem">${m.q}</div>
+              <div style="font-size:0.82rem;color:var(--ash-light)">${m.a}</div>
+            </div>
+            ${m.link ? `<a href="${m.link}" class="btn btn-outline" style="font-size:0.72rem;padding:0.4em 0.9em;white-space:nowrap">View →</a>` : ''}
+          </div>`).join('')}`;
+    }
+
+    document.getElementById('helpSearchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') runSearch();
     });
   </script>
 </body>

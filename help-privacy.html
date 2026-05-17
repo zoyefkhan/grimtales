@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy & Safety — GrimTales Help</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <style>
+    .page-help-topic { padding-top: 70px; min-height: 100vh; }
+    .topic-hero { background: linear-gradient(180deg,#0d0000,#060608); border-bottom: var(--border-subtle); padding: 2.5rem 0; }
+    .breadcrumb { font-family: var(--font-heading); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ash); margin-bottom: 0.75rem; }
+    .breadcrumb a { color: var(--crimson-glow); text-decoration: none; }
+    .topic-hero h1 { font-family: var(--font-display); font-size: 1.8rem; color: var(--white); margin-bottom: 0.4rem; }
+    .topic-hero p { color: var(--ash); font-size: 0.9rem; }
+    .topic-body { display: grid; grid-template-columns: 200px 1fr; gap: 2.5rem; padding: 3rem 0; align-items: start; }
+    .topic-sidebar { position: sticky; top: 90px; background: var(--metal-card); border: var(--border-subtle); border-radius: var(--radius-lg); padding: 1rem; }
+    .topic-sidebar h4 { font-family: var(--font-heading); font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ash); margin-bottom: 0.75rem; padding: 0 0.25rem; }
+    .topic-sidebar a { display: block; padding: 0.55rem 0.75rem; font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.04em; color: var(--ash-light); text-decoration: none; border-radius: var(--radius); border-left: 2px solid transparent; transition: var(--transition); margin-bottom: 0.15rem; }
+    .topic-sidebar a:hover, .topic-sidebar a.active { background: rgba(139,26,26,0.1); color: var(--crimson-glow); border-left-color: var(--crimson); }
+    .help-section { margin-bottom: 3rem; scroll-margin-top: 90px; }
+    .help-section h2 { font-family: var(--font-heading); font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--crimson-glow); border-bottom: var(--border-subtle); padding-bottom: 0.6rem; margin-bottom: 1.25rem; }
+    .help-step { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start; }
+    .step-num { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(180deg,#3a0000,#8b1a1a,#c0392b,#8b1a1a,#3a0000); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 0.72rem; color: #fff; flex-shrink: 0; margin-top: 0.15rem; }
+    .step-text { color: var(--ash-light); font-size: 0.9rem; line-height: 1.75; }
+    .step-text strong { color: var(--white); }
+    .help-tip { background: rgba(139,26,26,0.07); border: 1px solid rgba(139,26,26,0.2); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin: 1.25rem 0; font-size: 0.88rem; color: var(--ash-light); line-height: 1.7; }
+    .help-tip strong { color: var(--crimson-glow); }
+    .help-p { color: var(--ash-light); font-size: 0.9rem; line-height: 1.8; margin-bottom: 1rem; }
+    .help-p a { color: var(--crimson-glow); }
+    details.faq-item { background: var(--metal-card); border: var(--border-subtle); border-radius: var(--radius-lg); margin-bottom: 0.6rem; overflow: hidden; }
+    summary.faq-q { padding: 1.1rem 1.4rem; font-family: var(--font-heading); font-size: 0.85rem; color: var(--white); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; user-select: none; }
+    summary.faq-q::-webkit-details-marker { display: none; }
+    .faq-arrow { color: var(--crimson-glow); transition: transform 0.25s; flex-shrink: 0; }
+    details[open] .faq-arrow { transform: rotate(180deg); }
+    .faq-a { padding: 0 1.4rem 1.1rem; color: var(--ash-light); font-size: 0.88rem; line-height: 1.8; }
+    .faq-a a { color: var(--crimson-glow); }
+    .contact-strip { background: var(--metal-card); border: var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 3rem; }
+    .contact-strip p { color: var(--ash); font-size: 0.88rem; }
+    @media (max-width: 768px) { .topic-body { grid-template-columns: 1fr; } .topic-sidebar { position: static; } }
+</style>
+</head>
+<body class="page-help-topic">
+  <script src="js/loading.js"></script>
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo"><div class="logo-icon"></div><span class="logo-text">Grim<span>Tales</span></span></a>
+      <ul class="navbar-nav"><li><a href="index.html">Home</a></li><li><a href="browse.html">Browse</a></li><li><a href="help.html">Help</a></li></ul>
+      <div class="navbar-actions"><button class="theme-toggle" id="themeToggle">🌙</button></div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobileNav"><a href="index.html">🏠 Home</a><a href="help.html">❓ Help</a></div>
+
+  <section class="topic-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="help.html">Help Centre</a> › Privacy & Safety</div>
+      <h1>🔒 Privacy & Safety</h1>
+      <p>Report content, manage your privacy settings and understand your data rights.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="topic-body">
+      <aside class="topic-sidebar">
+        <h4>On this page</h4>
+        <a href="#report-content">Reporting Content</a><a href="#content-guidelines">Content Guidelines</a><a href="#privacy-settings">Privacy Settings</a><a href="#data-rights">Your Data Rights</a><a href="#faq">FAQs</a>
+        <div style="border-top:var(--border-subtle);margin-top:1rem;padding-top:1rem">
+          <a href="help.html" style="color:var(--ash)">← All Topics</a>
+          <a href="contact.html" style="color:var(--ash)">📬 Contact Us</a>
+        </div>
+      </aside>
+
+      <main>
+        
+<div class="help-section" id="report-content">
+  <h2>Reporting Content</h2>
+  <p class="help-p">If you find a novel, chapter or comment that violates GrimTales guidelines, please report it immediately. Our moderation team reviews all reports within 4 hours.</p>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text"><strong>Report a chapter</strong> — Open the chapter and click the <strong>⚑ flag icon</strong> in the reader controls at the top.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text"><strong>Report a novel</strong> — On the novel detail page, click <strong>Report</strong> in the actions section.</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text"><strong>Report via the form</strong> — Use the <a href="report.html" style="color:var(--crimson-glow)">Report Content page</a> to submit any report with full details.</div></div>
+  <div class="help-step"><div class="step-num">4</div><div class="step-text">Select a <strong>reason</strong> (hate speech, graphic violence, copyright violation, spam, etc.) and add any additional details that help our team.</div></div>
+  <div class="help-tip"><strong>Your report is anonymous</strong> by default. The author of the reported content will not know who submitted the report.</div>
+</div>
+
+<div class="help-section" id="content-guidelines">
+  <h2>Content Guidelines</h2>
+  <p class="help-p">GrimTales is a platform for dark fiction. While we embrace dark themes, the following content is strictly prohibited:</p>
+  <ul style="color:var(--ash-light);font-size:0.9rem;line-height:2;padding-left:1.5rem;margin-bottom:1rem">
+    <li>Sexual content involving minors — zero tolerance, reported to authorities</li>
+    <li>Hate speech, racism, discrimination targeting real groups</li>
+    <li>Harassment or threats directed at real individuals</li>
+    <li>Plagiarism or copyright-infringing content</li>
+    <li>Spam, misleading content or fake reviews</li>
+  </ul>
+  <p class="help-p">Dark themes, morally complex characters, violence, and horror are welcome as long as they serve the story and comply with the content rating you've set.</p>
+</div>
+
+<div class="help-section" id="privacy-settings">
+  <h2>Privacy Settings</h2>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text">Go to <a href="settings.html" style="color:var(--crimson-glow)">Settings → Privacy</a>.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text">Toggle <strong>Public Profile</strong> to control whether others can view your profile page.</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text">Toggle <strong>Show Reading History</strong> to choose whether your reading activity is visible to others.</div></div>
+  <div class="help-step"><div class="step-num">4</div><div class="step-text">Toggle <strong>Show Library</strong> to make your saved novels list public or private.</div></div>
+</div>
+
+<div class="help-section" id="data-rights">
+  <h2>Your Data Rights</h2>
+  <p class="help-p">You have full control over your personal data. GrimTales does not sell your data to third parties.</p>
+  <div class="help-step"><div class="step-num">📥</div><div class="step-text"><strong>Export your data</strong> — Go to Settings → Danger Zone → Export My Data. You'll receive a download link by email.</div></div>
+  <div class="help-step"><div class="step-num">✏️</div><div class="step-text"><strong>Correct your data</strong> — Update your profile information at any time in Settings → Profile.</div></div>
+  <div class="help-step"><div class="step-num">🗑</div><div class="step-text"><strong>Delete your data</strong> — Go to Settings → Danger Zone → Delete Account. All data is permanently removed.</div></div>
+  <p class="help-p">For other data requests, email <a href="mailto:rosewell079@gmail.com" style="color:var(--crimson-glow)">rosewell079@gmail.com</a>.</p>
+</div>
+
+
+        <div class="help-section" id="faq">
+          <h2>Frequently Asked Questions</h2>
+          
+        <details class="faq-item">
+          <summary class="faq-q">Who can see my reading history? <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">By default only you. Go to Settings → Privacy and toggle "Show Reading History" if you want it to be public.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">What happens after I report someone? <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">Our moderation team reviews the report and takes action within 4 hours. You won't be notified of the outcome to protect both parties' privacy.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Can I block another user? <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">User blocking is on the roadmap. For now, you can report any user who is harassing you and our team will take action.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">Does GrimTales sell my data? <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">No. We never sell personal data. See our <a href="privacy.html">Privacy Policy</a> for full details.</div>
+        </details>
+        </div>
+
+        <div class="contact-strip">
+          <p>Didn't find what you were looking for?</p>
+          <a href="contact.html" class="btn btn-crimson" style="font-size:0.8rem;padding:0.6em 1.4em">Contact Support →</a>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Highlight active sidebar link on scroll
+    const sections = document.querySelectorAll('.help-section[id]');
+    const links = document.querySelectorAll('.topic-sidebar a[href^="#"]');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.topic-sidebar a[href="#${e.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

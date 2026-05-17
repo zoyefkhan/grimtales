@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Technical Issues — GrimTales Help</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <style>
+    .page-help-topic { padding-top: 70px; min-height: 100vh; }
+    .topic-hero { background: linear-gradient(180deg,#0d0000,#060608); border-bottom: var(--border-subtle); padding: 2.5rem 0; }
+    .breadcrumb { font-family: var(--font-heading); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ash); margin-bottom: 0.75rem; }
+    .breadcrumb a { color: var(--crimson-glow); text-decoration: none; }
+    .topic-hero h1 { font-family: var(--font-display); font-size: 1.8rem; color: var(--white); margin-bottom: 0.4rem; }
+    .topic-hero p { color: var(--ash); font-size: 0.9rem; }
+    .topic-body { display: grid; grid-template-columns: 200px 1fr; gap: 2.5rem; padding: 3rem 0; align-items: start; }
+    .topic-sidebar { position: sticky; top: 90px; background: var(--metal-card); border: var(--border-subtle); border-radius: var(--radius-lg); padding: 1rem; }
+    .topic-sidebar h4 { font-family: var(--font-heading); font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ash); margin-bottom: 0.75rem; padding: 0 0.25rem; }
+    .topic-sidebar a { display: block; padding: 0.55rem 0.75rem; font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.04em; color: var(--ash-light); text-decoration: none; border-radius: var(--radius); border-left: 2px solid transparent; transition: var(--transition); margin-bottom: 0.15rem; }
+    .topic-sidebar a:hover, .topic-sidebar a.active { background: rgba(139,26,26,0.1); color: var(--crimson-glow); border-left-color: var(--crimson); }
+    .help-section { margin-bottom: 3rem; scroll-margin-top: 90px; }
+    .help-section h2 { font-family: var(--font-heading); font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--crimson-glow); border-bottom: var(--border-subtle); padding-bottom: 0.6rem; margin-bottom: 1.25rem; }
+    .help-step { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start; }
+    .step-num { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(180deg,#3a0000,#8b1a1a,#c0392b,#8b1a1a,#3a0000); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 0.72rem; color: #fff; flex-shrink: 0; margin-top: 0.15rem; }
+    .step-text { color: var(--ash-light); font-size: 0.9rem; line-height: 1.75; }
+    .step-text strong { color: var(--white); }
+    .help-tip { background: rgba(139,26,26,0.07); border: 1px solid rgba(139,26,26,0.2); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin: 1.25rem 0; font-size: 0.88rem; color: var(--ash-light); line-height: 1.7; }
+    .help-tip strong { color: var(--crimson-glow); }
+    .help-p { color: var(--ash-light); font-size: 0.9rem; line-height: 1.8; margin-bottom: 1rem; }
+    .help-p a { color: var(--crimson-glow); }
+    details.faq-item { background: var(--metal-card); border: var(--border-subtle); border-radius: var(--radius-lg); margin-bottom: 0.6rem; overflow: hidden; }
+    summary.faq-q { padding: 1.1rem 1.4rem; font-family: var(--font-heading); font-size: 0.85rem; color: var(--white); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; user-select: none; }
+    summary.faq-q::-webkit-details-marker { display: none; }
+    .faq-arrow { color: var(--crimson-glow); transition: transform 0.25s; flex-shrink: 0; }
+    details[open] .faq-arrow { transform: rotate(180deg); }
+    .faq-a { padding: 0 1.4rem 1.1rem; color: var(--ash-light); font-size: 0.88rem; line-height: 1.8; }
+    .faq-a a { color: var(--crimson-glow); }
+    .contact-strip { background: var(--metal-card); border: var(--border-subtle); border-radius: var(--radius-lg); padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-top: 3rem; }
+    .contact-strip p { color: var(--ash); font-size: 0.88rem; }
+    @media (max-width: 768px) { .topic-body { grid-template-columns: 1fr; } .topic-sidebar { position: static; } }
+</style>
+</head>
+<body class="page-help-topic">
+  <script src="js/loading.js"></script>
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="navbar-logo"><div class="logo-icon"></div><span class="logo-text">Grim<span>Tales</span></span></a>
+      <ul class="navbar-nav"><li><a href="index.html">Home</a></li><li><a href="browse.html">Browse</a></li><li><a href="help.html">Help</a></li></ul>
+      <div class="navbar-actions"><button class="theme-toggle" id="themeToggle">🌙</button></div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-nav" id="mobileNav"><a href="index.html">🏠 Home</a><a href="help.html">❓ Help</a></div>
+
+  <section class="topic-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="help.html">Help Centre</a> › Technical Issues</div>
+      <h1>⚙️ Technical Issues</h1>
+      <p>Fix common problems with loading, login, chapters and mobile.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="topic-body">
+      <aside class="topic-sidebar">
+        <h4>On this page</h4>
+        <a href="#page-not-loading">Page Not Loading</a><a href="#login-error">Login Errors</a><a href="#chapter-loading">Chapter Issues</a><a href="#mobile-issues">Mobile Issues</a><a href="#images-not-loading">Images Not Showing</a><a href="#faq">FAQs</a>
+        <div style="border-top:var(--border-subtle);margin-top:1rem;padding-top:1rem">
+          <a href="help.html" style="color:var(--ash)">← All Topics</a>
+          <a href="contact.html" style="color:var(--ash)">📬 Contact Us</a>
+        </div>
+      </aside>
+
+      <main>
+        
+<div class="help-section" id="page-not-loading">
+  <h2>Page Not Loading</h2>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text"><strong>Refresh the page</strong> — Press F5 or Ctrl+R (Cmd+R on Mac).</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text"><strong>Check your internet connection</strong> — Open another website to confirm you're online.</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text"><strong>Clear your browser cache</strong> — Press Ctrl+Shift+Delete (Cmd+Shift+Delete on Mac) → select Cached images and files → Clear data.</div></div>
+  <div class="help-step"><div class="step-num">4</div><div class="step-text"><strong>Try a different browser</strong> — If the page loads in another browser, the issue is specific to your current browser's settings.</div></div>
+  <div class="help-step"><div class="step-num">5</div><div class="step-text"><strong>Disable browser extensions</strong> — Ad blockers or privacy tools can sometimes block scripts. Try in an Incognito/Private window.</div></div>
+  <div class="help-tip">If the problem persists, <a href="contact.html" style="color:var(--crimson-glow)">contact us</a> with the URL that isn't loading and the error message you see.</div>
+</div>
+
+<div class="help-section" id="login-error">
+  <h2>Login / Sign-in Errors</h2>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text"><strong>"Wrong email or password"</strong> — Double-check your email address (no typos, no spaces). Use <a href="reset-password.html" style="color:var(--crimson-glow)">Forgot Password</a> if needed.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text"><strong>"Please confirm your email"</strong> — Check your inbox (and spam) for the confirmation link sent when you registered.</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text"><strong>Google/Discord sign-in not working</strong> — Make sure pop-ups aren't blocked in your browser. Try in a different browser or Incognito mode.</div></div>
+  <div class="help-step"><div class="step-num">4</div><div class="step-text"><strong>"Too many attempts"</strong> — Wait 1–2 minutes before trying again. Your account is temporarily rate-limited for security.</div></div>
+</div>
+
+<div class="help-section" id="chapter-loading">
+  <h2>Chapter Not Loading / Blank Page</h2>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text">Refresh the page — most blank chapter issues resolve on refresh.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text">Check that you're connected to the internet and try navigating to another page first.</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text">The chapter may have been taken down by the author or our moderation team. Return to the novel's chapter list to check.</div></div>
+  <div class="help-tip">If a specific chapter consistently fails to load, please <a href="contact.html" style="color:var(--crimson-glow)">contact us</a> with the chapter URL.</div>
+</div>
+
+<div class="help-section" id="mobile-issues">
+  <h2>Mobile Issues</h2>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text"><strong>Text too small or broken layout</strong> — Make sure your browser zoom is set to 100%. In Chrome on Android: tap ⋮ → Settings → Accessibility → Text Scaling.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text"><strong>Buttons not responding</strong> — Try a full page reload. If using an in-app browser (e.g. Instagram), open in Chrome or Safari instead.</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text"><strong>Install as app</strong> — In Chrome tap ⋮ → Add to Home Screen. This gives you a better experience than the browser tab.</div></div>
+</div>
+
+<div class="help-section" id="images-not-loading">
+  <h2>Covers / Images Not Showing</h2>
+  <div class="help-step"><div class="step-num">1</div><div class="step-text">Reload the page — image loading delays are usually temporary.</div></div>
+  <div class="help-step"><div class="step-num">2</div><div class="step-text">Check if your browser is blocking mixed content or images. Chrome: click the padlock icon → Site Settings → Images → Allow.</div></div>
+  <div class="help-step"><div class="step-num">3</div><div class="step-text">If you're on a slow connection, images may take longer to appear. Wait a few seconds.</div></div>
+</div>
+
+
+        <div class="help-section" id="faq">
+          <h2>Frequently Asked Questions</h2>
+          
+        <details class="faq-item">
+          <summary class="faq-q">The site looks broken / no CSS styles. <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">Clear your browser cache (Ctrl+Shift+Delete) and reload. If the issue persists, try a hard refresh: Ctrl+Shift+R on Windows/Linux, Cmd+Shift+R on Mac.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">My profile picture won't upload. <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">Make sure the file is JPG, PNG or WEBP and under 2MB. If it still fails, try a different image or contact support.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">I'm seeing an error message I don't understand. <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">Take a screenshot of the error and <a href="contact.html">contact us</a> — include the page URL and the full error message.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">The site is very slow. <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">Try on a different network. Clear your browser cache. Disable browser extensions. If you're on mobile, try Wi-Fi instead of mobile data.</div>
+        </details>
+        <details class="faq-item">
+          <summary class="faq-q">A feature that used to work has stopped working. <span class="faq-arrow">▾</span></summary>
+          <div class="faq-a">It may be a temporary issue. Refresh and try again. If the problem persists for more than a few hours, please contact us so we can investigate.</div>
+        </details>
+        </div>
+
+        <div class="contact-strip">
+          <p>Didn't find what you were looking for?</p>
+          <a href="contact.html" class="btn btn-crimson" style="font-size:0.8rem;padding:0.6em 1.4em">Contact Support →</a>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    // Highlight active sidebar link on scroll
+    const sections = document.querySelectorAll('.help-section[id]');
+    const links = document.querySelectorAll('.topic-sidebar a[href^="#"]');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.topic-sidebar a[href="#${e.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>
