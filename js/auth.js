@@ -291,7 +291,7 @@ function initRegister() {
           password: pass,
           options: {
             data: { username, role },
-            emailRedirectTo: window.location.origin + '/index.html',
+            emailRedirectTo: window.location.origin,
           },
         });
 
@@ -392,7 +392,7 @@ function initSocial() {
         const { error } = await sb.auth.signInWithOAuth({
           provider,
           options: {
-            redirectTo: window.location.origin + '/index.html',
+            redirectTo: window.location.origin,
             queryParams: isGoogle ? { access_type: 'offline', prompt: 'consent' } : {},
           },
         });
