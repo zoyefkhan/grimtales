@@ -23,7 +23,6 @@
     return window._sbClient;
   }
 
-  // Ensure profile row exists — same as auth.js
   async function ensureProfile(sb, sbUser) {
     try {
       const { data: existing } = await sb.from('profiles').select('id,username,role,avatar_url').eq('id', sbUser.id).single();
@@ -45,7 +44,7 @@
       }).select().single();
 
       return data;
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   }
@@ -68,33 +67,39 @@
     const sb = await loadSB();
     if (!sb) return;
 
-    // Handle URL hash (OAuth redirect)
     const hash = window.location.hash;
     if (hash && (hash.includes('access_token') || hash.includes('error_description'))) {
-      const { data: { session } } = await sb.auth.getSession();
+      const { data: { session } } = await sb.auth.getSessionFromUrl();
       if (session?.user) {
         const profile = await ensureProfile(sb, session.user);
         const user = saveUser(session.user, profile);
         window.history.replaceState(null, '', window.location.pathname);
         if (window.showToast) {
-          setTimeout(() => window.showToast(`Welcome, ${user.username}! ✦`), 300);
+          setTimeout(() => window.showToast(`Welcome, ${user.username}!`), 300);
+        }
+        if (typeof window.updateNavbarSession === 'function') {
+          window.updateNavbarSession();
         }
         return;
       }
     }
 
-    // Check session on every page load
     const { data: { session } } = await sb.auth.getSession();
     if (session?.user) {
       const profile = await ensureProfile(sb, session.user);
       saveUser(session.user, profile);
+      if (typeof window.updateNavbarSession === 'function') {
+        window.updateNavbarSession();
+      }
     }
 
-    // Watch for auth changes (handles Android OAuth)
     sb.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         const profile = await ensureProfile(sb, session.user);
         saveUser(session.user, profile);
+        if (typeof window.updateNavbarSession === 'function') {
+          window.updateNavbarSession();
+        }
       }
       if (event === 'SIGNED_OUT') {
         localStorage.removeItem('gt-user');
