@@ -369,14 +369,14 @@ window.resendEmail = async function(email) {
 };
 
 // ════════════════════════════════════════════
-//   GOOGLE & DISCORD OAUTH
+//   GOOGLE & FACEBOOK OAUTH
 // ════════════════════════════════════════════
 function initSocial() {
   document.querySelectorAll('.social-auth-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const isGoogle = btn.textContent.trim().toLowerCase().includes('google');
-      const provider = isGoogle ? 'google' : 'discord';
-      const label    = isGoogle ? 'Google' : 'Discord';
+      const provider = isGoogle ? 'google' : 'facebook';
+      const label    = isGoogle ? 'Google' : 'Facebook';
 
       if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
         window.showToast('Add your Supabase keys to js/auth.js first.', 'error');
@@ -403,7 +403,7 @@ function initSocial() {
       } catch (e) {
         console.error('OAuth error:', e);
         window.showToast(`${label} login failed. Try email login instead.`, 'error');
-        setBtn(btn, false, `${isGoogle ? 'G' : 'D'}  ${label}`);
+        setBtn(btn, false, `${label[0]}  ${label}`);
       }
     });
   });
@@ -411,7 +411,7 @@ function initSocial() {
 
 // ════════════════════════════════════════════
 //   HANDLE OAUTH CALLBACK
-//   Catches session after Google/Discord redirect
+//   Catches session after Google/Facebook redirect
 //   Also ensures profile exists for social logins
 // ════════════════════════════════════════════
 async function handleOAuthCallback() {

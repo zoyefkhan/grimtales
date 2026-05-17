@@ -32,7 +32,8 @@
   // ─── Inject CSS ───────────────────────────────────────────
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = '/css/loading.css';
+  const scriptSrc = document.currentScript?.src || document.querySelector('script[src$="/js/loading.js"], script[src$="js/loading.js"]')?.src;
+  link.href = scriptSrc ? new URL('../css/loading.css', scriptSrc).href : 'css/loading.css';
   document.head.appendChild(link);
 
   // ─── Build Loader ─────────────────────────────────────────
@@ -100,15 +101,29 @@
     setTimeout(() => loader?.remove(), 500);
   }
 
-  const maxWait = setTimeout(hideLoader, 1500);
+  const minDisplayMs = 1800;
+  const maxDisplayMs = 3200;
+  const startTime = Date.now();
+  let hideTimeout;
+
+  function scheduleHide() {
+    if (hideTimeout) return;
+    const elapsed = Date.now() - startTime;
+    const delay = Math.max(0, minDisplayMs - elapsed);
+    hideTimeout = setTimeout(hideLoader, delay);
+  }
+
+  const maxWait = setTimeout(() => {
+    scheduleHide();
+  }, maxDisplayMs);
 
   if (document.readyState === 'complete') {
     clearTimeout(maxWait);
-    setTimeout(hideLoader, 1200);
+    scheduleHide();
   } else {
     window.addEventListener('load', () => {
       clearTimeout(maxWait);
-      setTimeout(hideLoader, 1200);
+      scheduleHide();
     }, { once: true });
   }
 
