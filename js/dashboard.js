@@ -1,7 +1,7 @@
 /* ============================================
    dashboard.js — Author Dashboard
-   Fixed: no demo data, sign-in bug, 
-   all buttons working, real Supabase data
+   Fixed: HTML nesting, new novel form IDs,
+   all panels working, real Supabase data
 ============================================ */
 
 let currentPanel = 'overviewPanel';
@@ -14,19 +14,17 @@ function showPanel(id) {
   document.querySelectorAll('.dash-nav-link').forEach(l => l.classList.remove('active'));
   document.querySelector(`.dash-nav-link[data-panel="${id}"]`)?.classList.add('active');
 }
+window.showPanel = showPanel;
 
 // ─── Load user into dashboard UI ─────────────
 async function loadDashboardUser() {
-  // Get FRESH user from Supabase — not just localStorage
   const sb = await window.GT_Supabase?.getSupabase();
   let user = JSON.parse(localStorage.getItem('gt-user') || '{}');
 
   if (sb && user.id) {
     try {
-      // Refresh from Supabase auth
       const { data: { user: sbUser } } = await sb.auth.getUser();
       if (sbUser) {
-        // Get profile from DB
         const { data: profile } = await sb.from('profiles').select('*').eq('id', sbUser.id).single();
         if (profile) {
           user = {
@@ -44,7 +42,6 @@ async function loadDashboardUser() {
 
   if (!user.username) return;
 
-  // Update displays
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning,' : hour < 18 ? 'Good afternoon,' : 'Good evening,';
 
@@ -53,15 +50,18 @@ async function loadDashboardUser() {
   document.querySelectorAll('.dash-username').forEach(el => el.textContent = user.username);
   document.querySelectorAll('.dash-role').forEach(el => el.textContent = '✦ Author');
 
+  // Update the overview panel title specifically
+  const titleEl = document.getElementById('dashUserTitle');
+  if (titleEl) titleEl.textContent = user.username;
+
   // Avatar — only update dash avatar, not navbar (navbar handled by app.js)
   document.querySelectorAll('.dash-avatar').forEach(el => {
-    const inner = el.querySelector('div') || el;
     if (user.avatar) {
-      inner.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+      el.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
     } else {
-      inner.innerHTML = '';
-      inner.textContent = (user.username || '?').slice(0, 2).toUpperCase();
-      inner.style.cssText += ';display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.2rem;color:var(--crimson-glow)';
+      el.innerHTML = '';
+      el.textContent = (user.username || '?').slice(0, 2).toUpperCase();
+      el.style.cssText += ';display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.2rem;color:var(--crimson-glow)';
     }
   });
 }
@@ -71,7 +71,6 @@ async function loadStats() {
   const sb = await window.GT_Supabase?.getSupabase();
   const user = JSON.parse(localStorage.getItem('gt-user') || '{}');
 
-  // Reset to zero while loading
   ['statViews','statFollowers','statComments','statRating'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = '—';
@@ -126,7 +125,6 @@ async function loadMyNovels() {
   const sb = await window.GT_Supabase?.getSupabase();
   if (!sb) { container.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--ash)">Supabase not connected.</div>`; return; }
 
-  // Get current user directly from Supabase auth
   const { data: { user: sbUser } } = await sb.auth.getUser();
   if (!sbUser) {
     container.innerHTML = `<div style="padding:2.5rem;text-align:center">
@@ -213,7 +211,7 @@ async function loadActivity() {
     <div class="activity-item">
       <div class="activity-icon comment">💬</div>
       <div class="activity-text">
-        <strong>${c.author?.username||'Someone'}</strong> commented on 
+        <strong>${c.author?.username||'Someone'}</strong> commented on
         <a href="novel-detail.html?id=${c.novel_id}" style="color:var(--crimson-glow)">${c.novel?.title||'your novel'}</a>:
         <em style="color:var(--ash)">"${(c.text||'').slice(0,60)}${c.text?.length>60?'...':''}"</em>
       </div>
@@ -249,7 +247,7 @@ async function loadComments() {
             ${c.author?.avatar_url ? `<img src="${c.author.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : '💬'}
           </div>
           <div class="activity-text" style="flex:1">
-            <strong>${c.author?.username||'Anonymous'}</strong> on 
+            <strong>${c.author?.username||'Anonymous'}</strong> on
             <a href="novel-detail.html?id=${c.novel?.id}" style="color:var(--crimson-glow)">${c.novel?.title||'novel'}</a><br>
             <span style="color:var(--ash-light);font-size:0.88rem">${c.text}</span>
           </div>
@@ -515,40 +513,70 @@ async function publishChapter() {
   setTimeout(() => showPanel('overviewPanel'), 900);
 }
 
-// ─── Create novel ─────────────────────────────
+// ─── Create novel (FIXED — uses proper IDs) ───
 function initNewNovel() {
-  const panel = document.getElementById('newNovelPanel');
-  if (!panel) return;
-  const createBtn = panel.querySelector('.btn-crimson');
+  const createBtn = document.getElementById('createNovelBtn');
+  const draftBtn  = document.getElementById('saveNovelDraft');
   if (!createBtn) return;
 
-  createBtn.addEventListener('click', async () => {
-    const inputs = panel.querySelectorAll('input[type="text"]');
-    const title  = inputs[0]?.value?.trim();
-    const genre  = panel.querySelector('select')?.value;
-    const syn    = panel.querySelector('textarea')?.value?.trim();
+  async function submitNovel(asDraft) {
+    const title  = document.getElementById('newNovelTitle')?.value?.trim();
+    const genre  = document.getElementById('newNovelGenre')?.value;
+    const syn    = document.getElementById('newNovelSynopsis')?.value?.trim();
+    const status = asDraft ? 'draft' : (document.getElementById('newNovelStatus')?.value || 'draft');
+    const rating = document.getElementById('newNovelRating')?.value || 'all';
+    const lang   = document.getElementById('newNovelLanguage')?.value || 'English';
+    const tagsRaw = document.getElementById('newNovelTags')?.value || '';
+    const tags   = tagsRaw.split(',').map(t => t.trim()).filter(Boolean).slice(0, 15);
 
     if (!title) { window.showToast('Enter a novel title.', 'error'); return; }
     if (!syn)   { window.showToast('Add a synopsis.', 'error'); return; }
 
     const sb = await window.GT_Supabase?.getSupabase();
+    if (!sb) { window.showToast('Not connected to database.', 'error'); return; }
+
     const { data: { user: sbUser } } = await sb.auth.getUser();
     if (!sbUser) { window.showToast('Sign in required.', 'error'); return; }
 
-    createBtn.textContent = 'Creating...'; createBtn.disabled = true;
+    createBtn.textContent = 'Creating...';
+    createBtn.disabled = true;
+    if (draftBtn) draftBtn.disabled = true;
 
     const { data, error } = await sb.from('novels').insert({
-      author_id: sbUser.id, title, synopsis: syn,
-      genres: genre ? [genre] : [], status: 'draft',
+      author_id:      sbUser.id,
+      title,
+      synopsis:       syn,
+      genres:         genre ? [genre] : [],
+      status,
+      content_rating: rating,
+      language:       lang,
+      tags,
     }).select().single();
 
-    createBtn.textContent = 'Create Novel →'; createBtn.disabled = false;
+    createBtn.textContent = 'Create Novel →';
+    createBtn.disabled = false;
+    if (draftBtn) draftBtn.disabled = false;
 
     if (error) { window.showToast('Failed: ' + error.message, 'error'); return; }
 
     window.showToast(`"${title}" created! ✦`);
+
+    // Reset form
+    ['newNovelTitle','newNovelSynopsis','newNovelTags'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+
     showPanel('overviewPanel');
     loadMyNovels();
+  }
+
+  createBtn.addEventListener('click', () => submitNovel(false));
+  draftBtn?.addEventListener('click', () => submitNovel(true));
+
+  // Cover upload preview
+  document.getElementById('coverUpload')?.addEventListener('click', () => {
+    document.getElementById('coverImageInput')?.click();
   });
 }
 
@@ -567,7 +595,10 @@ function initSidebarNav() {
     });
   });
 
-  document.getElementById('dashWriteChapter')?.addEventListener('click', () => { showPanel('editorPanel'); populateNovelSelect(); });
+  document.getElementById('dashWriteChapter')?.addEventListener('click', () => {
+    showPanel('editorPanel');
+    populateNovelSelect();
+  });
   document.getElementById('dashNewNovel')?.addEventListener('click', () => showPanel('newNovelPanel'));
 }
 
@@ -604,4 +635,3 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadMyNovels();
   loadActivity();
 });
-

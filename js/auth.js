@@ -389,16 +389,19 @@ function initSocial() {
         const sb = await getSB();
         if (!sb) throw new Error('Supabase not available');
 
-        const { error } = await sb.auth.signInWithOAuth({
+        const { data, error } = await sb.auth.signInWithOAuth({
           provider,
           options: {
-            redirectTo: window.location.origin,
+            redirectTo: window.location.origin + '/',
+            skipBrowserRedirect: true,
             queryParams: isGoogle ? { access_type: 'offline', prompt: 'consent' } : {},
           },
         });
 
         if (error) throw error;
-        // Supabase redirects automatically
+        if (data?.url) {
+          window.location.href = data.url;
+        }
 
       } catch (e) {
         console.error('OAuth error:', e);
@@ -417,6 +420,13 @@ function initSocial() {
 async function handleOAuthCallback() {
   const sb = await getSB();
   if (!sb) return;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('error') || urlParams.get('error_code')) {
+    const errDesc = urlParams.get('error_description') || 'Authentication failed.';
+    window.history.replaceState(null, '', window.location.pathname);
+    setTimeout(() => window.showToast(errDesc.replace(/\+/g, ' '), 'error'), 300);
+  }
 
   // Listen for auth state changes
   sb.auth.onAuthStateChange(async (event, session) => {

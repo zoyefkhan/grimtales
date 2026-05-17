@@ -105,6 +105,10 @@
   padding: 3rem 2.5rem;
   border-left: var(--border-subtle);
   border-right: var(--border-subtle);
+  /* Prevent horizontal overflow on all screens */
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .chapter-heading {
@@ -159,10 +163,11 @@
   line-height: var(--reader-line-height, 1.9);
   color: var(--reader-text-color, #d4d0c8);
   letter-spacing: 0.01em;
-  /* IMPORTANT: prevent overflow on mobile */
   word-wrap: break-word;
   overflow-wrap: break-word;
   hyphens: auto;
+  /* Ensure text never overflows its container */
+  max-width: 100%;
 }
 
 .chapter-body p {
@@ -362,35 +367,49 @@
 .comment-action-btn:hover { color: var(--crimson-glow); }
 .comment-action-btn.liked { color: var(--crimson-glow); }
 
-/* ── MOBILE RESPONSIVE ── */
+/* ── TABLET ── */
 @media (max-width: 1200px) {
-  .reader-main { grid-template-columns: 0 1fr 0; }
+  .reader-main { grid-template-columns: 1fr; }
   .reader-sidebar-left, .reader-sidebar-right { display: none; }
 }
 
-@media (max-width: 768px) {                                                             
-  /* Fix for broken text layout on Android */
+/* ── MOBILE ── */
+@media (max-width: 768px) {
   .reader-content {
     padding: 1.5rem 1rem;
     border-left: none;
     border-right: none;
+    /* Critical: prevent content from expanding beyond screen */
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .chapter-body {
     font-size: 1rem !important;
     line-height: 1.85 !important;
-    /* Prevent text from being cut off */
-    max-width: 100%;
-    overflow: hidden;
+    /* Remove overflow:hidden — it was clipping text */
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  /* Fix drop cap on mobile */
+  /* Shrink drop cap on mobile so it doesn't break layout */
   .chapter-body p:first-of-type::first-letter {
-    font-size: 2.8em;
+    font-size: 2.4em;
+    margin-right: 0.05em;
+  }
+
+  /* Prevent any images or elements inside body from overflowing */
+  .chapter-body img,
+  .chapter-body video,
+  .chapter-body iframe {
+    max-width: 100%;
+    height: auto;
   }
 
   .chapter-title-main { font-size: 1.3rem; }
+  .chapter-meta-row { gap: 0.5rem; font-size: 0.72rem; }
 
+  /* Nav buttons: 2 columns, hide center label */
   .chapter-navigation {
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
@@ -398,7 +417,24 @@
   .chapter-nav-center { display: none; }
   .chapter-nav-btn { padding: 0.75em 0.9em; font-size: 0.72rem; }
 
-  .comments-section { padding: 2rem 1rem; }
-  .reader-settings-panel { right: 0.25rem; left: 0.25rem; width: auto; }
-  .chapter-meta-row { gap: 0.5rem; font-size: 0.72rem; }
+  /* Settings panel: full width on mobile */
+  .reader-settings-panel {
+    right: 0.5rem;
+    left: 0.5rem;
+    width: auto;
+    top: 120px;
   }
+
+  .comments-section { padding: 2rem 1rem; }
+
+  /* Comments grid fix on small screens */
+  .comment-item { grid-template-columns: 32px 1fr; gap: 0.75rem; padding: 0.85rem; }
+  .comment-avatar { width: 32px; height: 32px; }
+}
+
+/* ── SMALL MOBILE (360px and below) ── */
+@media (max-width: 380px) {
+  .reader-content { padding: 1.25rem 0.75rem; }
+  .chapter-body { font-size: 0.95rem !important; }
+  .reader-ctrl-btn { width: 30px; height: 30px; font-size: 0.8rem; }
+}

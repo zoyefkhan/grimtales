@@ -10,6 +10,10 @@
 </head>
 <body class="page-dashboard">
 
+  <script src="js/supabase.js"></script>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/loading.js"></script>
+
   <!-- NAVBAR -->
   <nav class="navbar" id="navbar">
     <div class="navbar-inner">
@@ -24,7 +28,6 @@
       </ul>
       <div class="navbar-actions">
         <button class="theme-toggle" id="themeToggle">🌙</button>
-       
       </div>
       <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
     </div>
@@ -40,13 +43,11 @@
     <aside class="dash-sidebar">
       <div class="dash-user">
         <div class="dash-avatar-wrap">
-          <div class="dash-avatar">
-            <div style="width:100%;height:100%;background:linear-gradient(135deg,#2d0f0f,#1a0808);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.4rem;color:var(--crimson-glow)">?</div>
-          </div>
+          <div class="dash-avatar"></div>
           <div class="dash-avatar-badge"></div>
         </div>
         <div class="dash-username">Author</div>
-        <div class="dash-role">Author</div>
+        <div class="dash-role">✦ Author</div>
       </div>
 
       <nav class="dash-nav">
@@ -100,7 +101,7 @@
           <a href="settings.html" class="dash-nav-link" data-panel="settings" id="settingsLink">
             <span class="nav-icon">⚙️</span> Settings
           </a>
-          <a href="index.html" class="dash-nav-link">
+          <a href="index.html" class="dash-nav-link" data-signout>
             <span class="nav-icon">🚪</span> Sign Out
           </a>
         </div>
@@ -110,14 +111,14 @@
     <!-- MAIN CONTENT -->
     <main class="dash-main" id="dashMain">
 
-      <!-- Overview Panel -->
+      <!-- ═══ OVERVIEW PANEL ═══ -->
       <div id="overviewPanel">
         <div class="dash-header">
           <div>
             <div class="dash-greeting">Good evening,</div>
-            <h1 class="dash-title">Marcus Vale</h1>
+            <h1 class="dash-title" id="dashUserTitle">—</h1>
           </div>
-          <div style="display:flex;gap:0.75rem">
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
             <button class="btn btn-outline" id="dashNewNovel">+ New Novel</button>
             <button class="btn btn-crimson" id="dashWriteChapter">✍ Write Chapter</button>
           </div>
@@ -129,19 +130,16 @@
             <span class="stat-card-icon">👁️</span>
             <div class="stat-card-value" id="statViews">—</div>
             <div class="stat-card-label">Total Views</div>
-            
           </div>
           <div class="stat-card">
             <span class="stat-card-icon">❤️</span>
             <div class="stat-card-value" id="statFollowers">—</div>
             <div class="stat-card-label">Followers</div>
-            
           </div>
           <div class="stat-card">
             <span class="stat-card-icon">💬</span>
             <div class="stat-card-value" id="statComments">—</div>
             <div class="stat-card-label">Comments</div>
-            
           </div>
           <div class="stat-card">
             <span class="stat-card-icon">⭐</span>
@@ -156,7 +154,7 @@
           <div class="dash-panel">
             <div class="dash-panel-header">
               <span class="dash-panel-title">My Novels</span>
-              <a href="#" class="section-link" style="font-size:0.72rem">Manage All →</a>
+              <a href="#" class="section-link" style="font-size:0.72rem" onclick="showPanel('overviewPanel')">Manage All →</a>
             </div>
             <div class="novel-manage-list" id="novelManageList">
               <!-- Injected by JS -->
@@ -175,7 +173,7 @@
         </div>
       </div>
 
-      <!-- Chapter Editor Panel (hidden by default) -->
+      <!-- ═══ CHAPTER EDITOR PANEL ═══ -->
       <div id="editorPanel" style="display:none">
         <div class="dash-header">
           <div>
@@ -187,12 +185,14 @@
 
         <div class="dash-panel">
           <div class="chapter-editor-container">
+
             <!-- Editor Header -->
             <div class="editor-header">
               <input type="text" class="editor-title-input" placeholder="Chapter Title..." id="chapterTitleInput" />
               <select id="novelSelectForChapter" style="width:auto;font-size:0.82rem;padding:0.45em 0.75em;border-radius:var(--radius)">
                 <option value="">Select a novel...</option>
               </select>
+            </div><!-- /.editor-header -->
 
             <!-- Toolbar -->
             <div class="editor-toolbar">
@@ -230,11 +230,12 @@
                 <button class="btn btn-crimson" id="publishChapter">Publish Chapter →</button>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- New Novel Panel (hidden by default) -->
+          </div><!-- /.chapter-editor-container -->
+        </div><!-- /.dash-panel -->
+      </div><!-- /#editorPanel -->
+
+      <!-- ═══ NEW NOVEL PANEL ═══ -->
       <div id="newNovelPanel" style="display:none">
         <div class="dash-header">
           <div>
@@ -245,16 +246,17 @@
         </div>
 
         <div class="dash-panel">
-          <div class="profile-panel-body" style="padding:2rem">
+          <div style="padding:2rem">
             <div class="write-novel-form">
+
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-                <div class="form-group" style="display:flex;flex-direction:column;gap:0.4rem">
+                <div style="display:flex;flex-direction:column;gap:0.4rem">
                   <label style="font-family:var(--font-heading);font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ash)">Novel Title *</label>
-                  <input type="text" placeholder="Enter your novel title..." />
+                  <input type="text" id="newNovelTitle" placeholder="Enter your novel title..." />
                 </div>
-                <div class="form-group" style="display:flex;flex-direction:column;gap:0.4rem">
+                <div style="display:flex;flex-direction:column;gap:0.4rem">
                   <label style="font-family:var(--font-heading);font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ash)">Genre *</label>
-                  <select>
+                  <select id="newNovelGenre">
                     <option value="">Select primary genre...</option>
                     <option>Dark Fantasy</option>
                     <option>Horror</option>
@@ -270,43 +272,43 @@
 
               <div style="display:flex;flex-direction:column;gap:0.4rem">
                 <label style="font-family:var(--font-heading);font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ash)">Synopsis *</label>
-                <textarea placeholder="Write a compelling synopsis (150–500 words recommended)..." style="min-height:140px;resize:vertical"></textarea>
+                <textarea id="newNovelSynopsis" placeholder="Write a compelling synopsis (150–500 words recommended)..." style="min-height:140px;resize:vertical"></textarea>
               </div>
 
               <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
                 <div style="display:flex;flex-direction:column;gap:0.4rem">
                   <label style="font-family:var(--font-heading);font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ash)">Status</label>
-                  <select>
-                    <option>Ongoing</option>
-                    <option>Completed</option>
-                    <option>On Hiatus</option>
-                    <option>Draft</option>
+                  <select id="newNovelStatus">
+                    <option value="ongoing">Ongoing</option>
+                    <option value="completed">Completed</option>
+                    <option value="hiatus">On Hiatus</option>
+                    <option value="draft" selected>Draft</option>
                   </select>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:0.4rem">
                   <label style="font-family:var(--font-heading);font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ash)">Content Rating</label>
-                  <select>
-                    <option>All Ages</option>
-                    <option>Teen (13+)</option>
-                    <option>Mature (17+)</option>
-                    <option>Adult (18+)</option>
+                  <select id="newNovelRating">
+                    <option value="all">All Ages</option>
+                    <option value="teen">Teen (13+)</option>
+                    <option value="mature">Mature (17+)</option>
+                    <option value="adult">Adult (18+)</option>
                   </select>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:0.4rem">
                   <label style="font-family:var(--font-heading);font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ash)">Language</label>
-                  <select>
-                    <option>English</option>
-                    <option>Spanish</option>
-                    <option>French</option>
-                    <option>German</option>
-                    <option>Portuguese</option>
+                  <select id="newNovelLanguage">
+                    <option value="English">English</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="French">French</option>
+                    <option value="German">German</option>
+                    <option value="Portuguese">Portuguese</option>
                   </select>
                 </div>
               </div>
 
               <div style="display:flex;flex-direction:column;gap:0.4rem">
                 <label style="font-family:var(--font-heading);font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ash)">Tags (comma separated)</label>
-                <input type="text" placeholder="fantasy, horror, mystery, gothic..." />
+                <input type="text" id="newNovelTags" placeholder="fantasy, horror, mystery, gothic..." />
                 <div style="font-size:0.75rem;color:var(--ash)">Add up to 15 tags to help readers find your novel</div>
               </div>
 
@@ -316,35 +318,36 @@
                   <div style="font-size:2rem;margin-bottom:0.75rem">🖼️</div>
                   <div style="font-family:var(--font-heading);font-size:0.8rem;color:var(--ash-light);margin-bottom:0.25rem">Click to upload cover image</div>
                   <div style="font-size:0.72rem;color:var(--ash)">PNG, JPG, WEBP · Recommended: 600×900px · Max 5MB</div>
+                  <input type="file" id="coverImageInput" accept="image/png,image/jpeg,image/webp" style="display:none" />
                 </div>
               </div>
 
-              <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:0.5rem">
-                <button class="btn btn-outline">Save as Draft</button>
-                <button class="btn btn-crimson">Create Novel →</button>
+              <div style="display:flex;gap:1rem;justify-content:flex-end;margin-top:0.5rem;flex-wrap:wrap">
+                <button class="btn btn-outline" id="saveNovelDraft">Save as Draft</button>
+                <button class="btn btn-crimson" id="createNovelBtn">Create Novel →</button>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-  
-      <!-- Stats Panel -->
+            </div><!-- /.write-novel-form -->
+          </div>
+        </div><!-- /.dash-panel -->
+      </div><!-- /#newNovelPanel -->
+
+      <!-- ═══ STATS PANEL ═══ -->
       <div id="statsPanel" style="display:none"></div>
-      <!-- Comments Panel -->
+
+      <!-- ═══ COMMENTS PANEL ═══ -->
       <div id="commentsPanel" style="display:none"></div>
-      <!-- Reviews Panel -->
+
+      <!-- ═══ REVIEWS PANEL ═══ -->
       <div id="reviewsPanel" style="display:none"></div>
-      <!-- Drafts Panel -->
+
+      <!-- ═══ DRAFTS PANEL ═══ -->
       <div id="draftsPanel" style="display:none"></div>
 
-  </main>
+    </main>
   </div>
 
- <script src="js/supabase.js"></script>   <!-- ← ADD THIS LINE -->
- <script src="js/auth-guard.js"></script>
- <script src="js/loading.js"></script>
- <script src="js/app.js"></script>
- <script src="js/dashboard.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/dashboard.js"></script>
 </body>
 </html>

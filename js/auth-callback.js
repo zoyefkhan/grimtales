@@ -67,6 +67,18 @@
     const sb = await loadSB();
     if (!sb) return;
 
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') || urlParams.get('error_code')) {
+      const errDesc = urlParams.get('error_description') || 'Authentication failed.';
+      window.history.replaceState(null, '', window.location.pathname);
+      if (window.showToast) {
+        setTimeout(() => window.showToast(errDesc.replace(/\+/g, ' '), 'error'), 300);
+      }
+      if (window.location.pathname.endsWith('login.html') || window.location.pathname.endsWith('register.html')) return;
+      setTimeout(() => window.location.href = 'login.html', 1500);
+      return;
+    }
+
     const hash = window.location.hash;
     if (hash && (hash.includes('access_token') || hash.includes('error_description'))) {
       const { data: { session } } = await sb.auth.getSessionFromUrl();
