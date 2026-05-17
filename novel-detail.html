@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Loading novel — GrimTales</title>
+  <title>GrimTales — Novel</title>
   <link rel="stylesheet" href="css/global.css" />
   <link rel="stylesheet" href="css/navbar.css" />
   <link rel="stylesheet" href="css/novel-detail.css" />
@@ -48,23 +48,28 @@
     <div class="novel-hero-inner container">
       <div class="novel-hero-cover">
         <div style="width:220px;height:320px;background:linear-gradient(135deg,#1a0808,#2d1010,#1a0808);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;text-align:center">
-          <div style="font-family:var(--font-heading);font-size:0.6rem;letter-spacing:0.2em;color:var(--crimson-glow);border:1px solid rgba(192,57,43,0.3);padding:0.2em 0.6em;margin-bottom:1.5rem;text-transform:uppercase">Loading</div>
-          <div style="font-family:var(--font-display);font-size:1.15rem;color:var(--white);line-height:1.3;margin-bottom:2rem">Loading title</div>
-          <div style="width:40px;height:1px;background:var(--crimson);margin-bottom:1.5rem"></div>
-          <div style="font-family:var(--font-heading);font-size:0.6rem;letter-spacing:0.2em;color:var(--ash);text-transform:uppercase">Loading author</div>
+          <div class="inline-loading" style="flex-direction:column;gap:0.8rem;">
+            <img src="assets/loader.svg" alt="Loading novel details" style="width:40px;height:40px;" />
+            <span style="font-family:var(--font-display);font-size:1rem;color:var(--white);line-height:1.3;">Loading novel details…</span>
+          </div>
         </div>
         <div class="novel-hero-cover-overlay"></div>
       </div>
 
       <div class="novel-hero-content">
         <div class="novel-status-row">
-          <span class="tag">Loading</span>
-          <span class="tag">Loading</span>
-          <span class="novel-status status-draft">Loading</span>
+          <div class="inline-loading" style="gap:0.6rem;padding:0.4rem 0;">
+            <img src="assets/loader.svg" alt="Loading novel metadata" style="width:18px;height:18px;" />
+            <span>Loading novel details…</span>
+          </div>
         </div>
-        <h1 class="novel-hero-title">Loading title</h1>
-        <div class="novel-hero-author">
-          by <a href="author-profile.html">Loading author</a>
+        <div class="novel-hero-title inline-loading" style="justify-content:center;gap:0.75rem;">
+          <img src="assets/loader.svg" alt="Loading novel title" style="width:24px;height:24px;" />
+          <span>Loading title…</span>
+        </div>
+        <div class="novel-hero-author inline-loading" style="gap:0.5rem;">
+          <img src="assets/loader.svg" alt="Loading author" style="width:18px;height:18px;" />
+          <span>Loading author…</span>
         </div>
         <div class="novel-hero-rating">
           <span class="rating-stars">☆☆☆☆☆</span>
@@ -72,7 +77,10 @@
           <span class="rating-count">(0 ratings)</span>
         </div>
         <div class="novel-hero-tags">
-          <span class="tag">Loading</span>
+          <div class="inline-loading" style="gap:0.5rem;">
+            <img src="assets/loader.svg" alt="Loading tags" style="width:16px;height:16px;" />
+            <span>Loading tags…</span>
+          </div>
         </div>
         <div class="novel-hero-stats">
           <div class="hero-stat-item">
@@ -111,7 +119,7 @@
         <div class="synopsis-section">
           <h3 style="font-family:var(--font-heading);font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--crimson-glow);margin-bottom:1rem">Synopsis</h3>
           <div class="synopsis-text collapsed" id="synopsisText">
-            <p>Loading synopsis…</p>
+            <p><span class="inline-loading"><img src="assets/loader.svg" alt="Loading synopsis" /><span>Loading synopsis…</span></span></p>
           </div>
           <button class="synopsis-toggle" id="synopsisToggle">▾ Read More</button>
         </div>
@@ -165,8 +173,8 @@
                 <div style="width:100%;height:100%;background:linear-gradient(135deg,#2d0f0f,#1a0808);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.2rem;color:var(--crimson-glow)">A</div>
               </div>
               <div>
-                <div class="author-card-name">Loading author</div>
-                <div class="author-card-novels">Loading profile</div>
+                <div class="author-card-name inline-loading" style="gap:0.5rem;"><img src="assets/loader.svg" alt="Loading author" style="width:18px;height:18px;" /><span>Loading author</span></div>
+                <div class="author-card-novels inline-loading" style="gap:0.5rem;"><img src="assets/loader.svg" alt="Loading profile" style="width:18px;height:18px;" /><span>Loading profile</span></div>
               </div>
             </div>
             <p class="author-card-bio">This author has not added a bio yet.</p>

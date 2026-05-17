@@ -39,27 +39,23 @@
 }
 
 .logo-icon {
-  width: 36px;
-  height: 36px;
-  background: var(--crimson);
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  width: 46px;
+  height: 46px;
+  background: url('../assets/logo.svg') center/contain no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  animation: pulse-crimson 3s ease-in-out infinite;
+
 }
 
 .logo-icon::after {
-  content: '✦';
-  color: var(--white);
-  font-size: 0.9rem;
-  position: absolute;
+  content: none;
 }
 
 .logo-text {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 0.92rem;
   color: var(--white);
   letter-spacing: 0.05em;
   line-height: 1;

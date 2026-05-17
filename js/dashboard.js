@@ -20,50 +20,67 @@ window.showPanel = showPanel;
 async function loadDashboardUser() {
   const sb = await window.GT_Supabase?.getSupabase();
   let user = JSON.parse(localStorage.getItem('gt-user') || '{}');
+  const initial = window.GT_User || {};
 
-  if (sb && user.id) {
+  user = {
+    id: user.id || initial.id || null,
+    username: user.username || initial.username || '',
+    email: user.email || initial.email || '',
+    role: user.role || initial.role || 'author',
+    avatar: user.avatar || initial.avatar || '',
+  };
+
+  if (sb) {
     try {
       const { data: { user: sbUser } } = await sb.auth.getUser();
       if (sbUser) {
-        const { data: profile } = await sb.from('profiles').select('*').eq('id', sbUser.id).single();
-        if (profile) {
-          user = {
-            id:       sbUser.id,
-            username: profile.username || sbUser.email?.split('@')[0] || 'User',
-            email:    sbUser.email,
-            role:     profile.role || 'author',
-            avatar:   profile.avatar_url || sbUser.user_metadata?.avatar_url || '',
-          };
-          localStorage.setItem('gt-user', JSON.stringify(user));
-        }
+        user.id = user.id || sbUser.id;
+        user.email = user.email || sbUser.email || '';
+
+        const { data: profile } = await sb.from('profiles')
+          .select('username, display_name, role, avatar_url')
+          .eq('id', sbUser.id)
+          .single();
+
+        const username = profile?.username || profile?.display_name || sbUser.user_metadata?.username || sbUser.user_metadata?.name || sbUser.email?.split('@')[0];
+        user.username = username || user.username || 'User';
+        user.role = profile?.role || user.role || 'author';
+        user.avatar = profile?.avatar_url || sbUser.user_metadata?.avatar_url || user.avatar || '';
+
+        localStorage.setItem('gt-user', JSON.stringify(user));
       }
-    } catch(e) { /* use localStorage fallback */ }
+    } catch(e) {
+      // If Supabase fails, keep the local fallback user
+      if (!user.username) user.username = user.email?.split('@')[0] || 'User';
+    }
   }
 
-  if (!user.username) return;
+  if (!user.username) {
+    user.username = user.email?.split('@')[0] || 'User';
+  }
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning,' : hour < 18 ? 'Good afternoon,' : 'Good evening,';
 
   document.querySelectorAll('.dash-greeting').forEach(el => el.textContent = greeting);
-  document.querySelectorAll('.dash-title').forEach(el => el.textContent = user.username);
   document.querySelectorAll('.dash-username').forEach(el => el.textContent = user.username);
   document.querySelectorAll('.dash-role').forEach(el => el.textContent = '✦ Author');
 
-  // Update the overview panel title specifically
   const titleEl = document.getElementById('dashUserTitle');
   if (titleEl) titleEl.textContent = user.username;
 
-  // Avatar — only update dash avatar, not navbar (navbar handled by app.js)
   document.querySelectorAll('.dash-avatar').forEach(el => {
     if (user.avatar) {
       el.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+      el.style.cssText = '';
     } else {
       el.innerHTML = '';
       el.textContent = (user.username || '?').slice(0, 2).toUpperCase();
-      el.style.cssText += ';display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.2rem;color:var(--crimson-glow)';
+      el.style.cssText = 'display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-size:1.2rem;color:var(--crimson-glow);';
     }
   });
+
+  window.GT_User = user;
 }
 
 // ─── Load real stats ──────────────────────────
@@ -223,7 +240,7 @@ async function loadActivity() {
 async function loadComments() {
   const panel = document.getElementById('commentsPanel');
   if (!panel) return;
-  panel.innerHTML = `<div class="dash-header"><div><div class="dash-greeting">Feedback</div><h1 class="dash-title">Comments</h1></div></div><div style="color:var(--ash);padding:2rem;text-align:center">Loading...</div>`;
+  panel.innerHTML = `<div class="dash-header"><div><div class="dash-greeting">Feedback</div><h1 class="dash-title">Comments</h1></div></div><div style="padding:2rem;text-align:center"><div class="inline-loading"><img src="assets/loader.svg" alt="Loading comments" /><span>Loading comments…</span></div></div>`;
 
   const sb = await window.GT_Supabase?.getSupabase();
   if (!sb) return;

@@ -54,20 +54,15 @@
 .auth-logo-icon {
   width: 48px;
   height: 48px;
-  background: var(--crimson);
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: url('../assets/logo.svg') center/contain no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: pulse-crimson 3s ease-in-out infinite;
   position: relative;
 }
 
 .auth-logo-icon::after {
-  content: '✦';
-  color: white;
-  font-size: 1.1rem;
-  position: absolute;
+  content: none;
 }
 
 .auth-logo-text {

@@ -149,7 +149,7 @@ async function loadLibrary() {
   const grid = document.getElementById('libraryGrid');
   if (!grid) return;
 
-  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--ash)">Loading...</div>`;
+  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem"><div class="inline-loading"><img src="assets/loader.svg" alt="Loading library" /><span>Loading...</span></div></div>`;
 
   const sb = await window.GT_Supabase?.getSupabase();
   const user = await getActiveUser();

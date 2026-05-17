@@ -120,7 +120,7 @@ function setBtn(btn, loading, label) {
   if (!btn) return;
   btn.disabled = loading;
   btn.innerHTML = loading
-    ? `<span style="display:inline-flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:_sp .7s linear infinite;display:inline-block"></span>${label}</span>`
+    ? `<span style="display:inline-flex;align-items:center;gap:8px"><img src="assets/loader.svg" alt="Loading" style="width:14px;height:14px;object-fit:contain" />${label}</span>`
     : label;
 }
 

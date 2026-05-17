@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <filter id="gothic-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="8" flood-color="#000000" flood-opacity="0.9" />
+    </filter>
+
+    <linearGradient id="metal-bright" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4d66" />
+      <stop offset="30%" stop-color="#ff0526" />
+      <stop offset="70%" stop-color="#8f0013" />
+      <stop offset="100%" stop-color="#380006" />
+    </linearGradient>
+
+    <linearGradient id="metal-dark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5c000c" />
+      <stop offset="50%" stop-color="#210003" />
+      <stop offset="100%" stop-color="#0a0001" />
+    </linearGradient>
+
+    <style>
+      @keyframes spin-clockwise {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes spin-counter {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(-360deg); }
+      }
+      @keyframes raven-pulse {
+        0%, 100% { transform: scale(0.96); filter: brightness(0.8) drop-shadow(0 0 2px rgba(255,5,38,0)); }
+        50% { transform: scale(1.02); filter: brightness(1.2) drop-shadow(0 0 15px rgba(255,5,38,0.6)); }
+      }
+      
+      /* Apply animations to vector groupings using their center points as transform origins */
+      .spinning-ring {
+        transform-origin: 250px 242px;
+        animation: spin-clockwise 8s linear infinite;
+      }
+      .spinning-spikes {
+        transform-origin: 250px 242px;
+        animation: spin-counter 12s linear infinite;
+      }
+      .pulsing-core {
+        transform-origin: 250px 242px;
+        animation: raven-pulse 2.5s ease-in-out infinite;
+      }
+    </style>
+  </defs>
+
+  <g filter="url(#gothic-shadow)">
+    
+    <g id="outer-ring" class="spinning-ring" transform="translate(250, 242) scale(0.95) translate(-250, -242)">
+      <path d="M 135 167 A 140 140 0 0 0 110 242 L 135 242 A 115 115 0 0 1 155 182 Z" fill="url(#metal-dark)" />
+      <path d="M 155 182 A 115 115 0 0 1 250 127 L 250 102 A 140 140 0 0 0 135 167 Z" fill="url(#metal-bright)" />
+      <path d="M 250 102 A 140 140 0 0 0 365 167 L 345 182 A 115 115 0 0 1 250 127 Z" fill="url(#metal-bright)" />
+      <path d="M 345 182 A 115 115 0 0 1 365 242 L 390 242 A 140 140 0 0 0 365 167 Z" fill="url(#metal-dark)" />
+      <path d="M 390 242 A 140 140 0 0 0 365 317 L 345 302 A 115 115 0 0 1 365 242 Z" fill="url(#metal-bright)" />
+      <path d="M 345 302 A 115 115 0 0 1 250 357 L 250 382 A 140 140 0 0 0 365 317 Z" fill="url(#metal-dark)" />
+      <path d="M 250 382 A 140 140 0 0 0 135 317 L 155 302 A 115 115 0 0 1 250 357 Z" fill="url(#metal-dark)" />
+      <path d="M 155 302 A 115 115 0 0 1 135 242 L 110 242 A 140 140 0 0 0 135 317 Z" fill="url(#metal-bright)" />
+    </g>
+
+    <g id="diagonal-spikes" class="spinning-spikes">
+      <path d="M 250 242 L 180 172 L 195 152 Z" fill="url(#metal-bright)" />
+      <path d="M 250 242 L 180 172 L 160 187 Z" fill="url(#metal-dark)" />
+      <path d="M 250 242 L 320 172 L 340 187 Z" fill="url(#metal-bright)" />
+      <path d="M 250 242 L 320 172 L 305 152 Z" fill="url(#metal-dark)" />
+      <path d="M 250 242 L 320 312 L 305 332 Z" fill="url(#metal-bright)" />
+      <path d="M 250 242 L 320 312 L 340 297 Z" fill="url(#metal-dark)" />
+      <path d="M 250 242 L 180 312 L 160 297 Z" fill="url(#metal-bright)" />
+      <path d="M 250 242 L 180 312 L 195 332 Z" fill="url(#metal-dark)" />
+    </g>
+
+    <g id="main-spikes">
+      <path d="M 250 22 L 225 132 L 250 112 Z" fill="url(#metal-bright)" />
+      <path d="M 250 22 L 275 132 L 250 112 Z" fill="url(#metal-dark)" />
+      <path d="M 250 482 L 225 352 L 250 372 Z" fill="url(#metal-bright)" />
+      <path d="M 250 482 L 275 352 L 250 372 Z" fill="url(#metal-dark)" />
+      <path d="M 40 242 L 140 220 L 125 242 Z" fill="url(#metal-bright)" />
+      <path d="M 40 242 L 140 264 L 125 242 Z" fill="url(#metal-dark)" />
+      <path d="M 460 242 L 360 220 L 375 242 Z" fill="url(#metal-bright)" />
+      <path d="M 460 242 L 360 264 L 375 242 Z" fill="url(#metal-dark)" />
+    </g>
+
+    <g id="gothic-raven" class="pulsing-core">
+      <path d="M 245 147 C 265 147 285 157 305 172 L 285 182 C 275 177 260 172 245 172 Z" fill="url(#metal-bright)" />
+      <path d="M 245 147 C 230 147 215 157 205 172 L 225 177 C 235 172 245 172 245 172 Z" fill="url(#metal-dark)" />
+      <path d="M 305 172 L 322 179 L 285 182 Z" fill="url(#metal-bright)" />
+      <path d="M 245 172 L 135 222 L 190 232 Z" fill="url(#metal-dark)" />
+      <path d="M 245 202 L 105 242 L 195 257 Z" fill="url(#metal-dark)" />
+      <path d="M 245 232 L 150 277 L 205 277 Z" fill="url(#metal-dark)" />
+      <path d="M 245 172 L 355 222 L 300 232 Z" fill="url(#metal-bright)" />
+      <path d="M 245 202 L 385 242 L 295 257 Z" fill="url(#metal-bright)" />
+      <path d="M 245 232 L 340 277 L 285 277 Z" fill="url(#metal-bright)" />
+      <path d="M 245 172 L 245 292 L 195 257 Z" fill="url(#metal-dark)" />
+      <path d="M 245 172 L 295 257 L 245 292 Z" fill="url(#metal-bright)" />
+      <path d="M 245 172 L 250 202 L 245 292 Z" fill="#ff4d6d" opacity="0.25" />
+      <path d="M 245 292 L 225 352 L 245 322 Z" fill="url(#metal-dark)" />
+      <path d="M 245 292 L 250 322 L 260 352 Z" fill="url(#metal-bright)" />
+      <path d="M 245 292 L 240 377 L 245 327 Z" fill="url(#metal-dark)" />
+      <path d="M 245 292 L 245 327 L 250 377 Z" fill="url(#metal-bright)" />
+    </g>
+  </g>
+</svg>

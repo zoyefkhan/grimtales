@@ -35,6 +35,7 @@
   const scriptSrc = document.currentScript?.src || document.querySelector('script[src$="/js/loading.js"], script[src$="js/loading.js"]')?.src;
   link.href = scriptSrc ? new URL('../css/loading.css', scriptSrc).href : 'css/loading.css';
   document.head.appendChild(link);
+  const loaderImageSrc = scriptSrc ? new URL('../assets/loader.svg', scriptSrc).href : 'assets/loader.svg';
 
   // ─── Build Loader ─────────────────────────────────────────
   const loader = document.createElement('div');
@@ -42,28 +43,7 @@
   loader.innerHTML = `
 
     <div class="loader-sigil">
-      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="44" fill="none" stroke="#2a0505" stroke-width="1" class="sigil-outer-ring"/>
-        <g class="sigil-rune-ring">
-          <circle cx="50" cy="50" r="38" fill="none" stroke="#5a0a0a" stroke-width="0.8" stroke-dasharray="4 7"/>
-          <circle cx="50" cy="12" r="2.5" fill="#8b1a1a"/>
-          <circle cx="82" cy="31" r="2.5" fill="#8b1a1a"/>
-          <circle cx="82" cy="69" r="2.5" fill="#8b1a1a"/>
-          <circle cx="50" cy="88" r="2.5" fill="#8b1a1a"/>
-          <circle cx="18" cy="69" r="2.5" fill="#8b1a1a"/>
-          <circle cx="18" cy="31" r="2.5" fill="#8b1a1a"/>
-        </g>
-        <g class="sigil-inner-star">
-          <polygon points="50,22 65,44 85,44 72,58 77,80 50,67 23,80 28,58 15,44 35,44"
-            fill="none" stroke="#7a1010" stroke-width="0.8"/>
-        </g>
-        <polygon points="50,30 66,39 66,61 50,70 34,61 34,39"
-          fill="#0f0003" stroke="#8b1a1a" stroke-width="1.2"/>
-        <text x="50" y="57" text-anchor="middle" font-size="20"
-          fill="#c0392b" class="sigil-core-text">✦</text>
-        <circle cx="50" cy="50" r="11" fill="none" stroke="#c0392b"
-          stroke-width="0.6" opacity="0.35" class="sigil-outer-ring"/>
-      </svg>
+      <img src="${loaderImageSrc}" alt="GrimTales loading" />
     </div>
 
     <div class="loader-brand">

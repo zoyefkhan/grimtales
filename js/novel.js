@@ -116,7 +116,7 @@ async function loadChapters(novelId) {
   const list = document.getElementById('chaptersList');
   if (!list) return;
 
-  list.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--ash)">Loading chapters...</div>`;
+  list.innerHTML = `<div style="padding:2rem;text-align:center"><div class="inline-loading"><img src="assets/loader.svg" alt="Loading chapters" /><span>Loading chapters...</span></div></div>`;
 
   const chapters = await window.GT_Data?.fetchChapters(novelId);
 
