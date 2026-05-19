@@ -123,14 +123,14 @@ async function initFeatured() {
     // Try featured first, then latest
     let novels = null;
     const { data: featured } = await sb.from('novels')
-      .select('*, author:profiles(username)')
+      .select('*, author:profiles!novels_author_id_fkey(username)')
       .eq('is_featured', true).eq('is_visible', true).limit(1);
 
     if (featured?.length) {
       novels = featured;
     } else {
       const { data: latest } = await sb.from('novels')
-        .select('*, author:profiles(username)')
+        .select('*, author:profiles!novels_author_id_fkey(username)')
         .eq('is_visible', true)
         .order('created_at', { ascending: false }).limit(1);
       novels = latest;

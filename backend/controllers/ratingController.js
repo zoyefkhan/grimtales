@@ -4,6 +4,18 @@
 const Rating = require('../models/Rating');
 const Novel = require('../models/Novel');
 
+function mapUser(u) {
+  if (!u) return u;
+  const obj = u.toObject ? u.toObject() : u;
+  return Object.assign({}, obj, { avatar_url: obj.avatar || obj.avatar_url || '', id: obj._id || obj.id, username: obj.username });
+}
+
+function mapRating(r) {
+  if (!r) return r;
+  const obj = r.toObject ? r.toObject() : r;
+  return Object.assign({}, obj, { user: mapUser(obj.user) });
+}
+
 exports.rateNovel = async (req, res, next) => {
   try {
     const { score, review } = req.body;
@@ -33,7 +45,7 @@ exports.rateNovel = async (req, res, next) => {
       totalRatings: allRatings.length,
     });
 
-    res.json({ success: true, data: rating });
+    res.json({ success: true, data: mapRating(rating) });
   } catch (err) { next(err); }
 };
 
@@ -52,7 +64,7 @@ exports.getNovelRatings = async (req, res, next) => {
     const allScores = await Rating.find({ novel: req.params.novelId }).select('score');
     allScores.forEach(r => { distribution[r.score] = (distribution[r.score] || 0) + 1; });
 
-    res.json({ success: true, count: ratings.length, total, distribution, data: ratings });
+    res.json({ success: true, count: ratings.length, total, distribution, data: ratings.map(mapRating) });
   } catch (err) { next(err); }
 };
 

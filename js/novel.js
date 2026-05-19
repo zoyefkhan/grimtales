@@ -26,11 +26,18 @@ async function loadNovelPage() {
 
   // Update all elements
   setEl('.novel-hero-title', novel.title);
-  setEl('.featured-title', novel.title);
-  setEl('.novel-hero-author a', novel.author?.username || 'Unknown');
+  const authorNameEl = document.querySelector('.novel-hero-author-link .author-link');
+  const authorLoadingEl = document.querySelector('.novel-hero-author');
+  const authorLinkWrapper = document.querySelector('.novel-hero-author-link');
+  if (authorNameEl) {
+    authorNameEl.textContent = novel.author?.username || 'Unknown';
+    authorNameEl.href = novel.author?.id ? `author-profile.html?id=${novel.author.id}` : 'author-profile.html';
+  }
+  if (authorLinkWrapper) authorLinkWrapper.style.display = 'inline-flex';
+  if (authorLoadingEl) authorLoadingEl.style.display = 'none';
 
   // Update cover
-  const coverEls = document.querySelectorAll('.novel-hero-cover > div, .featured-cover > div');
+  const coverEls = document.querySelectorAll('.novel-hero-cover > div:not(.novel-hero-cover-overlay)');
   if (novel.cover_url) {
     coverEls.forEach(el => {
       const img = document.createElement('img');
@@ -61,7 +68,7 @@ async function loadNovelPage() {
   if (synopsisText) synopsisText.innerHTML = `<p>${(novel.synopsis || 'No synopsis available.').replace(/\n\n/g, '</p><p>')}</p>`;
 
   // Tags
-  const tagsContainers = document.querySelectorAll('.novel-hero-tags, .featured-tags');
+  const tagsContainers = document.querySelectorAll('.novel-hero-tags');
   tagsContainers.forEach(c => {
     c.innerHTML = (novel.genres || []).map(g => `<span class="tag">${g}</span>`).join('') +
                   (novel.tags || []).slice(0,4).map(t => `<span class="tag">${t}</span>`).join('');
@@ -183,13 +190,18 @@ async function loadSimilar(genre) {
 }
 
 function showNoNovel() {
-  document.querySelector('.container')?.insertAdjacentHTML('afterbegin', `
-    <div style="text-align:center;padding:5rem 2rem">
+  // Hide the entire hero section
+  document.querySelector('.novel-hero').style.display = 'none';
+
+  // Replace body container content
+  const container = document.querySelectorAll('.container')[1];
+  if (container) container.innerHTML = `
+    <div style="text-align:center;padding:8rem 2rem">
       <div style="font-size:3rem;margin-bottom:1.5rem;opacity:0.3">📚</div>
-      <h2 style="font-family:var(--font-display);color:var(--white);margin-bottom:1rem">Novel not found</h2>
+      <h2 style="font-family:var(--font-display);color:var(--white);margin-bottom:1rem">Novel Not Found</h2>
       <p style="color:var(--ash);margin-bottom:2rem">This novel may have been removed or doesn't exist.</p>
       <a href="browse.html" class="btn btn-crimson">Browse Novels</a>
-    </div>`);
+    </div>`;
 }
 
 // ─── Actions ──────────────────────────────────

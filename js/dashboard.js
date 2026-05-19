@@ -118,9 +118,16 @@ async function loadStats() {
       commentCount = count || 0;
     }
 
+    const { count: draftCount } = await sb.from('chapters')
+      .select('*', { count: 'exact', head: true })
+      .eq('author_id', user.id)
+      .eq('is_published', false);
+
     const fmt = n => n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(0)+'K' : String(n);
 
     const el = id => document.getElementById(id);
+    const el2 = id => document.getElementById(id);
+    if (el2('statDrafts')) el2('statDrafts').textContent = fmt(draftCount || 0);
     if (el('statViews'))     el('statViews').textContent     = fmt(totalViews);
     if (el('statFollowers')) el('statFollowers').textContent = fmt(followers || 0);
     if (el('statComments'))  el('statComments').textContent  = fmt(commentCount);
@@ -214,7 +221,7 @@ async function loadActivity() {
   }
 
   const { data: comments } = await sb.from('comments')
-    .select('*, author:profiles(username), novel:novels(title)')
+    .select('*, author:profiles!comments_author_id_fkey(username), novel:novels(title)')
     .in('novel_id', novelIds)
     .order('created_at', { ascending: false })
     .limit(8);
@@ -252,7 +259,7 @@ async function loadComments() {
   if (!novelIds.length) { panel.innerHTML += `<div style="padding:2rem;color:var(--ash)">No novels yet.</div>`; return; }
 
   const { data: comments } = await sb.from('comments')
-    .select('*, author:profiles(username,avatar_url), novel:novels(title,id)')
+    .select('*, author:profiles!comments_author_id_fkey(username,avatar_url), novel:novels(title,id)')
     .in('novel_id', novelIds).eq('is_deleted', false)
     .order('created_at', { ascending: false }).limit(30);
 
@@ -520,7 +527,18 @@ async function publishChapter() {
   const { error } = await sb.from('chapters').update({ is_published: true, published_at: new Date().toISOString() }).eq('id', chapterId);
   if (error) { window.showToast('Publish failed: ' + error.message, 'error'); return; }
 
-  if (novelId) await sb.from('novels').update({ last_chapter_at: new Date().toISOString() }).eq('id', novelId);
+  if (novelId) {
+    const { count: chCount } = await sb.from('chapters')
+      .select('*', { count: 'exact', head: true })
+      .eq('novel_id', novelId)
+      .eq('is_published', true);
+    await sb.from('novels')
+      .update({ 
+        total_chapters: chCount || 0,
+        last_chapter_at: new Date().toISOString()
+      })
+      .eq('id', novelId);
+  }
 
   window.showToast('Chapter published! ✦');
   document.getElementById('editorPanel').dataset.chapterId = '';
@@ -568,6 +586,7 @@ function initNewNovel() {
       content_rating: rating,
       language:       lang,
       tags,
+      is_visible:     true,
     }).select().single();
 
     createBtn.textContent = 'Create Novel →';

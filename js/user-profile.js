@@ -156,7 +156,7 @@ async function loadLibrary() {
   if (!sb || !user?.id) { grid.innerHTML = `<div class="library-empty">Sign in to see your library.</div>`; return; }
 
   const { data: bookmarks } = await sb.from('bookmarks')
-    .select('*, novel:novels(*, author:profiles(username))')
+    .select('*, novel:novels(*, author:profiles!novels_author_id_fkey(username))')
     .eq('user_id', user.id)
     .order('updated_at', { ascending: false });
 
@@ -184,7 +184,7 @@ async function loadHistory() {
   if (!sb || !user?.id) { list.innerHTML = `<div style="color:var(--ash);padding:1rem">Sign in to see your history.</div>`; return; }
 
   const { data: history } = await sb.from('reading_history')
-    .select('*, novel:novels(id,title,cover_url,author:profiles(username)), chapter:chapters(id,title,number)')
+    .select('*, novel:novels(id,title,cover_url,author:profiles!novels_author_id_fkey(username)), chapter:chapters(id,title,number)')
     .eq('user_id', user.id)
     .order('read_at', { ascending: false })
     .limit(20);

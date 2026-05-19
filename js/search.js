@@ -23,7 +23,7 @@ async function searchNovels(q) {
   if (!sb) return [];
   const like = `%${q}%`;
   const { data, error } = await sb.from('novels')
-    .select('*, author:profiles(username,avatar_url)')
+    .select('*, author:profiles!novels_author_id_fkey(username,avatar_url)')
     .eq('is_visible', true)
     .or(`title.ilike.${like},author.username.ilike.${like}`)
     .limit(50);

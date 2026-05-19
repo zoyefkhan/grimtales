@@ -121,14 +121,14 @@ window.renderNovelCard     = renderNovelCard;
 window.renderNovelListItem = renderNovelListItem;
 
 // ─── Supabase data fetchers ───────────────────
-async function fetchNovels({ sort='total_views', genre, limit=20, page=1 }={}) {
+async function fetchNovels({ sort='total_views', genre, limit=20, page=1, visible=true }={}) {
   const sb = await window.GT_Supabase?.getSupabase();
   if (!sb) return [];
   const offset = (page-1)*limit;
   let q = sb.from('novels')
-    .select('*, author:profiles(username,avatar_url)')
-    .eq('is_visible',true)
-    .range(offset, offset+limit-1);
+    .select('*, author:profiles!novels_author_id_fkey(username,avatar_url)');
+  if (visible) q = q.eq('is_visible', true);
+  q = q.range(offset, offset+limit-1);
   if (genre) q = q.contains('genres',[genre]);
   const sortMap = { total_views:{column:'total_views',ascending:false}, new:{column:'created_at',ascending:false}, rating:{column:'avg_rating',ascending:false}, updated:{column:'last_chapter_at',ascending:false} };
   const s = sortMap[sort]||sortMap.total_views;
@@ -142,7 +142,7 @@ async function fetchNovel(id) {
   const sb = await window.GT_Supabase?.getSupabase();
   if (!sb) return null;
   const { data, error } = await sb.from('novels')
-    .select('*, author:profiles(id,username,avatar_url,bio,is_verified)')
+    .select('*, author:profiles!novels_author_id_fkey(id,username,avatar_url,bio,is_verified)')
     .eq('id',id).single();
   if (error) return null;
   return data;
@@ -162,7 +162,7 @@ async function fetchComments(chapterId) {
   const sb = await window.GT_Supabase?.getSupabase();
   if (!sb) return [];
   const { data } = await sb.from('comments')
-    .select('*, author:profiles(username,avatar_url)')
+    .select('*, author:profiles!comments_author_id_fkey(username,avatar_url)')
     .eq('chapter_id', chapterId)
     .eq('is_deleted', false)
     .is('parent_id', null)
@@ -175,7 +175,7 @@ async function fetchNovelComments(novelId) {
   const sb = await window.GT_Supabase?.getSupabase();
   if (!sb) return [];
   const { data } = await sb.from('comments')
-    .select('*, author:profiles(username,avatar_url)')
+    .select('*, author:profiles!comments_author_id_fkey(username,avatar_url)')
     .eq('novel_id', novelId)
     .eq('is_deleted', false)
     .is('parent_id', null)
@@ -191,7 +191,7 @@ async function postComment(chapterId, novelId, text) {
   if (!user) { showToast('Sign in to comment.','error'); return null; }
   const { data, error } = await sb.from('comments')
     .insert({ chapter_id:chapterId, novel_id:novelId, author_id:user.id, text })
-    .select('*, author:profiles(username,avatar_url)').single();
+    .select('*, author:profiles!comments_author_id_fkey(username,avatar_url)').single();
   if (error) { showToast('Failed to post comment.','error'); return null; }
   return data;
 }

@@ -133,7 +133,7 @@ async function fetchBrowseNovels(q = '') {
   const offset = (currentPage - 1) * PER_PAGE;
   const likeQuery = q ? `%${q}%` : null;
   let query = sb.from('novels')
-    .select('*, author:profiles(username,avatar_url)', { count: 'exact' })
+    .select('*, author:profiles!novels_author_id_fkey(username,avatar_url)', { count: 'exact' })
     .eq('is_visible', true);
 
   if (currentGenre !== 'all') {

@@ -4,6 +4,49 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/models').User || require('mongoose').model('User');
+const { Novel } = require('../models/models');
+
+function mapAuthor(a) {
+  if (!a) return a;
+  const obj = a.toObject ? a.toObject() : a;
+  return Object.assign({}, obj, {
+    avatar_url: obj.avatar || obj.avatar_url || '',
+    username: obj.username,
+    id: obj._id || obj.id,
+  });
+}
+
+function mapNovel(n) {
+  if (!n) return n;
+  const obj = n.toObject ? n.toObject() : n;
+  return Object.assign({}, obj, {
+    id: obj._id || obj.id,
+    cover_url: obj.cover || obj.cover_url || '',
+    total_views: obj.totalViews || obj.total_views || 0,
+    total_chapters: obj.totalChapters || obj.total_chapters || 0,
+    total_words: obj.totalWords || obj.total_words || 0,
+    avg_rating: obj.avgRating || obj.avg_rating || 0,
+    total_ratings: obj.totalRatings || obj.total_ratings || 0,
+    last_chapter_at: obj.lastChapterAt || obj.last_chapter_at || obj.last_chapter_at,
+    created_at: obj.createdAt || obj.created_at,
+    updated_at: obj.updatedAt || obj.updated_at,
+    is_visible: obj.isVisible || obj.is_visible,
+    is_featured: obj.isFeatured || obj.is_featured,
+    author: mapAuthor(obj.author),
+  });
+}
+
+function mapUser(u) {
+  if (!u) return u;
+  const obj = u.toObject ? u.toObject() : u;
+  return Object.assign({}, obj, { avatar_url: obj.avatar || obj.avatar_url || '', id: obj._id || obj.id, username: obj.username });
+}
+
+function mapRating(r) {
+  if (!r) return r;
+  const obj = r.toObject ? r.toObject() : r;
+  return Object.assign({}, obj, { user: mapUser(obj.user) });
+}
 
 const signToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '30d' });
 
@@ -107,7 +150,7 @@ exports.getNovels = async (req, res, next) => {
     const total = await Novel.countDocuments(filter);
     const novels = await Novel.find(filter).sort(sortObj).skip((page - 1) * limit).limit(+limit).populate('author', 'username avatar isVerified');
 
-    res.json({ success: true, count: novels.length, total, page: +page, pages: Math.ceil(total / limit), data: novels });
+    res.json({ success: true, count: novels.length, total, page: +page, pages: Math.ceil(total / limit), data: novels.map(mapNovel) });
   } catch (err) { next(err); }
 };
 
@@ -116,14 +159,14 @@ exports.getNovel = async (req, res, next) => {
     const novel = await Novel.findOne({ $or: [{ _id: req.params.id.match(/^[a-f\d]{24}$/i) ? req.params.id : null }, { slug: req.params.id }] }).populate('author', 'username avatar bio isVerified');
     if (!novel) return res.status(404).json({ success: false, message: 'Novel not found' });
     await Novel.findByIdAndUpdate(novel._id, { $inc: { totalViews: 1 } });
-    res.json({ success: true, data: novel });
+    res.json({ success: true, data: mapNovel(novel) });
   } catch (err) { next(err); }
 };
 
 exports.createNovel = async (req, res, next) => {
   try {
     const novel = await Novel.create({ ...req.body, author: req.user.id });
-    res.status(201).json({ success: true, data: novel });
+    res.status(201).json({ success: true, data: mapNovel(novel) });
   } catch (err) { next(err); }
 };
 
@@ -133,7 +176,7 @@ exports.updateNovel = async (req, res, next) => {
     if (!novel) return res.status(404).json({ success: false, message: 'Novel not found' });
     if (novel.author.toString() !== req.user.id && req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'Not authorized' });
     const updated = await Novel.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    res.json({ success: true, data: updated });
+    res.json({ success: true, data: mapNovel(updated) });
   } catch (err) { next(err); }
 };
 
@@ -150,7 +193,7 @@ exports.deleteNovel = async (req, res, next) => {
 exports.getMyNovels = async (req, res, next) => {
   try {
     const novels = await Novel.find({ author: req.user.id }).sort({ updatedAt: -1 });
-    res.json({ success: true, count: novels.length, data: novels });
+    res.json({ success: true, count: novels.length, data: novels.map(mapNovel) });
   } catch (err) { next(err); }
 };
 
@@ -158,7 +201,7 @@ exports.featureNovel = async (req, res, next) => {
   try {
     if (req.user.role !== 'admin') return res.status(403).json({ success: false, message: 'Admin only' });
     const novel = await Novel.findByIdAndUpdate(req.params.id, { isFeatured: req.body.featured }, { new: true });
-    res.json({ success: true, data: novel });
+    res.json({ success: true, data: mapNovel(novel) });
   } catch (err) { next(err); }
 };
 
@@ -299,7 +342,7 @@ exports.search = async (req, res, next) => {
     if (minRating) filter.avgRating = { $gte: +minRating };
     const total = await Novel.countDocuments(filter);
     const results = await Novel.find(filter, { score: { $meta: 'textScore' } }).sort({ score: { $meta: 'textScore' } }).skip((page - 1) * limit).limit(+limit).populate('author', 'username avatar');
-    res.json({ success: true, count: results.length, total, data: results });
+    res.json({ success: true, count: results.length, total, data: results.map(mapNovel) });
   } catch (err) { next(err); }
 };
 
@@ -308,7 +351,7 @@ exports.autocomplete = async (req, res, next) => {
     const { q } = req.query;
     if (!q || q.length < 2) return res.json({ success: true, data: [] });
     const novels = await Novel.find({ title: { $regex: q, $options: 'i' }, isVisible: true }).limit(6).select('title slug cover');
-    res.json({ success: true, data: novels });
+    res.json({ success: true, data: novels.map(n => Object.assign({}, n.toObject ? n.toObject() : n, { cover_url: (n.cover || n.cover_url || '') })) });
   } catch (err) { next(err); }
 };
 
@@ -363,7 +406,7 @@ exports.unfollowUser = async (req, res, next) => {
 exports.getUserNovels = async (req, res, next) => {
   try {
     const novels = await Novel.find({ author: req.params.id, isVisible: true }).sort({ updatedAt: -1 });
-    res.json({ success: true, count: novels.length, data: novels });
+    res.json({ success: true, count: novels.length, data: novels.map(mapNovel) });
   } catch (err) { next(err); }
 };
 
@@ -407,14 +450,14 @@ exports.rateNovel = async (req, res, next) => {
     const allRatings = await Rating.find({ novel: req.params.novelId });
     const avg = allRatings.reduce((a, r) => a + r.score, 0) / allRatings.length;
     await Novel.findByIdAndUpdate(req.params.novelId, { avgRating: Math.round(avg * 10) / 10, totalRatings: allRatings.length });
-    res.json({ success: true, data: rating });
+    res.json({ success: true, data: mapRating(rating) });
   } catch (err) { next(err); }
 };
 
 exports.getNovelRatings = async (req, res, next) => {
   try {
     const ratings = await Rating.find({ novel: req.params.novelId }).populate('user', 'username avatar').sort({ createdAt: -1 }).limit(20);
-    res.json({ success: true, data: ratings });
+    res.json({ success: true, data: ratings.map(mapRating) });
   } catch (err) { next(err); }
 };
 

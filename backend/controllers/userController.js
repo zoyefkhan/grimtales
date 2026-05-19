@@ -5,6 +5,18 @@ const User = require('../models/User');
 const Novel = require('../models/Novel');
 const { uploadAvatar } = require('../utils/cloudinary');
 
+function mapAuthor(a) {
+  if (!a) return a;
+  const obj = a.toObject ? a.toObject() : a;
+  return Object.assign({}, obj, { avatar_url: obj.avatar || obj.avatar_url || '', id: obj._id || obj.id, username: obj.username });
+}
+
+function mapNovel(n) {
+  if (!n) return n;
+  const obj = n.toObject ? n.toObject() : n;
+  return Object.assign({}, obj, { id: obj._id || obj.id, cover_url: obj.cover || obj.cover_url || '', avg_rating: obj.avgRating || obj.avg_rating || 0, total_chapters: obj.totalChapters || obj.total_chapters || 0, total_views: obj.totalViews || obj.total_views || 0, author: mapAuthor(obj.author) });
+}
+
 exports.getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
@@ -62,7 +74,7 @@ exports.getUserNovels = async (req, res, next) => {
   try {
     const novels = await Novel.find({ author: req.params.id, isVisible: true })
       .sort({ updatedAt: -1 });
-    res.json({ success: true, count: novels.length, data: novels });
+    res.json({ success: true, count: novels.length, data: novels.map(mapNovel) });
   } catch (err) { next(err); }
 };
 
@@ -73,7 +85,7 @@ exports.getLibrary = async (req, res, next) => {
       select: 'title slug cover genres avgRating totalChapters status author',
       populate: { path: 'author', select: 'username' },
     });
-    res.json({ success: true, data: user.library });
+    res.json({ success: true, data: user.library.map(mapNovel) });
   } catch (err) { next(err); }
 };
 
